@@ -1,0 +1,67 @@
+@startuml
+
+database client #honeydew {
+
+  rectangle "client socket ()" #technology
+  cloud "while (?)" #lightyellow {
+    rectangle "connect ()" #technology
+    rectangle "send ()" #technology
+    rectangle "c: read ()" #technology
+}
+}
+
+
+
+database server #whitesmoke;line:slategray;line.bold;text:slategray {
+
+  storage #floralwhite {
+    rectangle "server socket ()"
+    rectangle "bind ()"
+    rectangle "listen ()"
+    rectangle "epoll_create ()"
+  }
+
+  cloud "while (1)" #lavender {
+    rectangle "epoll_wait (nfds)"
+    cloud "while (nfds--)" #lightgreen {
+      rectangle "accept ()"
+      rectangle "s: read ()"
+    }
+    
+    storage #floralwhite {
+      rectangle "reassamble request ?"
+      rectangle "parse request"
+      rectangle "handle request"
+      rectangle "edit http response"
+      rectangle "write ()"
+  }
+  }
+  rectangle "close ()"
+}
+
+"server socket ()" --> "bind ()" : then
+"bind ()" --> "listen ()" : then
+"listen ()" --> "epoll_create ()" : then
+"epoll_create ()" --> "while (1)" : then
+"epoll_wait (nfds)" --> "while (nfds--)" : then  
+
+"client socket ()" --> "connect ()" : then
+"connect ()" --> "send ()"
+"send ()" -[#red,dashed,thickness=2]-> "s: read ()" : 1
+"send ()" --> "c: read ()" : 2
+
+"accept ()" -[dotted]-> "reassamble request ?"
+"reassamble request ?" --> "parse request"
+"parse request" --> "handle request"
+"handle request" --> "edit http response"
+"edit http response" --> "write ()"
+"write ()" -[#red,dashed,thickness=2]-> "c: read ()"
+
+"accept ()" -[dotted]-> "close ()" : "if killed ?"
+
+
+
+
+@enduml
+
+
