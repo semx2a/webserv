@@ -6,20 +6,20 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:56:51 by seozcan           #+#    #+#             */
-/*   Updated: 2023/07/25 15:52:24 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/07/25 16:25:56 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Webserv.hpp"
 #include <iostream>
 #include <unistd.h>
+#include <cstdlib>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Webserv::Webserv(void) : _buffer() {
-};
+Webserv::Webserv(void) : _buffer() { };
 
 Webserv::Webserv(int port) : _port(port), _buffer() {
     
@@ -45,6 +45,7 @@ Webserv &	Webserv::operator=(Webserv const & rhs) {
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
 void Webserv::_createSocket() {
+	
     if ((this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         std::cerr << "Socket creation failed." << std::endl;
         exit(1);
@@ -52,27 +53,33 @@ void Webserv::_createSocket() {
 }
 
 void Webserv::_bindSocket() {
+	
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(this->_port);
 
     if (bind(this->_serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+		
         std::cerr << "Binding failed." << std::endl;
         exit(1);
     }
 }
 
 void Webserv::_listenForConnections() {
+	
     if (listen(this->_serverSocket, 5) < 0) {
+		
         std::cerr << "Listening failed." << std::endl;
         exit(1);
     }
 }
 
 void Webserv::_handleConnection(int clientSocket) {
+	
     int bytesRead = read(clientSocket, this->_buffer, BUFFER_SIZE);
     if (bytesRead < 0) {
+		
         std::cerr << "Reading from client failed." << std::endl;
         close(clientSocket);
         return;
@@ -87,9 +94,11 @@ void Webserv::_handleConnection(int clientSocket) {
 }
 
 void Webserv::run() {
+	
     this->_listenForConnections();
 
     while (true) {
+		
         int newSocket;
         struct sockaddr_in clientAddr;
         socklen_t clientAddrLen = sizeof(clientAddr);

@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:55:43 by seozcan           #+#    #+#             */
-/*   Updated: 2023/07/25 15:50:27 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/07/26 00:04:40 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ class Webserv {
 		Webserv(Webserv const & src);
 		~Webserv(void);
 
-		Webserv &				operator=(Webserv const & rhs);
+		Webserv &			operator=(Webserv const & rhs);
 
-		void					run(void);
+		void				run(void);
 		
 	private:
 		
