@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:55:43 by seozcan           #+#    #+#             */
-/*   Updated: 2023/07/26 00:04:40 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/07/26 10:11:46 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,14 @@ class Webserv {
 
 		Webserv &			operator=(Webserv const & rhs);
 
+		int					getPort(void) const;
+		int					getSocket(void) const;
+		const char *		getBuffer(void) const;
+
+		void				setPort(const int);
+		void				setSocket(const int);
+		void				setBuffer(const char *);
+		
 		void				run(void);
 		
 	private:
