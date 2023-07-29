@@ -145,9 +145,9 @@ int main ()
 			}
 
 			// Parcourir tous les evenements
-			for (int i = 0; i < numEvents; ++i)
-			{
-				if (events [i].data.fd == serverSocket)
+			//for (int i = 0; i < numEvents; ++i)
+		//	{
+				if (events [0].data.fd == serverSocket)
 				{
 					// Nouvelle connexion entrante --> creation d'un socket specifique a ce client
 					clientSocket = accept (serverSocket, (struct sockaddr*)&clientAddress, &clientAddressSize);
@@ -173,24 +173,25 @@ int main ()
 				{
 					// Donnees disponibles a lire sur un socket client existant
 					char buffer [BUFFER_SIZE];
-					int bytesRead = read (events [i].data.fd, buffer, BUFFER_SIZE - 1);								// note: mieux d'utiliser recv ?
+					int bytesRead = read (events [0].data.fd, buffer, BUFFER_SIZE - 1);								// note: mieux d'utiliser recv ?
 					if (bytesRead == -1)
 					{
-						close (events [i].data.fd);
+						close (events [0].data.fd);
 						throw std::runtime_error ("read (): " + (std::string) strerror (errno));					// note: A SUPPR A TERME CAR INTERDIT DANS SUJET
 					}
 					else if (bytesRead == 0)
 					{
 						std::cout << "Connexion terminee" << std::endl;
-						close (events [i].data.fd);
+						close (events [0].data.fd);
 					}
 					else
 					{
 						buffer [bytesRead] = '\0';
 						std::cout << "Donnees reçues : " << buffer << std::endl;
+						
 					}
 				}
-			}
+		//	}
 		}
 		close (serverSocket);
 		close (epollFd);
