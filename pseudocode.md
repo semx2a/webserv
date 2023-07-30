@@ -11,6 +11,7 @@ class epoll {
         struct epoll_event to_poll;
         struct epoll_event events [MAX_EVENTS];
 };
+
 std::map <int, std::string> clients_requests;
 
 
