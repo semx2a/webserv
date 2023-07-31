@@ -1,9 +1,6 @@
 #include <cerrno>
-#include <arpa/inet.h>
 
 #include "Epoll.hpp"
-
-const int BUFFER_SIZE = 1024;
 
 class Server {
 
@@ -14,10 +11,12 @@ class Server {
 		~Server ();
 		Server& operator= (Server const& rhs);
 
+		void				connect ();
+
 	private:
-		int fd;
-		struct sockaddr_in address;
-		Epoll events (int socketFd);
+		Epoll				_epollEvents;
+		int					_numEvents;
+		struct epoll_event	_event;
 
 
 };

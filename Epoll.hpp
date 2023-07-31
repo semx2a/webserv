@@ -1,55 +1,48 @@
-#include <cstring>
-#include <exception>
+#ifndef EPOLL_HPP
+# define EPOLL_HPP
+
+#include <arpa/inet.h>
 #include <iostream>
-#include <netinet/in.h>
-#include <stdexcept>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <unistd.h>
 #include <vector>
 
-const int MAX_EVENTS = 10;
+#include "Socket.hpp"
 
-class Socket {
-
-	public:
-		Socket (int port);
-
-		void	createSocket ();
-		void	setReusable ();
-		void	setServerAddr ();
-		void	bindSock ();
-		void	startListening ();
-
-		int		getFd () const { return _sockFd; } //TODO implement in .cpp
-
-	private:
-		int					_sockFd;
-		int					_port;
-		struct sockaddr_in	_serverAddr;
-		struct epoll_event	_events [MAX_EVENTS];
-};
+# define BUFFER_SIZE 1024
 
 class Epoll {
 
 	public:
-		Epoll ();
+		Epoll (int port); // temp waiting for vector of fds
 		Epoll (std::vector <int> ports);
 		Epoll (Epoll const& rhs);
 		~Epoll ();
 		Epoll& operator= (Epoll const& rhs);
 		
 		void	createEpollEvent ();
-		void	editSocketInEpoll ();
+		void	editSocketInEpoll (); //TODO
+		int		waitForConnexions ();
+		void	addNewClient (int fd);
+		void	readFromClient (int fd);
+		void	writeToClient (int fd); //TODO
+
+		int								getServerFd () const { return _serverFd; } // temp waiting for vector of fds
+		struct epoll_event				getReadyEvent (int index) const;
 
 		// TODO : exception ?
 
 	private:
+		int					_epollFd;
+		int					_serverFd; // temp waiting for vector of fds
+		std::vector <int>	_sockFds;
+		struct epoll_event	_to_poll;
+		struct epoll_event	_events [MAX_EVENTS];
+		int					_clientSocket;
+		struct sockaddr_in	_clientAddress;
+		socklen_t			_clientAddressSize;
+
 		int		pollPort (int port);
 		void	addSocketToEpoll (int fd);
 
-		int					_epollFd;
-		std::vector <int>	_sockFds;
-
 };
 
+#endif
