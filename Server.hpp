@@ -1,5 +1,3 @@
-#include <cerrno>
-
 #include "Epoll.hpp"
 
 class Server {

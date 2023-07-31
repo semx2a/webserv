@@ -5,6 +5,7 @@
 /**********************************************************************************************************************/
 /*____________temp waiting for vector of fds__________*/
 Epoll::Epoll (int port) {
+	createEpollEvent ();
 	pollPort (port);
 }
 /*____________________________________________________*/
@@ -53,6 +54,7 @@ void	Epoll::createEpollEvent () {
 int		Epoll::pollPort (int port) {
 	Socket newSocket (port);
 	newSocket.createSocket ();
+	_serverFd = newSocket.getFd ();
 	newSocket.setReusable ();
 	newSocket.setServerAddr ();
 	newSocket.bindSock ();
@@ -83,10 +85,13 @@ int		Epoll::waitForConnexions () {
 }
 
 void	Epoll::addNewClient (int fd) {
-	if ((_clientSocket = accept (fd, (struct sockaddr*)&_clientAddress, &_clientAddressSize) == -1)) {
+
+	//if ((_clientSocket = accept (fd, (struct sockaddr*)&_clientAddress, &_clientAddressSize) == -1)) {
+	if ((_clientSocket = accept (fd, NULL, NULL)) == -1) {
 		throw std::runtime_error ("accept (): " + (std::string) strerror (errno));
 	}
-	std::cout << "Nouvelle connexion entrante : " << inet_ntoa (_clientAddress.sin_addr) << std::endl;
+	//std::cout << "Nouvelle connexion entrante : " << inet_ntoa (_clientAddress.sin_addr) << std::endl;
+	std::cout << "Nouvelle connexion entrante" << std::endl;
 	addSocketToEpoll (_clientSocket);
 	// TODO : set reusable ?	
 }
@@ -111,5 +116,5 @@ void	Epoll::readFromClient (int fd) {
 
 void	Epoll::writeToClient (int fd) {
 
-	std::cout << "Write to client: TODO" << std::endl;
+	std::cout << "Write to client " << fd << ": TODO" << std::endl;
 }

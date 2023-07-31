@@ -1,6 +1,7 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
+#include <cerrno>
 #include <cstring>
 #include <exception>
 #include <netinet/in.h>
