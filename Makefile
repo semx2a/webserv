@@ -86,17 +86,17 @@ all:			header h2 message $(NAME)
 
 $(ODIR)/%.o:	%.cpp
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
-	@echo "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 $(NAME):		$(OBJS)	
 	@$(CPP) $(WFLAGS) $(OBJS) -o $(NAME)
-	@echo "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 $(OBJS):		| $(ODIR)
 
 $(ODIR):
 	@mkdir -p $(ODIR)
-	@echo "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 	
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -105,41 +105,41 @@ update:		header fclean
 	@git pull
 
 push:		header fclean
-	@echo "$(HIGREEN)"
+	@echo -e "$(HIGREEN)"
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 clean:		header
 	@rm -rf $(ODIR)
-	@echo "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
 
 fclean:		header clean
 	@rm -f $(NAME)
-	@echo "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
 
 header:
-	@echo " ______________________________________________________"
-	@echo "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
-	@echo "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
-	@echo "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
-	@echo "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
-	@echo "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
-	@echo "|     \_____________________________________________________\ "
-	@echo "|     /$(BLACK)///////////////////////////////////////////////////$(NO_COLOR)/$(BLACK)/$(NO_COLOR)/ "
-	@echo "|    /                   S E O Z C A N                   / / "
-	@echo "|   /                   N F A U C O N N                 / / "
-	@echo "|  /                   A T H I E R R Y                 / / "
-	@echo "| /___________________________________________________/ / "
-	@echo "|/____________________________________________________\/ "
-	@echo ""
+	@echo -e " ______________________________________________________"
+	@echo -e "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
+	@echo -e "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
+	@echo -e "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
+	@echo -e "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
+	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
+	@echo -e "|     \_____________________________________________________\ "
+	@echo -e "|     /$(BLACK)///////////////////////////////////////////////////$(NO_COLOR)/$(BLACK)/$(NO_COLOR)/ "
+	@echo -e "|    /                   S E O Z C A N                   / / "
+	@echo -e "|   /                   N F A U C O N N                 / / "
+	@echo -e "|  /                   A T H I E R R Y                 / / "
+	@echo -e "| /___________________________________________________/ / "
+	@echo -e "|/____________________________________________________\/ "
+	@echo -e ""
 
 h2:
-	@echo "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
+	@echo -e "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
 
 message:
-	@make -q $(NAME) && echo "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
+	@make -q $(NAME) && echo -e "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
 
 re:		header fclean 
 	@make all 

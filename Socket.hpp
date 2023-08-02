@@ -24,6 +24,7 @@ class Socket {
 		Socket& operator= (Socket const& rhs);
 
 		int					getPort () const;
+		int					getFd () const;
 
 		void				createSocket ();
 		void				setReusable ();
@@ -31,14 +32,12 @@ class Socket {
 		void				bindSock ();
 		void				startListening ();
 
-		int					getFd () const { return _sockFd; } //TODO implement in .cpp
-
 
 	private:
 
-		int					_sockFd;
-		int	const			_port;
-		struct sockaddr_in	_serverAddr;
+		int					m_sockFd;
+		int	const			m_port;
+		struct sockaddr_in	m_serverAddr;
 };
 
 #endif

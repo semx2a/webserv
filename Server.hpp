@@ -1,3 +1,7 @@
+#ifndef SERVER_HPP
+# define SERVER_HPP
+
+#include <map>
 #include "Epoll.hpp"
 
 class Server {
@@ -14,9 +18,10 @@ class Server {
 
 	private:
 
-		Epoll				_epollEvents;
-		int					_numEvents;
-		struct epoll_event	_event;
+		Epoll								m_epollEvents;
+		std::map <int, std::vector <char> >	m_chunkRequests;
 
 
 };
+
+#endif

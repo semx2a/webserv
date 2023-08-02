@@ -5,16 +5,17 @@
 /**********************************************************************************************************************/
 
 
-/*____________temp waiting for vector of fds__________*/
-Server::Server () : _epollEvents (8080) {}
+/*___________m_temp waiting for vector of fds__________*/
+Server::Server () : m_epollEvents (8080) {}
 
 /*
-Server::Server (std::string config_file) {
+Server::Server (std::string configm_file) {
 }
 */
 
 
-Server::Server (Server const& rhs) : _epollEvents (8080) {
+Server::Server (Server const& rhs) : m_epollEvents (8080) {
+
 	*this = rhs;
 }
 /*____________________________________________________*/
@@ -24,6 +25,7 @@ Server::~Server () {}
 
 
 Server& Server::operator= (Server const& rhs) {
+
 	if (this != &rhs) {
         // TODO
 	}
@@ -43,28 +45,37 @@ Server& Server::operator= (Server const& rhs) {
 
 void	Server::connect () {
 
+	int					nb_events;
+	struct epoll_event	event;
+
 	try {
+
 		while (true) {
-			_numEvents = _epollEvents.waitForConnexions ();
-			for (int i = 0; i < _numEvents; ++i) {
-				_event = _epollEvents.getReadyEvent (i);
-				if ((_event.events & EPOLLERR) || (_event.events & EPOLLHUP) || (_event.events & EPOLLRDHUP)) {
-					// TODO : delete corresponding nodes in client map
-					close (_event.data.fd);
+
+			nb_events = m_epollEvents.waitForConnexions ();
+
+			for (int i = 0; i < nb_events; ++i) {
+
+				event = m_epollEvents.getReadyEvent (i);
+
+				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) || (event.events & EPOLLRDHUP)) {
+					close (event.data.fd);// TODO when map of clients : delete corresponding nodes in client map
 				}
-				else if (_event.data.fd == _epollEvents.getServerFd ()) { // temp waiting for vector of fds
-					_epollEvents.addNewClient (_event.data.fd);
+				else if (event.data.fd == m_epollEvents.getServerFd ()) { // temp waiting for vector of fds 
+					m_epollEvents.addNewClient (event.data.fd);
 				}
-				else if (_event.events & EPOLLIN) {
-					_epollEvents.readFromClient (_event.data.fd);
+				else if (event.events & EPOLLIN) {
+					m_epollEvents.readFromClient (event.data.fd);
 				}
-				else if (_event.events & EPOLLOUT) {
-					_epollEvents.writeToClient (_event.data.fd);
+				else if (event.events & EPOLLOUT) {
+					m_epollEvents.writeToClient (event.data.fd);
+					std::cout << "Waiting for new connexion..." << std::endl;
 				}
 			}
 		}
 	}
 	catch (std::exception& e) {
+
 		std::cerr << "Server: Error: " << e.what () << std::endl;
 	}
 }
