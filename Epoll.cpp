@@ -3,14 +3,19 @@
 /**********************************************************************************************************************/
 /*										CONSTRUCTORS / DESTRUCTORS													  */
 /**********************************************************************************************************************/
+
+
 /*____________temp waiting for vector of fds__________*/
 Epoll::Epoll (int port) {
+
 	createEpollEvent ();
 	pollPort (port);
 }
 /*____________________________________________________*/
 
+
 Epoll::Epoll (std::vector <int> ports) {
+
 	try {
 		for (std::vector <int>::iterator it = ports.begin (); it != ports.end (); it++) {
 			_sockFds.push_back (pollPort (*it));
@@ -20,38 +25,52 @@ Epoll::Epoll (std::vector <int> ports) {
 	}
 }
 
+
 Epoll::Epoll (Epoll const& rhs) {
+
 	*this = rhs;
 }
 
+
 Epoll::~Epoll () {}
 
+
 Epoll& Epoll::operator= (Epoll const& rhs) {
+
 	if (this != &rhs) {
         // TODO
 	}
 	return *this;
 }
 
+
 /**********************************************************************************************************************/
 /*											GETTERS / SETTERS														  */
 /**********************************************************************************************************************/
+
+
 struct epoll_event	Epoll::getReadyEvent (int index) const { 
+
 	return _events [index];
 }
+
 
 /**********************************************************************************************************************/
 /*											MEMBER FUNCTIONS														  */
 /**********************************************************************************************************************/
 
+
 void	Epoll::createEpollEvent () {
+
 	_epollFd = epoll_create (10); // TODO : fix number
 	if (_epollFd == -1) {
 		throw std::runtime_error ("epoll_create1 (): " + (std::string) strerror (errno));
 	}
 }
 
+
 int		Epoll::pollPort (int port) {
+
 	Socket newSocket (port);
 	newSocket.createSocket ();
 	_serverFd = newSocket.getFd ();
@@ -64,7 +83,9 @@ int		Epoll::pollPort (int port) {
 	return newSocket.getFd ();
 }
 
+
 void	Epoll::addSocketToEpoll (int fd) {
+
 	std::memset ((char *)&_to_poll, 0, sizeof (_to_poll));
 
 	_to_poll.events = EPOLLIN; 
@@ -74,15 +95,22 @@ void	Epoll::addSocketToEpoll (int fd) {
 	}
 }
 
-void	Epoll::editSocketInEpoll () {}
+
+void	Epoll::editSocketInEpoll () {
+
+	//TODO
+}
+
 
 int		Epoll::waitForConnexions () {
+
 	int numEvents = epoll_wait (_epollFd, _events, MAX_EVENTS, -1);
 	if (numEvents == -1) {
 		throw std::runtime_error ("epoll_wait (): " + (std::string) strerror (errno));
 	}
 	return numEvents;
 }
+
 
 void	Epoll::addNewClient (int fd) {
 
@@ -96,9 +124,12 @@ void	Epoll::addNewClient (int fd) {
 	// TODO : set reusable ?	
 }
 
+
 void	Epoll::readFromClient (int fd) {
+
 	char buffer [BUFFER_SIZE];
 	int bytesRead = read (fd, buffer, BUFFER_SIZE - 1);	// note: change for recv
+														
 	if (bytesRead == -1) {
 		close (fd);
 		throw std::runtime_error ("read (): " + (std::string) strerror (errno)); // note: A SUPPR A TERME CAR INTERDIT DANS SUJET
@@ -114,7 +145,10 @@ void	Epoll::readFromClient (int fd) {
 	}
 }
 
+
 void	Epoll::writeToClient (int fd) {
 
 	std::cout << "Write to client " << fd << ": TODO" << std::endl;
 }
+
+

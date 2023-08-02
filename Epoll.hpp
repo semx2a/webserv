@@ -12,25 +12,26 @@
 class Epoll {
 
 	public:
+
 		Epoll (int port); // temp waiting for vector of fds
 		Epoll (std::vector <int> ports);
 		Epoll (Epoll const& rhs);
 		~Epoll ();
 		Epoll& operator= (Epoll const& rhs);
 		
-		void	createEpollEvent ();
-		void	editSocketInEpoll (); //TODO
-		int		waitForConnexions ();
-		void	addNewClient (int fd);
-		void	readFromClient (int fd);
-		void	writeToClient (int fd); //TODO
+		void				createEpollEvent ();
+		void				editSocketInEpoll (); //TODO
+		int					waitForConnexions ();
+		void				addNewClient (int fd);
+		void				readFromClient (int fd);
+		void				writeToClient (int fd); //TODO
 
-		int								getServerFd () const { return _serverFd; } // temp waiting for vector of fds
-		struct epoll_event				getReadyEvent (int index) const;
+		int					getServerFd () const { return _serverFd; } // temp waiting for vector of fds
+		struct epoll_event	getReadyEvent (int index) const;
 
-		// TODO : exception ?
 
 	private:
+
 		int					_epollFd;
 		int					_serverFd; // temp waiting for vector of fds
 		std::vector <int>	_sockFds;
@@ -40,8 +41,8 @@ class Epoll {
 		struct sockaddr_in	_clientAddress;
 		socklen_t			_clientAddressSize;
 
-		int		pollPort (int port);
-		void	addSocketToEpoll (int fd);
+		int					pollPort (int port);
+		void				addSocketToEpoll (int fd);
 
 };
 

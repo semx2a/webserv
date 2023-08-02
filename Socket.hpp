@@ -15,6 +15,7 @@ const int MAX_EVENTS = 10;
 class Socket {
 
 	public:
+
 		Socket ();
 		Socket (int port);
 		Socket (std::string conf_file);
@@ -22,17 +23,19 @@ class Socket {
 		~Socket ();
 		Socket& operator= (Socket const& rhs);
 
-		int		getPort () const;
+		int					getPort () const;
 
-		void	createSocket ();
-		void	setReusable ();
-		void	setServerAddr ();
-		void	bindSock ();
-		void	startListening ();
+		void				createSocket ();
+		void				setReusable ();
+		void				setServerAddr ();
+		void				bindSock ();
+		void				startListening ();
 
-		int		getFd () const { return _sockFd; } //TODO implement in .cpp
+		int					getFd () const { return _sockFd; } //TODO implement in .cpp
+
 
 	private:
+
 		int					_sockFd;
 		int	const			_port;
 		struct sockaddr_in	_serverAddr;

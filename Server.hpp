@@ -3,6 +3,7 @@
 class Server {
 
 	public:
+
 		Server ();
 		Server (std::string conf_file);
 		Server (Server const& rhs);
@@ -12,6 +13,7 @@ class Server {
 		void				connect ();
 
 	private:
+
 		Epoll				_epollEvents;
 		int					_numEvents;
 		struct epoll_event	_event;

@@ -1,8 +1,8 @@
 #include "Server.hpp"
 
 //int	main (int ac, char **av)
-int main ()
-{
+int main () {
+
 	// TODO : check argc
 	try {
 		//TODO : server (argv [1]);
