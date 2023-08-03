@@ -10,7 +10,7 @@ class Server {
 	public:
 
 		Server ();
-		Server (Config& config);
+		Server (std::string const& conf_file);
 		Server (Server const& rhs);
 		~Server ();
 		Server& operator= (Server const& rhs);

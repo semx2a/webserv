@@ -2,7 +2,12 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Server::Server (Config& config) : epollEvents (config.getPorts ()) {
+Server::Server () :	config (), 
+					epollEvents (config.getPorts ()) {
+}
+
+Server::Server (std::string const& conf_file) :	config (conf_file), 
+												epollEvents (config.getPorts ()) {
 }
 
 Server::Server (Server const& rhs) {

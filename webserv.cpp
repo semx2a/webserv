@@ -6,8 +6,7 @@ int main () {
 	// TODO : check argc
 	try {
 		//TODO : handle av [1] or default conf
-		Config	server_conf ("");
-		Server	webserv (server_conf);
+		Server	webserv ("");
 		
 		webserv.connect ();
 	}
