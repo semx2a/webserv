@@ -9,40 +9,44 @@
 
 # define BUFFER_SIZE 1024
 
+# define ACCEPTERR "accept (): failed"
+# define ECREATERR "epoll_create (): failed"
+# define ECTLERR "epoll_ctl (): failed"
+# define EWAITERR "epoll_wait (): failed"
+# define RECVERR "recv (): failed"
+# define SENDERR "send (): failed"
+
 class Epoll {
 
 	public:
 
-		Epoll (int port); // temp waiting for vector of fds
-		Epoll (std::vector <int> ports);
+		Epoll ();
+		Epoll (std::vector <int>& ports);
 		Epoll (Epoll const& rhs);
 		~Epoll ();
 		Epoll& operator= (Epoll const& rhs);
 		
-		void				createEpollEvent ();
-		void				editSocketInEpoll (int fd, int eventToWatch); //TODO
+		struct epoll_event const&	getReadyEvent (int index) const;
+		std::vector <int> const&	getSockFds () const;
+		bool						isSockFd (int fd); 
+
 		int					waitForConnexions ();
 		void				addNewClient (int fd);
 		void				readFromClient (int fd);
 		void				writeToClient (int fd); //TODO
 
-		int					getServerFd () const { return m_serverFd; } // temp waiting for vector of fds
-		struct epoll_event	getReadyEvent (int index) const;
-
-
 	private:
 
-		int					m_epollFd;
-		int					m_serverFd; // temp waiting for vector of fds
-		std::vector <int>	m_sockFds;
-		struct epoll_event	m_toPoll;
-		struct epoll_event	m_events [MAX_EVENTS];
-		int					m_clientSocket;
-		struct sockaddr_in	m_clientAddress;
-		socklen_t			m_clientAddressSize;
+		int					epollFd;
+		std::vector <int>	sockFds;
+		struct epoll_event	toPoll;
+		struct epoll_event	events [MAX_EVENTS];
 
 		int					pollPort (int port);
 		void				addSocketToEpoll (int fd);
+		void				createEpollEvent ();
+		void				editSocketInEpoll (int fd, int eventToWatch); //TODO
+
 
 };
 

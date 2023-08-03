@@ -1,20 +1,11 @@
 #include "Server.hpp"
 
-/**********************************************************************************************************************/
-/*										CONSTRUCTORS / DESTRUCTORS													  */
-/**********************************************************************************************************************/
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-
-/*___________m_temp waiting for vector of fds__________*/
-Server::Server () : m_epollEvents (8080) {}
-
-/*
-Server::Server (std::string configm_file) {
+Server::Server (Config& config) : epollEvents (config.getPorts ()) {
 }
-*/
 
-
-Server::Server (Server const& rhs) : m_epollEvents (8080) {
+Server::Server (Server const& rhs) {
 
 	*this = rhs;
 }
@@ -33,14 +24,13 @@ Server& Server::operator= (Server const& rhs) {
 }
 
 
-/**********************************************************************************************************************/
-/*											GETTERS / SETTERS														  */
-/**********************************************************************************************************************/
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
+Config const&		Server::getConfig () const { return config; }
 
-/**********************************************************************************************************************/
-/*											MEMBER FUNCTIONS														  */
-/**********************************************************************************************************************/
+Epoll const&		Server::getEpollEvents () const { return epollEvents; }
+
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 
 void	Server::connect () {
@@ -52,23 +42,21 @@ void	Server::connect () {
 
 		while (true) {
 
-			nb_events = m_epollEvents.waitForConnexions ();
-
+			nb_events = epollEvents.waitForConnexions ();
 			for (int i = 0; i < nb_events; ++i) {
 
-				event = m_epollEvents.getReadyEvent (i);
-
+				event = epollEvents.getReadyEvent (i);
 				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) || (event.events & EPOLLRDHUP)) {
 					close (event.data.fd);// TODO when map of clients : delete corresponding nodes in client map
 				}
-				else if (event.data.fd == m_epollEvents.getServerFd ()) { // temp waiting for vector of fds 
-					m_epollEvents.addNewClient (event.data.fd);
+				else if (epollEvents.isSockFd (event.data.fd)) { // temp waiting for vector of fds 
+					epollEvents.addNewClient (event.data.fd);
 				}
 				else if (event.events & EPOLLIN) {
-					m_epollEvents.readFromClient (event.data.fd);
+					epollEvents.readFromClient (event.data.fd);
 				}
 				else if (event.events & EPOLLOUT) {
-					m_epollEvents.writeToClient (event.data.fd);
+					epollEvents.writeToClient (event.data.fd);
 					std::cout << "Waiting for new connexion..." << std::endl;
 				}
 			}
@@ -76,6 +64,6 @@ void	Server::connect () {
 	}
 	catch (std::exception& e) {
 
-		std::cerr << "Server: Error: " << e.what () << std::endl;
+		std::cerr << "ERROR: " << e.what () << std::endl;
 	}
 }

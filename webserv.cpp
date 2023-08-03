@@ -5,10 +5,11 @@ int main () {
 
 	// TODO : check argc
 	try {
-		//TODO : server (argv [1]);
-		Server	WebServ;
+		//TODO : handle av [1] or default conf
+		Config	server_conf ("");
+		Server	webserv (server_conf);
 		
-		WebServ.connect ();
+		webserv.connect ();
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what () << std::endl;

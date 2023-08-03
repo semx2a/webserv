@@ -15,6 +15,7 @@ NAME	:=	webserv
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
 SRCS	:=	webserv.cpp \
+			Config.cpp \
 			Server.cpp \
 			Epoll.cpp \
 			Socket.cpp
@@ -85,7 +86,7 @@ vpath %.o $(ODIR)
 all:			header h2 message $(NAME)
 
 $(ODIR)/%.o:	%.cpp
-	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
+	@$(CPP) $(WFLAGS) $(GFLAG) $(INCLUDE_FLAGS) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 $(NAME):		$(OBJS)	

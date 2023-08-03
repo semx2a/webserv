@@ -26,18 +26,18 @@ class Socket {
 		int					getPort () const;
 		int					getFd () const;
 
-		void				createSocket ();
 		void				setReusable ();
-		void				setServerAddr ();
-		void				bindSock ();
-		void				startListening ();
-
 
 	private:
 
-		int					m_sockFd;
-		int	const			m_port;
-		struct sockaddr_in	m_serverAddr;
+		int					fd;
+		int	const			port;
+		struct sockaddr_in	serverAddr;
+
+		void				createSocket ();
+		void				setServerAddr ();
+		void				bindSock ();
+		void				startListening ();
 };
 
 #endif

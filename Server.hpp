@@ -2,6 +2,7 @@
 # define SERVER_HPP
 
 #include <map>
+#include "Config.hpp"
 #include "Epoll.hpp"
 
 class Server {
@@ -9,17 +10,21 @@ class Server {
 	public:
 
 		Server ();
-		Server (std::string conf_file);
+		Server (Config& config);
 		Server (Server const& rhs);
 		~Server ();
 		Server& operator= (Server const& rhs);
+
+		Config const&		getConfig () const;
+		Epoll const&		getEpollEvents () const;
 
 		void				connect ();
 
 	private:
 
-		Epoll								m_epollEvents;
-		std::map <int, std::vector <char> >	m_chunkRequests;
+		Config								config;
+		Epoll								epollEvents;
+		std::map <int, std::vector <char> >	chunkRequests;
 
 
 };
