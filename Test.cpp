@@ -48,7 +48,6 @@ int main () {
         }
     }
 
-    // Wait for all threads to finish
     for (auto& t : threads) {
         t.join ();
     }
