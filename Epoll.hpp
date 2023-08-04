@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Socket.hpp"
+#include "display.hpp"
 
 # define BUFFER_SIZE 1024
 
@@ -28,7 +29,7 @@ class Epoll {
 		
 		struct epoll_event const&	getReadyEvent (int index) const;
 		std::vector <int> const&	getSockFds () const;
-		bool						isSockFd (int fd); 
+		bool						isNewClient (int fd); 
 
 		int					waitForConnexions ();
 		void				addNewClient (int fd);
