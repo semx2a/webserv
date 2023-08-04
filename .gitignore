@@ -1,6 +1,5 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/macos,c++,c
-# Edit at https://www.toptal.com/developers/gitignore?templates=macos,c++,c
+.vscode/
 
 ### C ###
 # Prerequisites

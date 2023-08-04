@@ -15,6 +15,7 @@ NAME	:=	webserv
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
 SRCS	:=	webserv.cpp \
+			display.cpp \
 			Config.cpp \
 			Server.cpp \
 			Epoll.cpp \

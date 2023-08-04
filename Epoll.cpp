@@ -45,7 +45,7 @@ std::vector <int> const&	Epoll::getSockFds () const {
 	return sockFds;
 }
 
-bool	Epoll::isSockFd (int fd) {
+bool	Epoll::isNewClient (int fd) {
 
 	std::vector <int>::iterator it;
 
@@ -88,8 +88,8 @@ void	Epoll::addNewClient (int fd) {
 	if (clientSocket < 0) {
 		throw std::runtime_error (ACCEPTERR);
 	}
-	std::cout << "\nNouvelle connexion entrante\n" << std::endl;
 	addSocketToEpoll (clientSocket);
+	display_client_added ();
 	// TODO : set reusable ?	
 }
 
@@ -112,6 +112,7 @@ int		Epoll::waitForConnexions () {
 	if (numEvents < 0) {
 		throw std::runtime_error (EWAITERR);
 	}
+	display_wait ();
 	return numEvents;
 }
 
@@ -126,12 +127,12 @@ void	Epoll::readFromClient (int fd) {
 		throw std::runtime_error (RECVERR);
 	}
 	else if (bytesRead == 0) {
-		std::cout << "Connexion terminee" << std::endl;
+		display_end_connexion ();
 		close (fd);
 	}
 	else {
 		buffer.resize (bytesRead);
-		std::cout << "Donnees reçues : " << &buffer[0] << std::endl; // TODO : handle request
+		display_buffer (buffer);
 		editSocketInEpoll (fd, EPOLLOUT);
 	}
 }
@@ -142,6 +143,7 @@ void	Epoll::writeToClient (int fd) {
 	if ((send (fd, message.c_str (), message.length (), 0)) < 0) {
 		throw std::runtime_error (SENDERR);
 	}
+	// TODO: delete client?
 	close (fd);
 }
 
