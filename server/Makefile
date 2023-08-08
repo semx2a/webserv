@@ -6,19 +6,19 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/07/29 22:24:52 by seozcan          ###   ########.fr        #
+#    Updated: 2023/08/08 17:17:55 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
 
-PROJ	:=	
+PROJ	:=	server
 
-ODIR	:=	objs
+ODIR	:=	$(addprefix $(PROJ)/, objs)
 
-SDIR	:=	srcs
+SDIR	:=	$(addprefix $(PROJ)/, srcs)
 
-IDIR	:=	inc
+IDIR	:=	$(addprefix $(PROJ)/, inc)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 
@@ -26,8 +26,14 @@ NAME	:=	webserv
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
-SRCS	:=	main.cpp \
-			Webserv.cpp
+SRCS	:=	Config.cpp \
+			display.cpp \
+			Epoll.cpp \
+			main.cpp \
+			Request.cpp \
+			Server.cpp \
+			Socket.cpp
+			
 			
 OBJS	=	$(addprefix $(ODIR)/, $(SRCS:.cpp=.o))
 
