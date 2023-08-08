@@ -6,19 +6,19 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/08/08 17:17:55 by seozcan          ###   ########.fr        #
+#    Updated: 2023/08/08 19:22:23 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
 
-PROJ	:=	server
+PROJ	:=	
 
-ODIR	:=	$(addprefix $(PROJ)/, objs)
+ODIR	:=	$(addprefix $(PROJ), objs)
 
-SDIR	:=	$(addprefix $(PROJ)/, srcs)
+SDIR	:=	$(addprefix $(PROJ), srcs)
 
-IDIR	:=	$(addprefix $(PROJ)/, inc)
+IDIR	:=	$(addprefix $(PROJ), inc)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 
