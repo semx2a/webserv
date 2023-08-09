@@ -4,6 +4,7 @@
 #include <map>
 #include "Config.hpp"
 #include "Epoll.hpp"
+#include "Request.hpp"
 
 class Server {
 
@@ -24,6 +25,7 @@ class Server {
 
 		Config								config;
 		Epoll								epollEvents;
+		Request								clientRequest;
 		std::map <int, std::vector <char> >	chunkRequests;
 
 };
