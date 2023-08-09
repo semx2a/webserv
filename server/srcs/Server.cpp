@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../inc/Server.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
@@ -57,7 +57,7 @@ void	Server::connect () {
 					epollEvents.addNewClient (event.data.fd);
 				}
 				else if (event.events & EPOLLIN) {
-					epollEvents.readFromClient (event.data.fd);
+					clientRequest.parser(epollEvents.readFromClient (event.data.fd));
 				}
 				else if (event.events & EPOLLOUT) {
 					epollEvents.writeToClient (event.data.fd);
