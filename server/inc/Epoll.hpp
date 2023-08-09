@@ -33,7 +33,7 @@ class Epoll {
 
 		int					waitForConnexions ();
 		void				addNewClient (int fd);
-		void				readFromClient (int fd);
+		std::string			readFromClient (int fd);
 		void				writeToClient (int fd); //TODO
 
 	private:
