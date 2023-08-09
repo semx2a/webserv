@@ -6,35 +6,40 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/08 19:22:47 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/09 18:33:49 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Request.hpp"
+#include "../inc/print.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Request::Request(void) : _method(), _target(), _version(), _query(), _body(), _headers() { }
+Request::Request(void) : _method(), _target(), _query(), _version(), _headers(), _body() {}
 
-Request::Request(Request const &src) {
+Request::Request(Request const &src)
+{
 
 	if (this != &src)
-		*this = src;		
+		*this = src;
 }
 
-Request::Request(std::string const str) {
+Request::Request(std::string const str)
+{
 
-	this->parse(str);
+	this->parser(str);
 }
 
-Request::~Request() { };
+Request::~Request() {};
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMPARISON OPERATORS::
 
-Request &	    Request::operator=(Request const & rhs) {
-	
-	if (this != &rhs) {
-		
+Request &Request::operator=(Request const &rhs)
+{
+
+	if (this != &rhs)
+	{
+
 		this->setMethod(rhs.getMethod());
 		this->setTarget(rhs.getTarget());
 		this->setVersion(rhs.getVersion());
@@ -42,54 +47,86 @@ Request &	    Request::operator=(Request const & rhs) {
 		this->setBody(rhs.getBody());
 		this->setHeaders(rhs.getHeaders());
 	}
-	
+
 	return *this;
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-void	Request::setMethod(const std::string method) { this->_method = method; }
+void Request::setMethod(const std::string method) { this->_method = method; }
 
-void	Request::setTarget(const std::string target) { this->_target = target; }
+void Request::setTarget(const std::string target) { this->_target = target; }
 
-void	Request::setVersion(const std::string version) { this->_version = version; }
+void Request::setVersion(const std::string version) { this->_version = version; }
 
-void	Request::setQuery(const std::string query) { this->_query = query; }
+void Request::setQuery(const std::string query) { this->_query = query; }
 
-void	Request::setBody(const std::vector<char> body) { this->_body = body; }
+void Request::setBody(const std::vector<char> body) { this->_body = body; }
 
-void	Request::setHeaders(const std::map<std::string, std::vector<std::string> > headers) { this->_headers = headers; }
+void Request::setHeaders(const std::map<std::string, std::vector<std::string> > headers) { this->_headers = headers; }
 
+const std::string Request::getMethod(void) const { return this->_method; }
 
-const std::string	Request::getMethod(void) const { return this->_method; }
+const std::string Request::getTarget(void) const { return this->_target; }
 
-const std::string	Request::getTarget(void) const { return this->_target; }
+const std::string Request::getVersion(void) const { return this->_version; }
 
-const std::string	Request::getVersion(void) const { return this->_version; }
+const std::string Request::getQuery(void) const { return this->_query; }
 
-const std::string	Request::getQuery(void) const { return this->_query; }
+const std::vector<char> Request::getBody(void) const { return this->_body; }
 
-const std::vector<char>									Request::getBody(void) const { return this->_body; }
-
-const std::map<std::string, std::vector<std::string> >	Request::getHeaders(void) const { return this->_headers; }
+const std::map<std::string, std::vector<std::string> > Request::getHeaders(void) const { return this->_headers; }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
-void			Request::parse(std::string const str) {
+void Request::parser(std::string const str)
+{
+
+	std::istringstream iss(str);
+
+	this->parseRequestLine(iss);
+	this->parseHeaders(iss);
+	if (!iss.eof())
+		this->parseBody(iss);
+
+	std::cout << *this << std::endl;
+
+}
+
+void Request::parseRequestLine(std::istringstream &stream) {
 	
-	(void)str;
+	stream >> this->_method >> this->_target >> this->_version;
+}
+
+void Request::parseHeaders(std::istringstream &stream) {
+	// Parse headers
+	std::string line;
+	std::vector<std::string> headers;
+
+	while (std::getline(stream, line) && !line.empty()) {
+		
+		headers.push_back(line);
+	}
+}
+
+void Request::parseBody(std::istringstream &stream) {
+	
+	std::string body;
+	std::getline(stream, body, '\0');
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::: OUTPUT OPERATOR OVERLOADING::
 
-std::ostream &	operator<<(std::ostream & o, Request const & r) {
-	
-	o << r.getMethod() << std::endl;
-	o << r.getTarget() << std::endl;
-	o << r.getVersion() << std::endl;
-	o << r.getQuery() << std::endl;
-//	o << r.getBody() << std::endl;
-//	o << r.getHeaders() << std::endl;
-	
+std::ostream &operator<<(std::ostream &o, Request const &r)
+{
+
+	o << custom_width(100, ':', " Request Class content:") << std::endl;
+	o << "method: " << r.getMethod() << std::endl;
+	o << "target: " << r.getTarget() << std::endl;
+	o << "query: " << r.getQuery() << std::endl;
+	o << "version: " << r.getVersion() << std::endl;
+	//	o << "headers: "	<< r.getHeaders() << std::endl;
+	//	o << "body: "		<< r.getBody() << std::endl;
+
 	return o;
 };
