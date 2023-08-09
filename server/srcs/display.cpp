@@ -1,4 +1,4 @@
-#include "display.hpp"
+#include "../inc/display.hpp"
 
 std::string custom_width (int width, char c, std::string const&  content) {
 
@@ -14,10 +14,11 @@ std::string custom_width (int width, char c, std::string const&  content) {
 	return result;
 }
 
-void	display_buffer (std::vector <char> buffer) {
+void	display_buffer (/* std::vector <char> */std::string buffer) {
 
 	std::string const& str ("Received: ");
-	std::cout << str << &buffer[0] << std::endl;
+	//std::cout << str << &buffer[0] << std::endl;
+	std::cout << str << buffer << std::endl;
 }
 
 void	display_client_added () {
@@ -28,12 +29,12 @@ void	display_client_added () {
 
 void	display_end_connexion () {
 
-	std::string const& str ("End of connexion with a client");
+	std::string const& str ("End of connection with a client");
 	std::cout << PURPLE << str << NO_COLOR << std::endl;
 }
 
 void	display_wait () {
 
-	std::string const& str ("Waiting for connexions...");
+	std::string const& str (" Waiting for connections...");
 	std::cout << "\n" << GREEN << custom_width (100, ':', str) << str << NO_COLOR << std::endl;
 }
