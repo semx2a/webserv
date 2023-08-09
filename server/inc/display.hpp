@@ -42,9 +42,10 @@
 // Italic
 # define ICYAN "\033[3;36m"
 
-void	display_buffer (std::vector <char> buffer);
-void	display_client_added ();
-void	display_end_connexion ();
-void	display_wait ();
+std::string	custom_width (int width, char c, std::string const&  content);
+void		display_buffer (/* std::vector <char> */std::string buffer);
+void		display_client_added ();
+void		display_end_connexion ();
+void		display_wait ();
 
 #endif
