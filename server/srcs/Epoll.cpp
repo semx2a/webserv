@@ -1,5 +1,6 @@
-#include "Epoll.hpp"
+#include "../inc/Epoll.hpp"
 #include <algorithm>
+
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
@@ -118,9 +119,10 @@ int		Epoll::waitForConnexions () {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::I/O OPERATIONS
 
-void	Epoll::readFromClient (int fd) {
+std::string	Epoll::readFromClient (int fd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
+	std::string str;
 
 	int	bytesRead = recv (fd, &buffer [0], buffer.size (), 0);
 	if (bytesRead < 0) {
@@ -132,9 +134,11 @@ void	Epoll::readFromClient (int fd) {
 	}
 	else {
 		buffer.resize (bytesRead);
-		display_buffer (buffer);
+		str.assign(&buffer[0]);
+		display_buffer (str);
 		editSocketInEpoll (fd, EPOLLOUT);
 	}
+	return str;
 }
 
 void	Epoll::writeToClient (int fd) {
