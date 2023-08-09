@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/08/08 19:49:38 by seozcan          ###   ########.fr        #
+#    Updated: 2023/08/09 18:36:13 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,8 @@ PROJ	:=
 ODIR	:=	$(addprefix $(PROJ), objs)
 
 SDIR	:=	$(addprefix $(PROJ), srcs)
+
+# TDIR	:=	$(addprefix $(PROJ), templates))
 
 IDIR	:=	$(addprefix $(PROJ), inc)
 
@@ -33,6 +35,8 @@ SRCS	:=	Config.cpp \
 			Request.cpp \
 			Server.cpp \
 			Socket.cpp
+
+#TTPS	:=	print.tpp
 			
 			
 OBJS	=	$(addprefix $(ODIR)/, $(SRCS:.cpp=.o))
@@ -93,7 +97,8 @@ ICYAN			=	\033[3;36m
 INCLUDE_FLAGS		= $(addprefix -I , $(IDIR))
 DEPS				= $(OBJS:.o=.d)
 
-vpath %.cpp $(SDIR)
+vpath %.cpp $(SDIR) \
+			$(TDIR)
 vpath %.o $(ODIR)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
