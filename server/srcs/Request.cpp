@@ -6,12 +6,11 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/09 18:33:49 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/10 18:38:05 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Request.hpp"
-#include "../inc/print.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
@@ -99,34 +98,74 @@ void Request::parseRequestLine(std::istringstream &stream) {
 }
 
 void Request::parseHeaders(std::istringstream &stream) {
-	// Parse headers
+
 	std::string line;
 	std::vector<std::string> headers;
 
 	while (std::getline(stream, line) && !line.empty()) {
 		
-		headers.push_back(line);
+		if (line.size() > 2)
+			headers.push_back(line);
 	}
+
+	if (!this->_headers.empty())
+		this->_headers.clear();
+
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); ++it) {
+
+		std::string	key;
+		std::string values;
+		size_t		pos;
+
+		pos = 0;
+		key.erase();
+		values.erase();
+		pos = it->find(":");
+		key = it->substr(0, pos);
+		values = it->substr(pos + 2, it->size());
+
+		this->_headers[key].push_back(values);
+		//tokenize values with ',' 
+	}
+	
+//	printRequestHeaders();
 }
 
 void Request::parseBody(std::istringstream &stream) {
 	
 	std::string body;
-	std::getline(stream, body, '\0');
+	while (std::getline(stream, body, '\0') && !body.empty()) {
+
+		for (std::string::iterator it = body.begin(); it != body.end(); it++) 
+			this->_body.push_back(*it);
+	}
 }
 
+/* void	Request::printRequestHeaders(void) {
+	
+	std::map<std::string, std::vector<std::string> >::iterator it;
+    
+    for (it = this->_headers.begin(); it != this->_headers.end(); ++it) {
+        
+        std::cout << RED << "key: " << it->first << NO_COLOR << " | " << GREEN << "values: ";
+        printVector(it->second);
+        std::cout << NO_COLOR << std::endl;
+	}
+} */
 // ::::::::::::::::::::::::::::::::::::::::::::::: OUTPUT OPERATOR OVERLOADING::
 
 std::ostream &operator<<(std::ostream &o, Request const &r)
 {
 
 	o << custom_width(100, ':', " Request Class content:") << std::endl;
-	o << "method: " << r.getMethod() << std::endl;
-	o << "target: " << r.getTarget() << std::endl;
-	o << "query: " << r.getQuery() << std::endl;
-	o << "version: " << r.getVersion() << std::endl;
-	//	o << "headers: "	<< r.getHeaders() << std::endl;
-	//	o << "body: "		<< r.getBody() << std::endl;
+	o << "method: " 	<< r.getMethod() << std::endl;
+	o << "target: "		<< r.getTarget() << std::endl;
+	o << "query: "		<< r.getQuery() << std::endl;
+	o << "version: "	<< r.getVersion() << std::endl;
+	o << "headers: "	<< std::endl;
+	printMap(r.getHeaders());
+	o << "body: " 		<< std::endl;
+	printVector(r.getBody());
 
 	return o;
 };

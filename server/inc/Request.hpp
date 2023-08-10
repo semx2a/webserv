@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/09 18:14:49 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/10 16:31:54 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 
 # include "display.hpp"
 # include "Epoll.hpp"
+# include "print.hpp"
+
 
 class Request {
 	
@@ -51,6 +53,8 @@ class Request {
 		void	parseRequestLine(std::istringstream&);
 		void	parseHeaders(std::istringstream&);
 		void	parseBody(std::istringstream&);
+
+		//void	printRequestHeaders(void);
 
 	private:
 	
