@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:47:12 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/09 18:35:57 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/10 15:59:10 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,17 @@
 # define PRINT_HPP
 
 # include <vector>
+# include <map>
 # include <iostream>
+
+#include "display.hpp"
+
+# include "../templates/print.tpp"
 
 template <typename T>
 void printVector(const std::vector<T>& vec);
 
-# include "../templates/print.tpp"
+template <typename KeyType, typename ValueType>
+void printMap(const std::map<KeyType, ValueType>& myMap);
 
 #endif
