@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/print.hpp"
+#include "../inc/print.hpp"
 
 template <typename T>
 void printVector(const std::vector<T>& vec) {

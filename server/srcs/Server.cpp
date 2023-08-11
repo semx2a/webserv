@@ -1,4 +1,4 @@
-#include "../incs/Server.hpp"
+#include "../inc/Server.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
@@ -61,11 +61,11 @@ void	Server::connect () {
 					epollEvents.addNewClient (event.data.fd);
 				}
 				else if (event.events & EPOLLIN) {
-					epollEvents.readFromClient (event.data.fd);
+					readFromClient (event.data.fd);
 					//clientRequest.parser(epollEvents.readFromClient (event.data.fd));
 				}
 				else if (event.events & EPOLLOUT) {
-					epollEvents.writeToClient (event.data.fd);
+					writeToClient (event.data.fd);
 				}
 			}
 		}
@@ -96,4 +96,14 @@ void	Server::readFromClient (int fd) {
 		display_buffer (str);
 		epollEvents.editSocketInEpoll (fd, EPOLLOUT);
 	}
+}
+
+void	Server::writeToClient (int fd) {
+
+	std::string message = "Request received";
+	if ((send (fd, message.c_str (), message.length (), 0)) < 0) {
+		throw std::runtime_error (SENDERR);
+	}
+	// TODO: delete client?
+	close (fd);
 }

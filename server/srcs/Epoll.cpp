@@ -1,4 +1,4 @@
-#include "../incs/Epoll.hpp"
+#include "../inc/Epoll.hpp"
 #include <algorithm>
 
 
@@ -119,7 +119,29 @@ int		Epoll::waitForConnexions () {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::I/O OPERATIONS
 
+/*
 std::vector <char>&	Epoll::receiveBuffer (int fd) {
+
+	std::vector <char>	buffer (BUFFER_SIZE, '\0');
+
+	int	bytesRead = recv (fd, &buffer [0], buffer.size (), 0);
+	if (bytesRead < 0) {
+		throw std::runtime_error (RECVERR);
+	}
+	else if (bytesRead == 0) { // TODO: find if it ever happens??
+		log (fd, "End of connexion");
+		close (fd);
+	}
+	else {
+		buffer.resize (bytesRead);
+		display_buffer (buffer);
+		editSocketInEpoll (fd, EPOLLOUT);
+	}
+	return buffer;
+}
+*/
+
+std::string	Epoll::receiveBuffer (int fd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
 	std::string str;
@@ -141,12 +163,3 @@ std::vector <char>&	Epoll::receiveBuffer (int fd) {
 	return str;
 }
 
-void	Epoll::writeToClient (int fd) {
-
-	std::string message = "Request received";
-	if ((send (fd, message.c_str (), message.length (), 0)) < 0) {
-		throw std::runtime_error (SENDERR);
-	}
-	// TODO: delete client?
-	close (fd);
-}

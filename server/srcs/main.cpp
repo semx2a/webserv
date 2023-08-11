@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/19 14:56:34 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/06 16:52:25 by seozcan          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-//#include "../incs/Webserv.hpp"
+//#include "../inc/Webserv.hpp"
 
 //const int PORT = 8080;
 //
@@ -22,7 +10,7 @@
 //    return 0;
 //}
 
-#include "../incs/Server.hpp"
+#include "../inc/Server.hpp"
 
 //int	main (int ac, char **av)
 int main () {

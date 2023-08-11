@@ -1,5 +1,4 @@
-#include "../incs/display.hpp"
-
+#include "../inc/display.hpp"
 
 void	log(int client_fd, std::string str)
 {

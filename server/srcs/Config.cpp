@@ -1,4 +1,4 @@
-#include "../incs/Config.hpp"
+#include "../inc/Config.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 

@@ -1,4 +1,4 @@
-#include "../incs/Socket.hpp"
+#include "../inc/Socket.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 

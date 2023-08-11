@@ -33,9 +33,9 @@ class Epoll {
 
 		int					waitForConnexions ();
 		void				addNewClient (int fd);
-		std::vector <char>&	receiveBuffer (int fd);
+		//std::vector <char>&	receiveBuffer (int fd);
+		std::string			receiveBuffer (int fd);
 		void				editSocketInEpoll (int fd, int eventToWatch); //TODO
-		void				writeToClient (int fd); //TODO
 
 	private:
 
