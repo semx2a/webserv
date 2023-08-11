@@ -119,8 +119,7 @@ int		Epoll::waitForConnexions () {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::I/O OPERATIONS
 
-/*
-std::vector <char>&	Epoll::receiveBuffer (int fd) {
+std::vector <char>	Epoll::receiveBuffer (int fd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
 
@@ -139,9 +138,9 @@ std::vector <char>&	Epoll::receiveBuffer (int fd) {
 	}
 	return buffer;
 }
-*/
 
-std::string	Epoll::receiveBuffer (int fd) {
+
+/*std::string	Epoll::receiveBuffer (int fd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
 	std::string str;
@@ -158,8 +157,7 @@ std::string	Epoll::receiveBuffer (int fd) {
 		buffer.resize (bytesRead);
 		str.assign(&buffer[0]);
 		display_buffer (str);
-		editSocketInEpoll (fd, EPOLLOUT);
 	}
 	return str;
-}
+}*/
 

@@ -13,18 +13,15 @@
 #ifndef PRINT_HPP
 # define PRINT_HPP
 
-# include <vector>
-# include <map>
-# include <iostream>
-
 #include "display.hpp"
-
-# include "../templates/print.tpp"
+#include "extern_libs.hpp"
 
 template <typename T>
 void printVector(const std::vector<T>& vec);
 
 template <typename KeyType, typename ValueType>
 void printMap(const std::map<KeyType, ValueType>& myMap);
+
+# include "../templates/print.tpp"
 
 #endif

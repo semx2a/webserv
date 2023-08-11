@@ -1,10 +1,7 @@
 #ifndef DISPLAY_HPP
 # define DISPLAY_HPP
 
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include <vector>
+# include "extern_libs.hpp"
 
 # define NO_COLOR	"\033[m"
 
@@ -47,7 +44,8 @@
 #define ENDLINE	"\n  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
 
 std::string		custom_width (int width, char c, std::string const& content);
-void			display_buffer (/* std::vector <char> */std::string buffer);
+void			display_buffer (std::vector <char>& buffer);
+void			display_buffer (std::string buffer);
 void	   	 	display_client_added ();
 void	   	 	display_end_connexion ();
 void	   	 	display_wait ();

@@ -13,13 +13,9 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
-# include <string>
-# include <iostream>
-# include <map>
-# include <vector>
-# include <sstream>
 
 # include "display.hpp"
+# include "extern_libs.hpp"
 # include "Epoll.hpp"
 # include "print.hpp"
 

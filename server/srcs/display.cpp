@@ -34,11 +34,16 @@ std::string custom_width (int width, char c, std::string const&  content) {
 	return result;
 }
 
-void	display_buffer (/* std::vector <char> */std::string buffer) {
+void	display_buffer (std::string buffer) {
 
 	std::string const& str ("Received: ");
-	//std::cout << str << &buffer[0] << std::endl;
 	std::cout << str << buffer << std::endl;
+}
+
+void	display_buffer (std::vector <char>& buffer) {
+
+	std::string const& str ("Received: ");
+	std::cout << str << &buffer[0] << std::endl;
 }
 
 void	display_client_added () {

@@ -1,12 +1,9 @@
 #ifndef EPOLL_HPP
 # define EPOLL_HPP
 
-#include <arpa/inet.h>
-#include <iostream>
-#include <vector>
-
-#include "Socket.hpp"
 #include "display.hpp"
+#include "extern_libs.hpp"
+#include "Socket.hpp"
 
 # define BUFFER_SIZE 1024
 
@@ -33,8 +30,7 @@ class Epoll {
 
 		int					waitForConnexions ();
 		void				addNewClient (int fd);
-		//std::vector <char>&	receiveBuffer (int fd);
-		std::string			receiveBuffer (int fd);
+		std::vector <char>	receiveBuffer (int fd);
 		void				editSocketInEpoll (int fd, int eventToWatch); //TODO
 
 	private:

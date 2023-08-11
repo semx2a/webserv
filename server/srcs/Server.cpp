@@ -62,7 +62,6 @@ void	Server::connect () {
 				}
 				else if (event.events & EPOLLIN) {
 					readFromClient (event.data.fd);
-					//clientRequest.parser(epollEvents.readFromClient (event.data.fd));
 				}
 				else if (event.events & EPOLLOUT) {
 					writeToClient (event.data.fd);
@@ -76,26 +75,25 @@ void	Server::connect () {
 	}
 }
 
-
 void	Server::readFromClient (int fd) {
 
-	std::vector <char>	buffer (BUFFER_SIZE, '\0');
-	std::string str;
+	std::vector <char>	buffer = epollEvents.receiveBuffer (fd);
+/*	std::map <int, std::vector <char> >::iterator it;
 
-	int	bytesRead = recv (fd, &buffer [0], buffer.size (), 0);
-	if (bytesRead < 0) {
-		throw std::runtime_error (RECVERR);
-	}
-	else if (bytesRead == 0) { // TODO: find if it ever happens??
-		log (fd, "End of connexion");
-		close (fd);
+	it = chunkRequests.find (fd);
+	if (it != chunkRequests.end ()) {
+		it->second.insert (it->second.end (), buffer.begin (), buffer.begin () + buffer.size () - 2);
 	}
 	else {
-		buffer.resize (bytesRead);
-		str.assign(&buffer[0]);
-		display_buffer (str);
-		epollEvents.editSocketInEpoll (fd, EPOLLOUT);
+		chunkRequests.insert (std::make_pair(fd, buffer));
 	}
+*/
+
+	//TEMP:
+	std::string str;
+	str.assign(&buffer[0]);
+	clientRequest.parser(str);
+	epollEvents.editSocketInEpoll (fd, EPOLLOUT);
 }
 
 void	Server::writeToClient (int fd) {

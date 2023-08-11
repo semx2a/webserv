@@ -84,7 +84,7 @@ void Request::parser(std::string const str)
 	if (!iss.eof())
 		this->parseBody(iss);
 
-	std::cout << *this << std::endl;
+	//std::cout << *this << std::endl;
 
 }
 
