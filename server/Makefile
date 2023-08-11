@@ -20,7 +20,7 @@ SDIR	:=	$(addprefix $(PROJ), srcs)
 
 # TDIR	:=	$(addprefix $(PROJ), templates))
 
-IDIR	:=	$(addprefix $(PROJ), inc)
+IDIR	:=	$(addprefix $(PROJ), incs)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 

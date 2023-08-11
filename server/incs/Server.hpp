@@ -28,6 +28,9 @@ class Server {
 		Request								clientRequest;
 		std::map <int, std::vector <char> >	chunkRequests;
 
+		void								readFromClient (int fd);
+		void								writeToClient (int fd);
+
 };
 
 #endif

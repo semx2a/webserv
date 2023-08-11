@@ -3,6 +3,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <string>
 #include <vector>
 
 # define NO_COLOR	"\033[m"
@@ -42,10 +43,14 @@
 // Italic
 # define ICYAN 		"\033[3;36m"
 
-std::string	custom_width (int width, char c, std::string const& content);
-void		display_buffer (/* std::vector <char> */std::string buffer);
-void		display_client_added ();
-void		display_end_connexion ();
-void		display_wait ();
+#define LINE	"\n  _____________________________________________________________________\n"
+#define ENDLINE	"\n  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
+
+std::string		custom_width (int width, char c, std::string const& content);
+void			display_buffer (/* std::vector <char> */std::string buffer);
+void	   	 	display_client_added ();
+void	   	 	display_end_connexion ();
+void	   	 	display_wait ();
+void			log (int client_fd, std::string str);
 
 #endif

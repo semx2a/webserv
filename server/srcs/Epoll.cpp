@@ -1,4 +1,4 @@
-#include "../inc/Epoll.hpp"
+#include "../incs/Epoll.hpp"
 #include <algorithm>
 
 
@@ -11,7 +11,7 @@ Epoll::Epoll (std::vector <int>& ports) {
 	try {
 		createEpollEvent ();
 		for (std::vector <int>::iterator it = ports.begin (); it != ports.end (); it++) {
-			sockFds.push_back (pollPort (*it));
+			serversFds.push_back (pollPort (*it));
 		}
 	}
 	catch (const std::exception& e) {
@@ -41,17 +41,17 @@ struct epoll_event const&	Epoll::getReadyEvent (int index) const {
 	return events [index];
 }
 
-std::vector <int> const&	Epoll::getSockFds () const { 
+std::vector <int> const&	Epoll::getServersFds () const { 
 
-	return sockFds;
+	return serversFds;
 }
 
 bool	Epoll::isNewClient (int fd) {
 
 	std::vector <int>::iterator it;
 
-	it = std::find (sockFds.begin (), sockFds.end (), fd);
-	return (it != sockFds.end ());
+	it = std::find (serversFds.begin (), serversFds.end (), fd);
+	return (it != serversFds.end ());
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CREATION
@@ -90,7 +90,7 @@ void	Epoll::addNewClient (int fd) {
 		throw std::runtime_error (ACCEPTERR);
 	}
 	addSocketToEpoll (clientSocket);
-	display_client_added ();
+	log (clientSocket, "New request");
 	// TODO : set reusable ?	
 }
 
@@ -119,7 +119,7 @@ int		Epoll::waitForConnexions () {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::I/O OPERATIONS
 
-std::string	Epoll::readFromClient (int fd) {
+std::vector <char>&	Epoll::receiveBuffer (int fd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
 	std::string str;
@@ -128,8 +128,8 @@ std::string	Epoll::readFromClient (int fd) {
 	if (bytesRead < 0) {
 		throw std::runtime_error (RECVERR);
 	}
-	else if (bytesRead == 0) {
-		display_end_connexion ();
+	else if (bytesRead == 0) { // TODO: find if it ever happens??
+		log (fd, "End of connexion");
 		close (fd);
 	}
 	else {

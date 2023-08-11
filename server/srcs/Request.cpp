@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/Request.hpp"
+#include "../incs/Request.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
@@ -18,14 +18,12 @@ Request::Request(void) : _method(), _target(), _query(), _version(), _headers(),
 
 Request::Request(Request const &src)
 {
-
 	if (this != &src)
 		*this = src;
 }
 
 Request::Request(std::string const str)
 {
-
 	this->parser(str);
 }
 
@@ -38,7 +36,6 @@ Request &Request::operator=(Request const &rhs)
 
 	if (this != &rhs)
 	{
-
 		this->setMethod(rhs.getMethod());
 		this->setTarget(rhs.getTarget());
 		this->setVersion(rhs.getVersion());
@@ -46,7 +43,6 @@ Request &Request::operator=(Request const &rhs)
 		this->setBody(rhs.getBody());
 		this->setHeaders(rhs.getHeaders());
 	}
-
 	return *this;
 }
 

@@ -1,4 +1,25 @@
-#include "../inc/display.hpp"
+#include "../incs/display.hpp"
+
+
+void	log(int client_fd, std::string str)
+{
+	char	date[100];
+	time_t	now;
+	tm		*brk;
+	int 	len = 68 - str.length();
+
+	time(&now);
+	brk = localtime(&now);
+	strftime(date, 99, "%B %d %Y %T", brk);
+
+	if (len < 0)
+		len = 0;
+	std::cout << LINE 
+			<< " | " << ORANGE << date << NO_COLOR << std::string (32, ' ') 
+				<< CYAN << "Client fd: " << client_fd << NO_COLOR << " |\n |"
+			<< PURPLE << " " << str <<  NO_COLOR << std::string(len, ' ') << '|' 
+			<< ENDLINE;
+}
 
 std::string custom_width (int width, char c, std::string const&  content) {
 
@@ -36,5 +57,7 @@ void	display_end_connexion () {
 void	display_wait () {
 
 	std::string const& str (" Waiting for connections...");
-	std::cout << "\n" << GREEN << custom_width (100, ':', str) << str << NO_COLOR << std::endl;
+	//std::cout << "\n" << GREEN << custom_width (68, ':', str) << str << NO_COLOR << std::endl;
 }
+
+
