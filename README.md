@@ -1,4 +1,8 @@
-# EPOLL OU SELECT
+# WEBSERV
+---
+## SERVEUR
+
+### EPOLL OU SELECT
 
 Pour un serveur HTTP en C++ sur Linux, mieux d'utiliser `epoll ()` plutôt que `select ()`.
 - `select ()` est plus ancienne et utilise une approche basée sur des descripteurs de fichiers pour la gestion des I/O.
@@ -15,8 +19,7 @@ Pour un serveur HTTP en C++ sur Linux, mieux d'utiliser `epoll ()` plutôt que `
     qu'il vous informe uniquement lorsque de nouveaux événements se produisent, plutôt que lorsqu'un descripteur de fichier est prêt en 
     lecture ou en écriture.
 
-
-# ADDRINFO OU SOCKADDR_IN
+### ADDRINFO OU SOCKADDR_IN
 
 La structure `addrinfo` et la structure `sockaddr_in` sont toutes deux utilisées pour la manipulation des adresses réseau dans les sockets.
 Cependant, elles ont des utilisations légèrement différentes.
@@ -37,7 +40,7 @@ et le port sur lequel le serveur écoute les requêtes HTTP entrantes. Cependant
 d'utiliser la structure `addrinfo` afin de prendre en charge à la fois les adresses IPv4 et IPv6.
 
 
-# EPOLL_CTL
+### EPOLL_CTL
 
 La fonction `epoll_ctl` est utilisée pour manipuler l'ensemble epoll.
 Voici les actions disponibles :
@@ -57,7 +60,7 @@ Voici les actions disponibles :
     descripteurs qui y sont associés.
 
 
-# ADDRINFO
+### ADDRINFO
 
 ```C
 # include <netdb.h>
@@ -97,3 +100,5 @@ const char *gai_strerror(int errcode);
 ```
 
 The port number is used by the kernel to match an incoming packet to a certain process’s socket descriptor.
+
+## PARSING
