@@ -22,13 +22,13 @@ void	display_buffer (std::vector <char> buffer) {
 
 void	display_client_added () {
 
-	std::string const& str ("New client added");
+	std::string const& str ("New connexion !");
 	std::cout << PURPLE << str << NO_COLOR << std::endl;
 }
 
 void	display_end_connexion () {
 
-	std::string const& str ("End of connexion with a client");
+	std::string const& str ("End of connexion");
 	std::cout << PURPLE << str << NO_COLOR << std::endl;
 }
 
