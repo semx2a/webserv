@@ -60,8 +60,8 @@ void	display_end_connexion () {
 
 void	display_wait () {
 
-	std::string const& str (" Waiting for connections...");
-	//std::cout << "\n" << GREEN << custom_width (68, ':', str) << str << NO_COLOR << std::endl;
+//	std::string const& str (" Waiting for connections...");
+//	std::cout << "\n" << GREEN << custom_width (68, ':', str) << str << NO_COLOR << std::endl;
 }
 
 

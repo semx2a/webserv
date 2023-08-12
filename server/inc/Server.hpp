@@ -1,10 +1,14 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+#include <iostream>
+#include <map>
+
 #include "Config.hpp"
 #include "Epoll.hpp"
-#include "extern_libs.hpp"
 #include "Request.hpp"
+
+typedef std::map <int, std::vector<char> >		chunkRequests_t;
 
 class Server {
 
@@ -26,10 +30,11 @@ class Server {
 		Config								config;
 		Epoll								epollEvents;
 		Request								clientRequest;
-		std::map <int, std::vector <char> >	chunkRequests;
+		chunkRequests_t						chunkRequests;
 
 		void								readFromClient (int fd);
 		void								writeToClient (int fd);
+		bool								isRequestEnded (chunkRequests_t::iterator it);
 
 };
 

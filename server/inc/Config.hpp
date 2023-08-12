@@ -1,7 +1,8 @@
 #ifndef CONFIG_HPP
 # define CONFIG_HPP
 
-# include "extern_libs.hpp"
+#include <string>
+#include <vector>
 
 class Config {
 

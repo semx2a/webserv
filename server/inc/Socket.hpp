@@ -1,7 +1,14 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
-#include "extern_libs.hpp"
+#include <cerrno>
+#include <cstring>
+#include <exception>
+#include <netinet/in.h>
+#include <stdexcept>
+#include <sys/epoll.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 const int MAX_EVENTS = 10;
 

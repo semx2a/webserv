@@ -133,8 +133,6 @@ std::vector <char>	Epoll::receiveBuffer (int fd) {
 	}
 	else {
 		buffer.resize (bytesRead);
-		display_buffer (buffer);
-		editSocketInEpoll (fd, EPOLLOUT);
 	}
 	return buffer;
 }

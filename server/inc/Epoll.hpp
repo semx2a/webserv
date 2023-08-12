@@ -1,8 +1,11 @@
 #ifndef EPOLL_HPP
 # define EPOLL_HPP
 
+#include <arpa/inet.h>
+#include <iostream>
+#include <vector>
+
 #include "display.hpp"
-#include "extern_libs.hpp"
 #include "Socket.hpp"
 
 # define BUFFER_SIZE 1024
