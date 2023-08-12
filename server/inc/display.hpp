@@ -1,7 +1,9 @@
 #ifndef DISPLAY_HPP
 # define DISPLAY_HPP
 
-# include "extern_libs.hpp"
+#include <iomanip>
+#include <iostream>
+#include <vector>
 
 # define NO_COLOR	"\033[m"
 

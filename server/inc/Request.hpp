@@ -6,20 +6,22 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/10 16:31:54 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/12 15:34:04 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
+# include <string>
+# include <iostream>
+# include <map>
+# include <vector>
+# include <sstream>
 
 # include "display.hpp"
-# include "extern_libs.hpp"
 # include "Epoll.hpp"
 # include "print.hpp"
-
-
 class Request {
 	
 	public:
