@@ -78,32 +78,34 @@ void	Server::connect () {
 void	Server::readFromClient (int fd) {
 
 	std::vector <char>	buffer = epollEvents.receiveBuffer (fd);
-/*
-	chunkRequests_t::iterator it;
-	it = chunkRequests.find (fd);
+	chunkRequestsIt_t it = chunkRequests.find (fd);
+
 	if (it != chunkRequests.end ()) {
+
 		it->second.insert (it->second.end (), buffer.begin (), buffer.end ());
 		// parse if ended
-		if (isRequestEnded (it)) // dans classe Request ?
-		{
-			std::string str;
-			str.assign(&it->second[0]);
-			std::cout << str << std::endl;
-			//clientRequest.parser(str);
-			epollEvents.editSocketInEpoll (fd, EPOLLOUT);
-		}
 	}
 	else {
 		chunkRequests.insert (std::make_pair(fd, buffer));
 	}
-*/
+	chunkRequestsIt_t it2 = chunkRequests.find (fd);
+	if (isRequestEnded (it2)) // dans classe Request ?
+	{
+		//std::string str;
+		//str.assign(&it->second[0]);
+		std::cout << &it2->second [0] << std::endl;
+		//clientRequest.parser(str);
+		epollEvents.editSocketInEpoll (fd, EPOLLOUT);
+	}
+
+/*
 	//TEMP:
 	std::string str;
 	str.assign(&buffer[0]);
 	std::cout << str << std::endl;
 	clientRequest.parser(str);
 	epollEvents.editSocketInEpoll (fd, EPOLLOUT);
-
+*/
 }
 
 void	Server::writeToClient (int fd) {
@@ -116,11 +118,11 @@ void	Server::writeToClient (int fd) {
 	close (fd);
 }
 
-/*
+
 bool	Server::isRequestEnded (chunkRequestsIt_t it) {
 
-	if (it != chunkRequests.end()) {
-
+	if (it != chunkRequests.end ())
+	{
 		const std::vector<char>& requestVector = it->second;
 		std::string requestStr(requestVector.begin(), requestVector.end());
 
@@ -129,4 +131,4 @@ bool	Server::isRequestEnded (chunkRequestsIt_t it) {
 	}
 	return false;
 }
-*/
+

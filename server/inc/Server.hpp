@@ -9,6 +9,7 @@
 #include "Request.hpp"
 
 typedef std::map <int, std::vector<char> >		chunkRequests_t;
+typedef std::map <int, std::vector<char> >::iterator		chunkRequestsIt_t;
 
 class Server {
 
@@ -34,7 +35,8 @@ class Server {
 
 		void								readFromClient (int fd);
 		void								writeToClient (int fd);
-		bool								isRequestEnded (chunkRequests_t::iterator it);
+		//bool								isRequestEnded (chunkRequests_t::iterator it);
+		bool								isRequestEnded (chunkRequestsIt_t it);
 
 };
 
