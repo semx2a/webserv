@@ -44,6 +44,7 @@ void	Server::connect () {
 
 	struct epoll_event	event;
 	int					nb_events;
+	int					clientFd;
 
 	try {
 
@@ -53,18 +54,20 @@ void	Server::connect () {
 			for (int i = 0; i < nb_events; ++i) {
 
 				event = epollEvents.getReadyEvent (i);
+				clientFd = event.data.fd;
 				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) || (event.events & EPOLLRDHUP)) {
-					log (event.data.fd, "End of connexion");
-					close (event.data.fd);// TODO : delete corresponding nodes in client map
+					log (clientFd, "End of connexion");
+					clientData.erase (clientFd);
+					close (clientFd);
 				}
-				else if (epollEvents.isNewClient (event.data.fd)) {
-					epollEvents.addNewClient (event.data.fd);
+				else if (epollEvents.isNewClient (clientFd)) {
+					epollEvents.addNewClient (clientFd);
 				}
 				else if (event.events & EPOLLIN) {
-					readFromClient (event.data.fd);
+					readFromClient (clientFd);
 				}
 				else if (event.events & EPOLLOUT) {
-					writeToClient (event.data.fd);
+					writeToClient (clientFd);
 				}
 			}
 		}
@@ -79,51 +82,40 @@ void	Server::readFromClient (int clientFd) {
 
 	std::vector <char>	buffer = epollEvents.receiveBuffer (clientFd);
 
-	chunkRequests [clientFd].insert (chunkRequests [clientFd].end (), buffer.begin (), buffer.end ());
-	handleRequest (clientFd);
+	clientData [clientFd].insert (clientData [clientFd].end (), buffer.begin (), buffer.end ());
+	if(isRequestEnded (clientFd)) {
+		handleRequest (clientFd);
+	}
 }
 
-void	Server::writeToClient (int fd) {
+void	Server::writeToClient (int clientFd) {
 
 	std::string message = "Request received";
-	if ((send (fd, message.c_str (), message.length (), 0)) < 0) {
+	if ((send (clientFd, message.c_str (), message.length (), 0)) < 0) {
 		throw std::runtime_error (SENDERR);
 	}
-	chunkRequests.erase (fd);
-	close (fd);
+	clientData.erase (clientFd);
+	close (clientFd);
 }
 
 
-void	Server::handleRequest (int fd) {
+void	Server::handleRequest (int clientFd) {
 
-	chunkRequestsIt_t it = chunkRequests.find (fd);
-
-	if (isRequestEnded (it)) { // dans classe Request ? 
-							   
-		std::string str;
-		str.assign(&it->second[0]);
-		std::cout << &it->second [0] << std::endl;
-		clientRequest.parser(str);
-		epollEvents.editSocketInEpoll (fd, EPOLLOUT);
-	}
+	std::string str;
+	str.assign(&clientData[clientFd][0]);
+	#ifdef DEBUG
+	std::cout << &clientData[clientFd][0] << std::endl;
+	#endif
+	clientRequest.parser(str);
+	epollEvents.editSocketInEpoll (clientFd, EPOLLOUT);
 }
 
-bool	Server::isRequestEnded (chunkRequestsIt_t it) {
+bool	Server::isRequestEnded (int clientFd) {
 
-	if (it != chunkRequests.end ())
-	{
-		const std::vector<char>& requestVector = it->second;
-		std::string requestStr(requestVector.begin(), requestVector.end());
+	std::string	end_of_data(&clientData[clientFd].end()[-4], &clientData[clientFd].end()[0]);
 
-		size_t found = requestStr.find("\r\n\r\n");
-		//return found != std::string::npos;
-		if (found != std::string::npos)
-		{
-			//std::cout << requestStr << std::endl;
-			return true;
-		}
-
-	}
+	if (clientData[clientFd].size() > 4 && end_of_data == "\r\n\r\n")
+		return true;
 	return false;
 }
 

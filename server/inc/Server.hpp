@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+# define DEBUG
+
 #include <iostream>
 #include <map>
 
@@ -8,8 +10,8 @@
 #include "Epoll.hpp"
 #include "Request.hpp"
 
-typedef std::map <int, std::vector<char> >		chunkRequests_t;
-typedef std::map <int, std::vector<char> >::iterator		chunkRequestsIt_t;
+typedef std::map <int, std::vector<char> >		clientData_t;
+typedef std::map <int, std::vector<char> >::iterator		clientDataIt_t;
 
 class Server {
 
@@ -31,13 +33,13 @@ class Server {
 		Config								config;
 		Epoll								epollEvents;
 		Request								clientRequest;
-		chunkRequests_t						chunkRequests;
+		clientData_t						clientData;
 
-		void								readFromClient (int fd);
-		void								writeToClient (int fd);
-		//bool								isRequestEnded (chunkRequests_t::iterator it);
-		bool								isRequestEnded (chunkRequestsIt_t it);
-		void								handleRequest (int fd);
+		void								readFromClient (int clientFd);
+		void								writeToClient (int clientFd);
+		//bool								isRequestEnded (clientData_t::iterator it);
+		bool								isRequestEnded (int clientFd);
+		void								handleRequest (int clientFd);
 
 };
 
