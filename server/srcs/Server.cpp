@@ -55,10 +55,13 @@ void	Server::connect () {
 
 				event = epollEvents.getReadyEvent (i);
 				clientFd = event.data.fd;
-				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) || (event.events & EPOLLRDHUP)) {
-					log (clientFd, "End of connexion");
-					clientData.erase (clientFd);
-					close (clientFd);
+				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)) {
+					log (clientFd, "Epoll error");
+					endClientConnexion (clientFd);
+				}
+				else if (event.events & EPOLLRDHUP) {
+					log (clientFd, "Closed connexion");
+					endClientConnexion (clientFd);
 				}
 				else if (epollEvents.isNewClient (clientFd)) {
 					epollEvents.addNewClient (clientFd);
@@ -80,8 +83,19 @@ void	Server::connect () {
 
 void	Server::readFromClient (int clientFd) {
 
-	std::vector <char>	buffer = epollEvents.receiveBuffer (clientFd);
+	std::vector <char>	buffer (BUFFER_SIZE, '\0');
 
+	int	bytesRead = recv (clientFd, &buffer [0], buffer.size (), 0);
+	if (bytesRead < 0) {
+		throw std::runtime_error (RECVERR);
+	}
+	else if (bytesRead == 0) { // TODO: find if it ever happens??
+		log (clientFd, "End of connexion");
+		endClientConnexion (clientFd);
+	}
+	else {
+		buffer.resize (bytesRead);
+	}
 	clientData [clientFd].insert (clientData [clientFd].end (), buffer.begin (), buffer.end ());
 	if(isRequestEnded (clientFd)) {
 		handleRequest (clientFd);
@@ -94,8 +108,7 @@ void	Server::writeToClient (int clientFd) {
 	if ((send (clientFd, message.c_str (), message.length (), 0)) < 0) {
 		throw std::runtime_error (SENDERR);
 	}
-	clientData.erase (clientFd);
-	close (clientFd);
+	endClientConnexion (clientFd);
 }
 
 
@@ -119,3 +132,8 @@ bool	Server::isRequestEnded (int clientFd) {
 	return false;
 }
 
+void	Server::endClientConnexion (int clientFd) {
+
+	clientData.erase (clientFd);
+	close (clientFd);
+}

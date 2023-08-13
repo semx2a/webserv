@@ -11,7 +11,7 @@ Epoll::Epoll (std::vector <int>& ports) {
 	try {
 		createEpollEvent ();
 		for (std::vector <int>::iterator it = ports.begin (); it != ports.end (); it++) {
-			serversFds.push_back (pollPort (*it));
+			listenFds.push_back (pollPort (*it));
 		}
 	}
 	catch (const std::exception& e) {
@@ -43,15 +43,15 @@ struct epoll_event const&	Epoll::getReadyEvent (int index) const {
 
 std::vector <int> const&	Epoll::getServersFds () const { 
 
-	return serversFds;
+	return listenFds;
 }
 
 bool	Epoll::isNewClient (int fd) {
 
 	std::vector <int>::iterator it;
 
-	it = std::find (serversFds.begin (), serversFds.end (), fd);
-	return (it != serversFds.end ());
+	it = std::find (listenFds.begin (), listenFds.end (), fd);
+	return (it != listenFds.end ());
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CREATION
@@ -85,9 +85,16 @@ void	Epoll::addSocketToEpoll (int fd) {
 
 void	Epoll::addNewClient (int fd) {
 
-	int	clientSocket = accept (fd, NULL, NULL);
-	if (clientSocket < 0) {
-		throw std::runtime_error (ACCEPTERR);
+	int	clientSocket;
+
+	try {
+		clientSocket = accept (fd, NULL, NULL);
+		if (clientSocket < 0) {
+			throw std::runtime_error (ACCEPTERR);
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "ERROR: " << e.what () << std::endl;
 	}
 	addSocketToEpoll (clientSocket);
 	log (clientSocket, "New request");
@@ -119,6 +126,7 @@ int		Epoll::waitForConnexions () {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::I/O OPERATIONS
 
+/*
 std::vector <char>	Epoll::receiveBuffer (int fd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
@@ -136,6 +144,7 @@ std::vector <char>	Epoll::receiveBuffer (int fd) {
 	}
 	return buffer;
 }
+*/
 
 
 /*std::string	Epoll::receiveBuffer (int fd) {

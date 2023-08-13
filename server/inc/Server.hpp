@@ -40,6 +40,7 @@ class Server {
 		//bool								isRequestEnded (clientData_t::iterator it);
 		bool								isRequestEnded (int clientFd);
 		void								handleRequest (int clientFd);
+		void								endClientConnexion (int clientFd);
 
 };
 
