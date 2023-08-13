@@ -1,5 +1,6 @@
 
 epoll_create : cb? flags?
+isRequestEnded : check more than \r\n
 
 ### boucle de connection
 
