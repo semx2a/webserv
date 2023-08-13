@@ -81,31 +81,12 @@ void	Server::readFromClient (int fd) {
 	chunkRequestsIt_t it = chunkRequests.find (fd);
 
 	if (it != chunkRequests.end ()) {
-
 		it->second.insert (it->second.end (), buffer.begin (), buffer.end ());
-		// parse if ended
 	}
 	else {
 		chunkRequests.insert (std::make_pair(fd, buffer));
 	}
-	chunkRequestsIt_t it2 = chunkRequests.find (fd);
-	if (isRequestEnded (it2)) // dans classe Request ?
-	{
-		//std::string str;
-		//str.assign(&it->second[0]);
-		std::cout << &it2->second [0] << std::endl;
-		//clientRequest.parser(str);
-		epollEvents.editSocketInEpoll (fd, EPOLLOUT);
-	}
-
-/*
-	//TEMP:
-	std::string str;
-	str.assign(&buffer[0]);
-	std::cout << str << std::endl;
-	clientRequest.parser(str);
-	epollEvents.editSocketInEpoll (fd, EPOLLOUT);
-*/
+	handleRequest (fd);
 }
 
 void	Server::writeToClient (int fd) {
@@ -114,10 +95,24 @@ void	Server::writeToClient (int fd) {
 	if ((send (fd, message.c_str (), message.length (), 0)) < 0) {
 		throw std::runtime_error (SENDERR);
 	}
-	// TODO: delete client?
+	chunkRequests.erase (fd);
 	close (fd);
 }
 
+
+void	Server::handleRequest (int fd) {
+
+	chunkRequestsIt_t it = chunkRequests.find (fd);
+
+	if (isRequestEnded (it)) { // dans classe Request ? 
+							   
+		std::string str;
+		str.assign(&it->second[0]);
+		std::cout << &it->second [0] << std::endl;
+		clientRequest.parser(str);
+		epollEvents.editSocketInEpoll (fd, EPOLLOUT);
+	}
+}
 
 bool	Server::isRequestEnded (chunkRequestsIt_t it) {
 
@@ -127,7 +122,13 @@ bool	Server::isRequestEnded (chunkRequestsIt_t it) {
 		std::string requestStr(requestVector.begin(), requestVector.end());
 
 		size_t found = requestStr.find("\r\n\r\n");
-		return found != std::string::npos;
+		//return found != std::string::npos;
+		if (found != std::string::npos)
+		{
+			//std::cout << requestStr << std::endl;
+			return true;
+		}
+
 	}
 	return false;
 }

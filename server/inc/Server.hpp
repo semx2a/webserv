@@ -37,6 +37,7 @@ class Server {
 		void								writeToClient (int fd);
 		//bool								isRequestEnded (chunkRequests_t::iterator it);
 		bool								isRequestEnded (chunkRequestsIt_t it);
+		void								handleRequest (int fd);
 
 };
 

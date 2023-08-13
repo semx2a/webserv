@@ -8,7 +8,7 @@
 #include "display.hpp"
 #include "Socket.hpp"
 
-# define BUFFER_SIZE 10
+# define BUFFER_SIZE 1024
 
 # define ACCEPTERR "accept (): failed"
 # define ECREATERR "epoll_create (): failed"
