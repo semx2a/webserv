@@ -75,18 +75,12 @@ void	Server::connect () {
 	}
 }
 
-void	Server::readFromClient (int fd) {
+void	Server::readFromClient (int clientFd) {
 
-	std::vector <char>	buffer = epollEvents.receiveBuffer (fd);
-	chunkRequestsIt_t it = chunkRequests.find (fd);
+	std::vector <char>	buffer = epollEvents.receiveBuffer (clientFd);
 
-	if (it != chunkRequests.end ()) {
-		it->second.insert (it->second.end (), buffer.begin (), buffer.end ());
-	}
-	else {
-		chunkRequests.insert (std::make_pair(fd, buffer));
-	}
-	handleRequest (fd);
+	chunkRequests [clientFd].insert (chunkRequests [clientFd].end (), buffer.begin (), buffer.end ());
+	handleRequest (clientFd);
 }
 
 void	Server::writeToClient (int fd) {
