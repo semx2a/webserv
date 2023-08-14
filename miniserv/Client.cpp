@@ -1,15 +1,28 @@
 # include <cstring>
+#include <fstream>
 # include <iostream>
 # include <netinet/in.h>
 # include <stdexcept>
+#include <string>
 # include <sys/socket.h>
 # include <unistd.h>
 
-int main (void)
+int main (int ac, char** av)
 {
 	try {
 
-		std::string hello = "Coucou from client\n" ;
+		if (ac != 2)
+			throw std::invalid_argument ("Format: ./Client <request_file>");
+		std::ifstream request_file(av[1]);
+    
+		if (!request_file.is_open()) 
+			throw std::runtime_error ("File could not be opened");
+
+		std::string	request((std::istreambuf_iterator<char>(request_file)), std::istreambuf_iterator<char>());
+		request_file.close();
+
+		std::cout << request << std::endl; 
+
 		struct sockaddr_in	_server_addr;
 		socklen_t			_server_addrlen = sizeof (_server_addr);
 		int					domain = AF_INET;
@@ -24,23 +37,20 @@ int main (void)
 		_server_addr.sin_addr.s_addr = htonl (interface);
 		_server_addrlen = sizeof (_server_addr);
 
-//		int i = 40;
-//		while (i--)
-//		{
-			int sockfd = socket (domain, service, protocol);
-			if (sockfd < 0)
-				throw std::runtime_error ("Socket creation failed");
+		int sockfd = socket (domain, service, protocol);
+		if (sockfd < 0)
+			throw std::runtime_error ("Socket creation failed");
 
-			if (connect (sockfd, (struct sockaddr *)&_server_addr, _server_addrlen) < 0)
-				throw std::runtime_error ("Client socket connect () failed");
+		if (connect (sockfd, (struct sockaddr *)&_server_addr, _server_addrlen) < 0)
+			throw std::runtime_error ("Client socket connect () failed");
 
-			send (sockfd, hello.c_str (), hello.size () , 0 );
-			std::cout << "Hello message sent" << std::endl;
-			char buffer[1024] = {0};
-			recv (sockfd, buffer, 1024, 0);
-			std::cout << buffer << std::endl;
-//		}
-
+		//std::string request1 = "yo";
+		//send (sockfd, request1.c_str (), request1.size () , 0 );
+		send (sockfd, request.c_str (), request.size () , 0 );
+		std::cout << "Request sent" << std::endl;
+		char buffer[1024] = {0};
+		recv (sockfd, buffer, 1024, 0);
+		std::cout << buffer << std::endl;
 	}
 	catch (const std::exception& e) {
 		
