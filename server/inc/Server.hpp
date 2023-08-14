@@ -30,16 +30,16 @@ class Server {
 
 	private:
 
-		Config								config;
-		Epoll								epollEvents;
-		Request								clientRequest;
-		clientData_t						clientData;
+		Config								_config;
+		Epoll								_epollEvents;
+		Request								_clientRequest;
+		clientData_t						_clientData;
 
-		void								readFromClient (int clientFd);
-		void								writeToClient (int clientFd);
-		bool								isRequestEnded (int clientFd);
-		void								handleRequest (int clientFd);
-		void								endClientConnexion (int clientFd);
+		void								_readFromClient (int clientFd);
+		void								_writeToClient (int clientFd);
+		bool								_isRequestEnded (int clientFd);
+		void								_handleClientData (int clientFd);
+		void								_endClientConnexion (int clientFd);
 
 };
 

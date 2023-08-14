@@ -33,19 +33,18 @@ class Epoll {
 
 		int					waitForConnexions ();
 		void				addNewClient (int fd);
-		//std::vector <char>	receiveBuffer (int fd);
 		void				editSocketInEpoll (int fd, int eventToWatch); //TODO
 
 	private:
 
-		int					epollFd;
-		std::vector <int>	listenFds;
-		struct epoll_event	toPoll;
-		struct epoll_event	events [MAX_EVENTS];
+		int					_epollFd;
+		std::vector <int>	_listenFds;
+		struct epoll_event	_toPoll;
+		struct epoll_event	_events [MAX_EVENTS];
 
-		int					pollPort (int port);
-		void				addSocketToEpoll (int fd);
-		void				createEpollEvent ();
+		int					_pollPort (int port);
+		void				_addSocketToEpoll (int fd);
+		void				_createEpollEvent ();
 };
 
 #endif

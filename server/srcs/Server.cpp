@@ -2,12 +2,12 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Server::Server () :	config (), 
-					epollEvents (config.getPorts ()) {
+Server::Server () :	_config (), 
+					_epollEvents (this->_config.getPorts ()) {
 }
 
-Server::Server (std::string const& conf_file) :	config (conf_file), 
-												epollEvents (config.getPorts ()) {
+Server::Server (std::string const& conf_file) :	_config (conf_file), 
+												_epollEvents (this->_config.getPorts ()) {
 }
 
 Server::Server (Server const& rhs) {
@@ -32,9 +32,9 @@ Server& Server::operator= (Server const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-Config const&	Server::getConfig () const { return config; }
+Config const&	Server::getConfig () const { return this->_config; }
 
-Epoll const&	Server::getEpollEvents () const { return epollEvents; }
+Epoll const&	Server::getEpollEvents () const { return this->_epollEvents; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
@@ -50,27 +50,27 @@ void	Server::connect () {
 
 		while (true) {
 
-			nb_events = epollEvents.waitForConnexions ();
+			nb_events = this->_epollEvents.waitForConnexions ();
 			for (int i = 0; i < nb_events; ++i) {
 
-				event = epollEvents.getReadyEvent (i);
+				event = this->_epollEvents.getReadyEvent (i);
 				clientFd = event.data.fd;
 				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)) {
 					log (clientFd, "Epoll error");
-					endClientConnexion (clientFd);
+					_endClientConnexion (clientFd);
 				}
 				else if (event.events & EPOLLRDHUP) {
 					log (clientFd, "Closed connexion");
-					endClientConnexion (clientFd);
+					_endClientConnexion (clientFd);
 				}
-				else if (epollEvents.isNewClient (clientFd)) {
-					epollEvents.addNewClient (clientFd);
+				else if (this->_epollEvents.isNewClient (clientFd)) {
+					this->_epollEvents.addNewClient (clientFd);
 				}
 				else if (event.events & EPOLLIN) {
-					readFromClient (clientFd);
+					_readFromClient (clientFd);
 				}
 				else if (event.events & EPOLLOUT) {
-					writeToClient (clientFd);
+					_writeToClient (clientFd);
 				}
 			}
 		}
@@ -81,7 +81,7 @@ void	Server::connect () {
 	}
 }
 
-void	Server::readFromClient (int clientFd) {
+void	Server::_readFromClient (int clientFd) {
 
 	std::vector <char>	buffer (BUFFER_SIZE, '\0');
 
@@ -91,50 +91,50 @@ void	Server::readFromClient (int clientFd) {
 	}
 	else if (bytesRead == 0) { 
 		log (clientFd, "End of connexion");
-		endClientConnexion (clientFd);
+		_endClientConnexion (clientFd);
 	}
 	else {
 		buffer.resize (bytesRead);
 	}
-	handleRequest (clientFd);
+	this->_clientData [clientFd].insert (this->_clientData [clientFd].end (), buffer.begin (), buffer.end ());
+	_handleClientData (clientFd);
 }
 
-void	Server::writeToClient (int clientFd) {
+void	Server::_writeToClient (int clientFd) {
 
 	std::string message = "Request received";
 	if ((send (clientFd, message.c_str (), message.length (), 0)) < 0) {
 		throw std::runtime_error (SENDERR);
 	}
-	endClientConnexion (clientFd);
+	_endClientConnexion (clientFd);
 }
 
 
-void	Server::handleRequest (int clientFd) {
+void	Server::_handleClientData (int clientFd) {
 
-	clientData [clientFd].insert (clientData [clientFd].end (), buffer.begin (), buffer.end ());
-	if(!isRequestEnded (clientFd))
+	if(!_isRequestEnded (clientFd))
 		return ;
 
 	std::string str;
-	str.assign(&clientData[clientFd][0]);
+	str.assign(&this->_clientData[clientFd][0]);
 	#ifdef DEBUG
-	std::cout << &clientData[clientFd][0] << std::endl;
+	std::cout << &this->_clientData[clientFd][0] << std::endl;
 	#endif
-	clientRequest.parser(str);
-	epollEvents.editSocketInEpoll (clientFd, EPOLLOUT);
+	this->_clientRequest.parser(str);
+	this->_epollEvents.editSocketInEpoll (clientFd, EPOLLOUT);
 }
 
-bool	Server::isRequestEnded (int clientFd) {
+bool	Server::_isRequestEnded (int clientFd) {
 
-	std::string	end_of_data(&clientData[clientFd].end()[-4], &clientData[clientFd].end()[0]);
+	std::string	end_of_data (&this->_clientData[clientFd].end()[-4], &this->_clientData[clientFd].end()[0]);
 
-	if (clientData[clientFd].size() > 4 && end_of_data == "\r\n\r\n")
+	if (this->_clientData[clientFd].size() > 4 && end_of_data == "\r\n\r\n")
 		return true;
 	return false;
 }
 
-void	Server::endClientConnexion (int clientFd) {
+void	Server::_endClientConnexion (int clientFd) {
 
-	clientData.erase (clientFd);
+	this->_clientData.erase (clientFd);
 	close (clientFd);
 }
