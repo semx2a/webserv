@@ -23,28 +23,23 @@ void	log(int client_fd, std::string str)
 	time(&now);
 	brk = localtime(&now);
 	strftime(date, 99, "%B %d %Y %T", brk);
-	date_str.append(ORANGE);
 	date_str.append(date);
 
 	sstr << client_fd;
-	header_str.append(CYAN);
 	header_str.append("Client fd: ");
 	header_str.append(sstr.str());
-	header_str.append(NO_COLOR);
-
-	str.insert(0, PURPLE);
-	str.append(NO_COLOR);
 	
-	size_t	total_len = 70;
-	size_t	len_between = total_len - ((header_str.length() - strlen(ORANGE)) + (date_str.length() - (strlen(CYAN) + strlen(NO_COLOR))));
-	size_t	len = total_len - (str.length() - (strlen(PURPLE) + strlen(NO_COLOR)));
+	size_t	total_len 	= 60;
+	size_t	len_between	= total_len - (header_str.length() + date_str.length() + 3);
+	size_t	len 		= total_len - (str.length() + 2);
 	
 	printLine(total_len , "_");
 
-	std::cout << " |" << date_str << std::string(len_between, ' ') << header_str << "|\n";
-	std::cout << " |" << str << std::string(len, ' ') << "|\n";
+	std::cout << " |" << ORANGE << date_str << std::string(len_between, ' ') << CYAN << header_str << NO_COLOR << "|" << std::endl;
+	std::cout << " |" << PURPLE << str << NO_COLOR << std::string(len, ' ') << "|" << std::endl;
 	
 	printLine(total_len, "‾");
+	std::cout << std::ends;
 }
 
 
