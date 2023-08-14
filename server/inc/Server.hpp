@@ -2,6 +2,7 @@
 # define SERVER_HPP
 
 # define DEBUG
+# define DB_CRLF "\r\n\r\n"
 
 #include <iostream>
 #include <map>
@@ -10,23 +11,22 @@
 #include "Epoll.hpp"
 #include "Request.hpp"
 
-typedef std::map <int, std::vector<char> >		clientData_t;
-typedef std::map <int, std::vector<char> >::iterator		clientDataIt_t;
+typedef std::map<int, std::vector<char> >				clientData_t;
 
 class Server {
 
 	public:
 
-		Server ();
-		Server (std::string const& conf_file);
-		Server (Server const& rhs);
-		~Server ();
-		Server& operator= (Server const& rhs);
+		Server();
+		Server(std::string const& conf_file);
+		Server(Server const& rhs);
+		~Server();
+		Server& operator=(Server const& rhs);
 
-		Config const&		getConfig () const;
-		Epoll const&		getEpollEvents () const;
+		Config const&		getConfig() const;
+		Epoll const&		getEpollEvents() const;
 
-		void				connect ();
+		void				connect();
 
 	private:
 
@@ -35,11 +35,11 @@ class Server {
 		Request								_clientRequest;
 		clientData_t						_clientData;
 
-		void								_readFromClient (int clientFd);
-		void								_writeToClient (int clientFd);
-		bool								_isRequestEnded (int clientFd);
-		void								_handleClientData (int clientFd);
-		void								_endClientConnexion (int clientFd);
+		void								_readFromClient(int clientFd);
+		void								_writeToClient(int clientFd);
+		bool								_isRequestEnded(int clientFd);
+		void								_handleClientData(int clientFd);
+		void								_endClientConnexion(int clientFd);
 
 };
 

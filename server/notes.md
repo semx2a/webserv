@@ -7,3 +7,6 @@ epoll_create : cb? flags?
 - isRequestEnded : check more than \r\n
 - retour recv 0 : ?
 - timeout
+
+### erros
+- lesquelles et comment les traiter (classe d'erreur?)

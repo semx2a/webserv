@@ -2,26 +2,26 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Server::Server () :	_config (), 
-					_epollEvents (this->_config.getPorts ()) {
+Server::Server() :	_config(), 
+					_epollEvents(this->_config.getPorts()) {
 }
 
-Server::Server (std::string const& conf_file) :	_config (conf_file), 
-												_epollEvents (this->_config.getPorts ()) {
+Server::Server(std::string const& conf_file) :	_config(conf_file), 
+												_epollEvents(this->_config.getPorts()) {
 }
 
-Server::Server (Server const& rhs) {
+Server::Server(Server const& rhs) {
 
 	*this = rhs;
 }
 
-Server::~Server () {
+Server::~Server() {
 
 	// TODO
 }
 
 
-Server& Server::operator= (Server const& rhs) {
+Server& Server::operator=(Server const& rhs) {
 
 	if (this != &rhs) {
         // TODO
@@ -32,15 +32,15 @@ Server& Server::operator= (Server const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-Config const&	Server::getConfig () const { return this->_config; }
+Config const&	Server::getConfig() const { return this->_config; }
 
-Epoll const&	Server::getEpollEvents () const { return this->_epollEvents; }
+Epoll const&	Server::getEpollEvents() const { return this->_epollEvents; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 
-void	Server::connect () {
+void	Server::connect() {
 
 	struct epoll_event	event;
 	int					nb_events;
@@ -50,69 +50,69 @@ void	Server::connect () {
 
 		while (true) {
 
-			nb_events = this->_epollEvents.waitForConnexions ();
+			nb_events = this->_epollEvents.waitForConnexions();
 			for (int i = 0; i < nb_events; ++i) {
 
-				event = this->_epollEvents.getReadyEvent (i);
+				event = this->_epollEvents.getReadyEvent(i);
 				clientFd = event.data.fd;
-				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP)) {
-					log (clientFd, "Epoll error");
-					_endClientConnexion (clientFd);
+				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
+					log(clientFd, "Epoll error");
+					_endClientConnexion(clientFd);
 				}
 				else if (event.events & EPOLLRDHUP) {
-					log (clientFd, "Closed connexion");
-					_endClientConnexion (clientFd);
+					log(clientFd, "Closed connexion");
+					_endClientConnexion(clientFd);
 				}
-				else if (this->_epollEvents.isNewClient (clientFd)) {
-					this->_epollEvents.addNewClient (clientFd);
+				else if (this->_epollEvents.isNewClient(clientFd)) {
+					this->_epollEvents.addNewClient(clientFd);
 				}
 				else if (event.events & EPOLLIN) {
-					_readFromClient (clientFd);
+					_readFromClient(clientFd);
 				}
 				else if (event.events & EPOLLOUT) {
-					_writeToClient (clientFd);
+					_writeToClient(clientFd);
 				}
 			}
 		}
 	}
 	catch (std::exception& e) {
 
-		std::cerr << "ERROR: " << e.what () << std::endl;
+		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 }
 
-void	Server::_readFromClient (int clientFd) {
+void	Server::_readFromClient(int clientFd) {
 
-	std::vector <char>	buffer (BUFFER_SIZE, '\0');
+	std::vector<char>	buffer(BUFFER_SIZE, '\0');
 
-	int	bytesRead = recv (clientFd, &buffer [0], buffer.size (), 0);
+	int	bytesRead = recv(clientFd, &buffer[0], buffer.size(), 0);
 	if (bytesRead < 0) {
-		throw std::runtime_error (RECVERR);
+		throw std::runtime_error(RECVERR);
 	}
 	else if (bytesRead == 0) { 
-		log (clientFd, "End of connexion");
-		_endClientConnexion (clientFd);
+		log(clientFd, "End of connexion");
+		_endClientConnexion(clientFd);
 	}
 	else {
-		buffer.resize (bytesRead);
+		buffer.resize(bytesRead);
 	}
-	this->_clientData [clientFd].insert (this->_clientData [clientFd].end (), buffer.begin (), buffer.end ());
-	_handleClientData (clientFd);
+	this->_clientData[clientFd].insert(this->_clientData[clientFd].end(), buffer.begin(), buffer.end());
+	_handleClientData(clientFd);
 }
 
-void	Server::_writeToClient (int clientFd) {
+void	Server::_writeToClient(int clientFd) {
 
 	std::string message = "Request received";
-	if ((send (clientFd, message.c_str (), message.length (), 0)) < 0) {
-		throw std::runtime_error (SENDERR);
+	if ((send(clientFd, message.c_str(), message.length(), 0)) < 0) {
+		throw std::runtime_error(SENDERR);
 	}
-	_endClientConnexion (clientFd);
+	_endClientConnexion(clientFd);
 }
 
 
-void	Server::_handleClientData (int clientFd) {
+void	Server::_handleClientData(int clientFd) {
 
-	if(!_isRequestEnded (clientFd))
+	if (!_isRequestEnded(clientFd))
 		return ;
 
 	std::string str;
@@ -121,20 +121,28 @@ void	Server::_handleClientData (int clientFd) {
 	std::cout << &this->_clientData[clientFd][0] << std::endl;
 	#endif
 	this->_clientRequest.parser(str);
-	this->_epollEvents.editSocketInEpoll (clientFd, EPOLLOUT);
+	//this->_clientRequest.parser(_clientData[clientFd]);
+	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
-bool	Server::_isRequestEnded (int clientFd) {
+bool	Server::_isRequestEnded(int clientFd) {
 
-	std::string	end_of_data (&this->_clientData[clientFd].end()[-4], &this->_clientData[clientFd].end()[0]);
+	std::string	end_of_data(&this->_clientData[clientFd].end()[-4], &this->_clientData[clientFd].end()[0]);
 
-	if (this->_clientData[clientFd].size() > 4 && end_of_data == "\r\n\r\n")
-		return true;
+	if (this->_clientData[clientFd].size() > 4 && end_of_data == DB_CRLF)
+	{
+		//clientData_t::iterator it;
+//		if (std::find ())
+//		{
+			return true;
+//		}
+		//handle body size
+	}
 	return false;
 }
 
-void	Server::_endClientConnexion (int clientFd) {
+void	Server::_endClientConnexion(int clientFd) {
 
-	this->_clientData.erase (clientFd);
-	close (clientFd);
+	this->_clientData.erase(clientFd);
+	close(clientFd);
 }
