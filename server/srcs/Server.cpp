@@ -131,12 +131,15 @@ bool	Server::_isRequestEnded(int clientFd) {
 
 	if (this->_clientData[clientFd].size() > 4 && end_of_data == DB_CRLF)
 	{
-		//clientData_t::iterator it;
-//		if (std::find ())
-//		{
-			return true;
-//		}
-		//handle body size
+		std::string	last_buffer(&this->_clientData[clientFd].end()[-100], &this->_clientData[clientFd].end()[0]);
+		if (last_buffer.find ("Content-Length") != std::string::npos)
+		{
+			std::cout << "Last buffer: \n" << last_buffer << std::endl;
+			std::cout << "Content-Length found" << std::endl;
+			//handle body size
+			return false;
+		}
+	 	return true;
 	}
 	return false;
 }

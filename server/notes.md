@@ -10,3 +10,6 @@ epoll_create : cb? flags?
 
 ### erros
 - lesquelles et comment les traiter (classe d'erreur?)
+
+### server
+- keep track of server fd
