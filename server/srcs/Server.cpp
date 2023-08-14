@@ -89,17 +89,14 @@ void	Server::readFromClient (int clientFd) {
 	if (bytesRead < 0) {
 		throw std::runtime_error (RECVERR);
 	}
-	else if (bytesRead == 0) { // TODO: find if it ever happens??
+	else if (bytesRead == 0) { 
 		log (clientFd, "End of connexion");
 		endClientConnexion (clientFd);
 	}
 	else {
 		buffer.resize (bytesRead);
 	}
-	clientData [clientFd].insert (clientData [clientFd].end (), buffer.begin (), buffer.end ());
-	if(isRequestEnded (clientFd)) {
-		handleRequest (clientFd);
-	}
+	handleRequest (clientFd);
 }
 
 void	Server::writeToClient (int clientFd) {
@@ -113,6 +110,10 @@ void	Server::writeToClient (int clientFd) {
 
 
 void	Server::handleRequest (int clientFd) {
+
+	clientData [clientFd].insert (clientData [clientFd].end (), buffer.begin (), buffer.end ());
+	if(!isRequestEnded (clientFd))
+		return ;
 
 	std::string str;
 	str.assign(&clientData[clientFd][0]);
