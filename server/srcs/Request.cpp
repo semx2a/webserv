@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/10 18:38:05 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/14 15:17:50 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,26 +74,17 @@ const std::map<std::string, std::vector<std::string> > Request::getHeaders(void)
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
-void Request::parser(std::string const str)
-{
-
-	std::istringstream iss(str);
-
-	this->parseRequestLine(iss);
-	this->parseHeaders(iss);
-	if (!iss.eof())
-		this->parseBody(iss);
-
-	std::cout << *this << std::endl;
-
-}
-
-void Request::parseRequestLine(std::istringstream &stream) {
+void Request::_parseBody(std::istringstream &stream) {
 	
-	stream >> this->_method >> this->_target >> this->_version;
+	std::string body;
+	while (std::getline(stream, body, '\0') && !body.empty()) {
+
+		for (std::string::iterator it = body.begin(); it != body.end(); it++) 
+			this->_body.push_back(*it);
+	}
 }
 
-void Request::parseHeaders(std::istringstream &stream) {
+void Request::_parseHeaders(std::istringstream &stream) {
 
 	std::string line;
 	std::vector<std::string> headers;
@@ -123,37 +114,35 @@ void Request::parseHeaders(std::istringstream &stream) {
 		this->_headers[key].push_back(values);
 		//tokenize values with ',' 
 	}
-	
-//	printRequestHeaders();
 }
 
-void Request::parseBody(std::istringstream &stream) {
+void Request::_parseRequestLine(std::istringstream &stream) {
 	
-	std::string body;
-	while (std::getline(stream, body, '\0') && !body.empty()) {
+	stream >> this->_method >> this->_target >> this->_version;
 
-		for (std::string::iterator it = body.begin(); it != body.end(); it++) 
-			this->_body.push_back(*it);
-	}
+	if (this->_method.empty() || this->_target.empty() || this->_version.emtpy())
+		throw std::exception 
 }
 
-/* void	Request::printRequestHeaders(void) {
-	
-	std::map<std::string, std::vector<std::string> >::iterator it;
-    
-    for (it = this->_headers.begin(); it != this->_headers.end(); ++it) {
-        
-        std::cout << RED << "key: " << it->first << NO_COLOR << " | " << GREEN << "values: ";
-        printVector(it->second);
-        std::cout << NO_COLOR << std::endl;
-	}
-} */
+void Request::parser(std::string const str)
+{
+	std::istringstream iss(str);
+
+	this->parseRequestLine(iss);
+	this->parseHeaders(iss);
+	if (!iss.eof())
+		this->parseBody(iss);
+
+	std::cout << *this << std::endl;
+
+}
+
 // ::::::::::::::::::::::::::::::::::::::::::::::: OUTPUT OPERATOR OVERLOADING::
 
 std::ostream &operator<<(std::ostream &o, Request const &r)
 {
 
-	o << custom_width(100, ':', " Request Class content:") << std::endl;
+	o << "  " << printLine(60, ":") << std::endl << std::endl;
 	o << "method: " 	<< r.getMethod() << std::endl;
 	o << "target: "		<< r.getTarget() << std::endl;
 	o << "query: "		<< r.getQuery() << std::endl;
