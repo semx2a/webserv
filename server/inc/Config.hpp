@@ -7,16 +7,16 @@
 class Config {
 
 	public:
-		Config ();
-		Config (std::string const& config_file);
-		Config (Config const&);
-		Config& operator= (Config const& rhs);
+		Config();
+		Config(std::string const& config_file);
+		Config(Config const&);
+		Config& operator=(Config const& rhs);
 		~Config();
 
-		std::vector <int>&	getPorts ();
+		std::vector<int>&	getPorts();
 
 	private:
-		std::vector <int>	ports;
+		std::vector<int>	ports;
 		
 };
 

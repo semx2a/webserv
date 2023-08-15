@@ -1,6 +1,9 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+# define DEBUG
+# define DB_CRLF "\r\n\r\n"
+
 #include <iostream>
 #include <map>
 
@@ -8,33 +11,35 @@
 #include "Epoll.hpp"
 #include "Request.hpp"
 
-typedef std::map <int, std::vector<char> >		chunkRequests_t;
+typedef std::map<int, std::vector<char> >				clientData_t;
 
 class Server {
 
 	public:
 
-		Server ();
-		Server (std::string const& conf_file);
-		Server (Server const& rhs);
-		~Server ();
-		Server& operator= (Server const& rhs);
+		Server();
+		Server(std::string const& conf_file);
+		Server(Server const& rhs);
+		~Server();
+		Server& operator=(Server const& rhs);
 
-		Config const&		getConfig () const;
-		Epoll const&		getEpollEvents () const;
+		Config const&		getConfig() const;
+		Epoll const&		getEpollEvents() const;
 
-		void				connect ();
+		void				connect();
 
 	private:
 
-		Config								config;
-		Epoll								epollEvents;
-		Request								clientRequest;
-		chunkRequests_t						chunkRequests;
+		Config								_config;
+		Epoll								_epollEvents;
+		Request								_clientRequest;
+		clientData_t						_clientData;
 
-		void								readFromClient (int fd);
-		void								writeToClient (int fd);
-		bool								isRequestEnded (chunkRequests_t::iterator it);
+		void								_readFromClient(int clientFd);
+		void								_writeToClient(int clientFd);
+		bool								_isRequestEnded(int clientFd);
+		void								_handleClientData(int clientFd);
+		void								_endClientConnexion(int clientFd);
 
 };
 
