@@ -44,15 +44,14 @@
 // Italic
 # define ICYAN 		"\033[3;36m "
 
-#define LINE	"\n  _____________________________________________________________________\n"
-#define ENDLINE	"\n  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
-
+std::string		printLine(size_t size, const std::string & c);
 std::string		custom_width (int width, char c, std::string const& content);
+
+void			log (int client_fd, std::string str);
 void			display_buffer (std::vector <char>& buffer);
 void			display_buffer (std::string buffer);
 void	   	 	display_client_added ();
 void	   	 	display_end_connexion ();
 void	   	 	display_wait ();
-void			log (int client_fd, std::string str);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/12 15:34:04 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/15 15:11:28 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "display.hpp"
 # include "Epoll.hpp"
 # include "print.hpp"
+
 class Request {
 	
 	public:
@@ -48,12 +49,18 @@ class Request {
 		const std::vector<char>									getBody(void) const;
 
 		void	parser(std::string const);
-		void	parseRequestLine(std::istringstream&);
-		void	parseHeaders(std::istringstream&);
-		void	parseBody(std::istringstream&);
 
-		//void	printRequestHeaders(void);
-
+		class RequestLineException : public std::exception { 
+			virtual const char* what() const throw() 
+			{ return "Bad Request LIne"; }};
+		class HeadersException : public std::exception { 
+			virtual const char* what() const throw() 
+			{ return "Bad headers"; }};
+		
+		class BodyException : public std::exception { 
+			virtual const char* what() const throw() 
+			{ return "Bad body"; }};
+	
 	private:
 	
 		std::string												_method;
@@ -63,6 +70,9 @@ class Request {
 		std::map<std::string, std::vector<std::string> >		_headers;
 		std::vector<char>										_body;
 
+		void	_parseRequestLine(std::istringstream&);
+		void	_parseHeaders(std::istringstream&);
+		void	_parseBody(std::istringstream&);
 };
 
 std::ostream &	operator<<(std::ostream & o, Request const & r);

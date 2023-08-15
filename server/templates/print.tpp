@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/14 11:08:41 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/15 15:17:43 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ void printMap(const std::map<KeyType, ValueType>& myMap) {
     
     for (it = myMap.begin(); it != myMap.end(); ++it) {
         
-        std::cout << RED << "key: " << it->first << NO_COLOR;
+        std::cout << RED << it->first << std::endl;
         
-        std::cout << " | " << GREEN << "values: ";
+        std::cout << GREEN;
         printVector(it->second);
         std::cout << NO_COLOR << std::endl;
     }

@@ -1,14 +1,15 @@
 #include "../inc/display.hpp"
-#include <cstring>
 
-void	printLine(size_t size, std::string c) {
+std::string	printLine(size_t size, const std::string & c) {
 	
-	std::cout << "  ";
+	std::string	buffer;
+
+	buffer.reserve(size);
 	for (size_t x = 0; x < size; x++) {
-		std::cout << c;
+		buffer.append(c);
 	}
-	std::cout << std::endl;
 	
+	return buffer;
 }
 
 void	log(int client_fd, std::string str)
@@ -33,13 +34,12 @@ void	log(int client_fd, std::string str)
 	size_t	len_between	= total_len - (header_str.length() + date_str.length() + 3);
 	size_t	len 		= total_len - (str.length() + 2);
 	
-	printLine(total_len , "_");
+	std::cout << "  " << printLine(total_len , "_") << std::endl;
 
-	std::cout << " |" << ORANGE << date_str << std::string(len_between, ' ') << CYAN << header_str << NO_COLOR << "|" << std::endl;
-	std::cout << " |" << PURPLE << str << NO_COLOR << std::string(len, ' ') << "|" << std::endl;
+	std::cout << " |" << ORANGE << date_str << printLine(len_between, " ") << CYAN << header_str << NO_COLOR << "|" << std::endl;
+	std::cout << " |" << PURPLE << str << NO_COLOR << printLine(len, " ") << "|" << std::endl;
 	
-	printLine(total_len, "‾");
-	std::cout << std::ends;
+	std::cout << "  " << printLine(total_len, "‾") << std::endl;
 }
 
 
