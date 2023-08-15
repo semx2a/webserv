@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/14 15:16:13 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/15 15:11:28 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "display.hpp"
 # include "Epoll.hpp"
 # include "print.hpp"
+
 class Request {
 	
 	public:
@@ -49,8 +50,17 @@ class Request {
 
 		void	parser(std::string const);
 
-		//void	printRequestHeaders(void);
-
+		class RequestLineException : public std::exception { 
+			virtual const char* what() const throw() 
+			{ return "Bad Request LIne"; }};
+		class HeadersException : public std::exception { 
+			virtual const char* what() const throw() 
+			{ return "Bad headers"; }};
+		
+		class BodyException : public std::exception { 
+			virtual const char* what() const throw() 
+			{ return "Bad body"; }};
+	
 	private:
 	
 		std::string												_method;
