@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/15 15:17:43 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/16 17:48:25 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void printVector(const std::vector<T>& vec) {
     
 	for (it = vec.begin(); it != vec.end(); ++it) {
         
-        std::cout << *it << " ";
+        std::cout << *it << std::endl;
     }
     
 	std::cout << std::endl;
