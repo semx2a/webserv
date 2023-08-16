@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/15 15:11:28 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/16 17:45:56 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "display.hpp"
 # include "Epoll.hpp"
 # include "print.hpp"
+# include "Macros.hpp"
 
 class Request {
 	
@@ -34,22 +35,35 @@ class Request {
 
 		Request &	operator=(Request const &rhs);
 
+		//GET/SET
 		void	setMethod(const std::string);
 		void	setTarget(const std::string);
 		void	setQuery(const std::string);
 		void	setVersion(const std::string);
 		void	setHeaders(const std::map<std::string, std::vector<std::string> >);
 		void	setBody(const std::vector<char>);
+		
+		const std::string &			getMethod(void) const;
+		const std::string &			getTarget(void) const;
+		const std::string &			getQuery(void) const;
+		const std::string &			getVersion(void) const;
+		const std::vector<char> &	getBody(void) const;
+		const std::map<std::string, std::vector<std::string> > &	getHeaders(void) const;
 
-		const std::string										getMethod(void) const;
-		const std::string										getTarget(void) const;
-		const std::string										getQuery(void) const;
-		const std::string										getVersion(void) const;
-		const std::map<std::string, std::vector<std::string> >	getHeaders(void) const;
-		const std::vector<char>									getBody(void) const;
+		//DB
+		void	setIsFirstLine(const bool);
+		void	setIsHeader(const bool);
+		void	setIsBody(const bool);
+		void	setIsQuery(const bool);
+		bool	getIsFirstLine(void) const;
+		bool	getIsHeader(void) const;
+		bool	getIsBody(void) const;
+		bool	getIsQuery(void) const;
 
+		//METHODS
 		void	parser(std::string const);
-
+		
+		//ERRORS
 		class RequestLineException : public std::exception { 
 			virtual const char* what() const throw() 
 			{ return "Bad Request LIne"; }};
@@ -62,7 +76,8 @@ class Request {
 			{ return "Bad body"; }};
 	
 	private:
-	
+
+		//VARIABLES	
 		std::string												_method;
 		std::string												_target;
 		std::string												_query;
@@ -70,9 +85,18 @@ class Request {
 		std::map<std::string, std::vector<std::string> >		_headers;
 		std::vector<char>										_body;
 
-		void	_parseRequestLine(std::istringstream&);
-		void	_parseHeaders(std::istringstream&);
-		void	_parseBody(std::istringstream&);
+		//DB
+		bool													_isFirstLine;
+		bool													_isHeader;
+		bool													_isBody;
+		bool													_isQuery;
+
+		//PRIVATE METHODS
+		void						_parseRequestLine(std::istringstream&);
+		void						_parseHeaders(std::istringstream&);
+		void						_parseBody(std::istringstream&);
+
+		std::vector<std::string>	_tokenize(const std::string, char);
 };
 
 std::ostream &	operator<<(std::ostream & o, Request const & r);
