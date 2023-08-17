@@ -53,8 +53,6 @@ void		ClientData::setContentLength(size_t contentLength) { _contentLength = cont
 
 void		ClientData::addToBuffer(std::vector<char> raw) { _request.insert(_request.end(), raw.begin(), raw.end()); 
 
-	std::cout << "Buffer now : " << &_request[0] << std::endl;
-
 	if (this->_hasBody) {
 		
 		if (this->_isTransferEncoding) {
