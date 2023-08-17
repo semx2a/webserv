@@ -116,13 +116,10 @@ void	Server::_handleClientData(int clientFd) {
 	if (!this->_clientDataMap[clientFd].isRequestEnded())
 		return ;
 
-	std::string str;
-	str.assign(&this->_clientDataMap[clientFd].getRequest()[0]);
 	#ifdef DEBUG
 	std::cout << &this->_clientDataMap[clientFd].getRequest()[0] << std::endl;
 	#endif
-	this->_clientRequest.parser(str);
-	//this->_clientRequest.parser(_clientDataMap[clientFd]);
+	this->_clientRequest.parser(_clientDataMap[clientFd].getRequest());
 	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
