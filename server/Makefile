@@ -29,6 +29,7 @@ NAME	:=	webserv
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
 SRCS	:=	Config.cpp \
+			ClientData.cpp \
 			display.cpp \
 			Epoll.cpp \
 			main.cpp \
@@ -107,17 +108,17 @@ all:			header h2 message $(NAME)
 
 $(ODIR)/%.o:	%.cpp
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 $(NAME):		$(OBJS)	
 	@$(CPP) $(WFLAGS) $(OBJS) -o $(NAME)
-	@echo -e "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 $(OBJS):		| $(ODIR)
 
 $(ODIR):
 	@mkdir -p $(ODIR)
-	@echo -e "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 	
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -126,41 +127,41 @@ update:		header fclean
 	@git pull
 
 push:		header fclean
-	@echo -e "$(HIGREEN)"
+	@echo "$(HIGREEN)"
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo -e "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 clean:		header
 	@rm -rf $(ODIR)
-	@echo -e "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
 
 fclean:		header clean
 	@rm -f $(NAME)
-	@echo -e "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
 
 header:
-	@echo -e " ______________________________________________________"
-	@echo -e "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
-	@echo -e "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
-	@echo -e "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
-	@echo -e "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
-	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
-	@echo -e "|     \_____________________________________________________\ "
-	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
-	@echo -e "|    /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
-	@echo -e "|   /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
-	@echo -e "|  /$(BLACK)                   A T H I E R R Y                 /$(NO_COLOR) / "
-	@echo -e "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
-	@echo -e "|/____________________________________________________\/ "
-	@echo -e ""
+	@echo " ______________________________________________________"
+	@echo "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
+	@echo "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
+	@echo "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
+	@echo "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
+	@echo "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
+	@echo "|     \_____________________________________________________\ "
+	@echo "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
+	@echo "|    /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
+	@echo "|   /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
+	@echo "|  /$(BLACK)                   A T H I E R R Y                 /$(NO_COLOR) / "
+	@echo "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
+	@echo "|/____________________________________________________\/ "
+	@echo ""
 
 h2:
-	@echo -e "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
+	@echo "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
 
 message:
-	@make -q $(NAME) && echo -e "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
+	@make -q $(NAME) && echo "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
 
 re:		header fclean 
 	@make all 
