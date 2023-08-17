@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/16 17:47:29 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/17 17:51:32 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Request::Request(Request const &src)
 		*this = src;
 }
 
-Request::Request(std::string const str)
+Request::Request(std::vector<char> const str)
 {
 	this->parser(str);
 }
@@ -87,16 +87,41 @@ bool Request::getIsQuery(void) const { return this->_isQuery; }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
-void Request::_parseBody(std::istringstream &stream) {
-	
-	std::string body;
-	
-	while (std::getline(stream, body, '\0') && !body.empty()) {
+int Request::_find_last_occurrence(const std::vector<char>& haystack, const std::string& needle) {
+    // Convert the vector of characters to a string
+    std::string haystack_str(haystack.begin(), haystack.end());
 
-		for (std::string::iterator it = body.begin(); it != body.end(); it++) 
-			this->_body.push_back(*it);
-	}
+    // Use rfind to find the last occurrence of the needle
+    size_t pos = haystack_str.rfind(needle);
 
+    // If the needle is not found, return -1
+    if(pos == std::string::npos) {
+        return -1;
+    }
+
+    // Otherwise, return the position of the last character of the needle
+    return pos + needle.size() - 1;
+}
+
+
+void Request::_parseBody(std::vector<char>& str_vec) {
+	
+	int pos = this->_find_last_occurrence(str_vec, "\r\n\r\n");
+	
+	this->_body.assign(str_vec.begin() + (pos + 1), str_vec.end());
+}
+
+std::string Request::_trim(const std::string& str)
+{
+    const std::string ws = " \n\r\t\f\v";
+    
+    size_t start = str.find_first_not_of(ws);
+    if (start == std::string::npos)
+        return ""; // no content except whitespace
+
+    size_t end = str.find_last_not_of(ws);
+    
+    return str.substr(start, end-start+1);
 }
 
 std::vector<std::string> Request::_tokenize(const std::string str, char sep) {
@@ -118,39 +143,43 @@ std::vector<std::string> Request::_tokenize(const std::string str, char sep) {
 void Request::_parseHeaders(std::istringstream &stream) {
 
 	std::string 				line;
-	std::vector<std::string> headers;
+	std::vector<std::string>	headers_vec;
 
 	if (!this->_headers.empty())
 		this->_headers.clear();
 	
-	while (std::getline(stream, line) && !line.empty()) {
+	while (std::getline(stream, line, '\r')) {
+
+		line = this->_trim(line);
+		if (!line.empty())
+			headers_vec.push_back(line);
+	}
+	
+	for (std::vector<std::string>::iterator it = headers_vec.begin(); it != headers_vec.end(); it++)
+	{
+		std::istringstream	hd_line(*it);
+		std::string			hd_key;
+		std::string 		hd_values;
 		
-		if (line.compare(0, 2, CRLF))
-			headers.push_back(line);
+		hd_key.erase(); 	
+		hd_values.erase();
+		std::getline(hd_line, hd_key, ':');
+		std::getline(hd_line, hd_values);
+
+		if (hd_key.empty())
+			throw HeadersException();
+		if (hd_values.empty())
+			throw HeadersException();
+		
+		hd_values = this->_trim(hd_values);
+ 		this->_headers[hd_key].push_back(hd_values);
+		//this->_headers[hd_key] = this->_tokenize(hd_values, ',');
 	}
-
-	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); ++it) {
-
-		std::string	key;
-		std::string values;
-		size_t		pos;
-
-		pos = 0;
-		key.erase(); 	
-		values.erase();
-		pos = it->find(":");
-		key = it->substr(0, pos);
-		values = it->substr(pos + 2, it->size());
-
-/* 		this->_headers[key].push_back(values); */
-		this->_headers[key] = this->_tokenize(values, ',');
-	}
+	
 	if (this->getHeaders().empty())
 		throw HeadersException();
 	else
 		this->setIsHeader(true);
-
-	line.clear();
 }
 
 void Request::_parseRequestLine(std::istringstream &stream) {
@@ -163,14 +192,15 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 		this->setIsFirstLine(true);
 }
 
-void Request::parser(std::string const str) {
+void Request::parser(std::vector<char> str_vec) {
 	
-	std::istringstream iss(str);
+	std::string			str(str_vec.begin(), str_vec.end());
+	std::istringstream	stream(str);
 
-	this->_parseRequestLine(iss);
-	this->_parseHeaders(iss);
-	if (!iss.eof())
-		this->_parseBody(iss);
+	this->_parseRequestLine(stream);
+	this->_parseHeaders(stream);
+	if (!stream.eof())
+		this->_parseBody(str_vec);
 
 	std::cout << *this << std::endl;
 
