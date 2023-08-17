@@ -96,7 +96,8 @@ void	Server::_readFromClient(int clientFd) {
 	else {
 		buffer.resize(bytesRead);
 	}
-	this->_clientData[clientFd].insert(this->_clientData[clientFd].end(), buffer.begin(), buffer.end());
+	//this->_clientDataMap[clientFd].insert(this->_clientDataMap[clientFd].end(), buffer.begin(), buffer.end());
+	this->_clientDataMap[clientFd].addToBuffer(buffer);
 	_handleClientData(clientFd);
 }
 
@@ -112,40 +113,22 @@ void	Server::_writeToClient(int clientFd) {
 
 void	Server::_handleClientData(int clientFd) {
 
-	if (!_isRequestEnded(clientFd))
+	if (!this->_clientDataMap[clientFd].isRequestEnded())
 		return ;
 
 	std::string str;
-	str.assign(&this->_clientData[clientFd][0]);
+	str.assign(&this->_clientDataMap[clientFd].getRequest()[0]);
 	#ifdef DEBUG
-	std::cout << &this->_clientData[clientFd][0] << std::endl;
+	std::cout << &this->_clientDataMap[clientFd].getRequest()[0] << std::endl;
 	#endif
 	this->_clientRequest.parser(str);
-	//this->_clientRequest.parser(_clientData[clientFd]);
+	//this->_clientRequest.parser(_clientDataMap[clientFd]);
 	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
-bool	Server::_isRequestEnded(int clientFd) {
-
-	std::string	end_of_data(&this->_clientData[clientFd].end()[-4], &this->_clientData[clientFd].end()[0]);
-
-	if (this->_clientData[clientFd].size() > 4 && end_of_data == DB_CRLF)
-	{
-		std::string	last_buffer(&this->_clientData[clientFd].end()[-100], &this->_clientData[clientFd].end()[0]);
-		if (last_buffer.find("Content-Length") != std::string::npos)
-		{
-			std::cout << "Last buffer: \n" << last_buffer << std::endl;
-			std::cout << "Content-Length found" << std::endl;
-			//handle body size
-			return false;
-		}
-	 	return true;
-	}
-	return false;
-}
 
 void	Server::_endClientConnexion(int clientFd) {
 
-	this->_clientData.erase(clientFd);
+	this->_clientDataMap.erase(clientFd);
 	close(clientFd);
 }

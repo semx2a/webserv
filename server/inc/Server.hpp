@@ -2,16 +2,16 @@
 # define SERVER_HPP
 
 # define DEBUG
-# define DB_CRLF "\r\n\r\n"
 
 #include <iostream>
 #include <map>
 
+#include "ClientData.hpp"
 #include "Config.hpp"
 #include "Epoll.hpp"
 #include "Request.hpp"
 
-typedef std::map<int, std::vector<char> >				clientData_t;
+typedef std::map<int, ClientData>				clientDataMap_t;
 
 class Server {
 
@@ -30,16 +30,15 @@ class Server {
 
 	private:
 
-		Config								_config;
-		Epoll								_epollEvents;
-		Request								_clientRequest;
-		clientData_t						_clientData;
+		Config				_config;
+		Epoll				_epollEvents;
+		Request				_clientRequest;
+		clientDataMap_t		_clientDataMap;
 
-		void								_readFromClient(int clientFd);
-		void								_writeToClient(int clientFd);
-		bool								_isRequestEnded(int clientFd);
-		void								_handleClientData(int clientFd);
-		void								_endClientConnexion(int clientFd);
+		void				_readFromClient(int clientFd);
+		void				_writeToClient(int clientFd);
+		void				_handleClientData(int clientFd);
+		void				_endClientConnexion(int clientFd);
 
 };
 
