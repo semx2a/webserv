@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/16 17:45:56 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/17 17:49:22 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <map>
 # include <vector>
 # include <sstream>
+# include <algorithm>
 
 # include "display.hpp"
 # include "Epoll.hpp"
@@ -30,7 +31,7 @@ class Request {
 
 		Request(void);
 		Request(Request const &src);
-		Request(std::string const);
+		Request(std::vector<char> const);
 		~Request(void);
 
 		Request &	operator=(Request const &rhs);
@@ -61,7 +62,7 @@ class Request {
 		bool	getIsQuery(void) const;
 
 		//METHODS
-		void	parser(std::string const);
+		void	parser(std::vector<char>);
 		
 		//ERRORS
 		class RequestLineException : public std::exception { 
@@ -94,9 +95,11 @@ class Request {
 		//PRIVATE METHODS
 		void						_parseRequestLine(std::istringstream&);
 		void						_parseHeaders(std::istringstream&);
-		void						_parseBody(std::istringstream&);
+		void						_parseBody(std::vector<char>&);
 
 		std::vector<std::string>	_tokenize(const std::string, char);
+		std::string 				_trim(const std::string&);
+		int 						_find_last_occurrence(const std::vector<char>& haystack, const std::string& needle);
 };
 
 std::ostream &	operator<<(std::ostream & o, Request const & r);
