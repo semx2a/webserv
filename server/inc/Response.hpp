@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 11:35:17 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/18 11:40:22 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/08/18 18:16:20 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <vector>
 # include <map>
 
+# include "Macros.hpp"
 class Response {
 
 	public:
@@ -27,12 +28,30 @@ class Response {
 		~Response();
 		Response& operator=(Response const& rhs);
 
-		std::string const&	getResponse() const;
-		void				setResponse(std::string const& response);
+		std::string const&					getStatusLine(void) const;
+		std::map<int, std::string> const&	getStatusCodes(void) const;
+		std::vector<std::string> const&		getErrorPages(void) const;
+		std::string const&					getResponse(void) const;
+
+		void	setStatusLine(std::string const& statusLine);
+		void	setStatusCodes(void);
+		void	setErrorPages(std::vector<std::string> const& errorPages);
+		void	setResponse(std::string const& response);
+		
+
+		void	buildResponse(void);
 
 	private:
 
-		std::string			_response;
+		std::string					_statusLine;
+		std::string					_version;
+		std::map<int, std::string>	_statusCodes;
+		
+		std::vector<std::string>	_errorPages;
+		
+		std::string					_response;
+
+		
 
 };
 
