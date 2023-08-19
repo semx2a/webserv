@@ -1,4 +1,32 @@
-#include "../inc/Config.hpp"
+#include <fstream>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
+
+class Config {
+
+	public:
+		Config();
+		Config(std::string const& config_file);
+		Config(Config const&);
+		Config& operator=(Config const& rhs);
+		~Config();
+
+		std::vector<int>&			getPorts();
+		std::string	const&			get(const std::string& key) const; 
+		std::vector<std::string>&	getArray(const std::string& key) const; 
+
+	    Config* getBlock(const std::string& key) const;
+
+
+	private:
+		std::vector<int>									ports;
+		std::map<std::string, std::string>					data;
+		std::map<std::string, std::vector<std::string> >	arrayData;
+		std::map<std::string, Config*>						blockData;
+		
+};
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
@@ -11,9 +39,9 @@ Config::Config() {
 	ports.push_back(8084);
 }
 
-Config::Config(std::string const& conf_file) {
+Config::Config(std::string const& conf_conf_file) {
 
-	(void) conf_file;
+	(void) conf_conf_file;
 	ports.push_back(8080);
 	ports.push_back(8081);
 	ports.push_back(8082);
@@ -46,12 +74,12 @@ Config*						Config::getBlock(std::string const& key) const { return blockData.a
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
-void parse(const std::string& filename) {
+void parse(const std::string& conf_filename) {
 
-	std::ifstream	file(filename.c_str());
+	std::ifstream	conf_file(conf_filename.c_str());
 	std::string		line;
 
-	while (std::getline(file, line)) {
+	while (std::getline(conf_file, line)) {
 
 		std::istringstream	is_line(line);
 		std::string			key;
