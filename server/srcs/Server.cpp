@@ -103,10 +103,13 @@ void	Server::_readFromClient(int clientFd) {
 
 void	Server::_writeToClient(int clientFd) {
 
+	//TODO: Response	response(this->_clientRequest, this->_config, clientFd);
+	
 	std::string message = "Request received";
 	if ((send(clientFd, message.c_str(), message.length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
 	}
+	//TODO: dont close if header keep-alive
 	_endClientConnexion(clientFd);
 }
 
