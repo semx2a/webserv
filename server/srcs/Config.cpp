@@ -4,21 +4,21 @@
 
 Config::Config() {
 
-	ports.push_back(8080);
-	ports.push_back(8081);
-	ports.push_back(8082);
-	ports.push_back(8083);
-	ports.push_back(8084);
+	_ports.push_back(8080);
+	_ports.push_back(8081);
+	_ports.push_back(8082);
+	_ports.push_back(8083);
+	_ports.push_back(8084);
 }
 
 Config::Config(std::string const& conf_file) {
 
 	(void) conf_file;
-	ports.push_back(8080);
-	ports.push_back(8081);
-	ports.push_back(8082);
-	ports.push_back(8083);
-	ports.push_back(8084);
+	_ports.push_back(8080);
+	_ports.push_back(8081);
+	_ports.push_back(8082);
+	_ports.push_back(8083);
+	_ports.push_back(8084);
 }
 
 Config::Config(Config const& rhs) { *this = rhs; }
@@ -36,4 +36,7 @@ Config::~Config() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-std::vector<int>&	Config::getPorts() { return ports; }
+std::vector<int>&			Config::getPorts() { return _ports; }
+
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
+
