@@ -28,6 +28,24 @@
       "inc",
       "-c",
       "-o",
+      "objs/ClientData.o",
+      "srcs/ClientData.cpp"
+    ],
+    "directory": "/home/meow/repos/MINE/42/webserv/server",
+    "file": "/home/meow/repos/MINE/42/webserv/server/srcs/ClientData.cpp",
+    "output": "/home/meow/repos/MINE/42/webserv/server/objs/ClientData.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-std=c++98",
+      "-I",
+      "inc",
+      "-c",
+      "-o",
       "objs/display.o",
       "srcs/display.cpp"
     ],

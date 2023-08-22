@@ -70,12 +70,11 @@ void		ClientData::addToBuffer(std::vector<char> raw) { _request.insert(_request.
 	if (this->_request.size() < 4)
 		return;
 
-	if (std::string(&this->_request.end()[-4], &this->_request.end()[0]) == DB_CRLF) {
+	if (_requestStr.find(DB_CRLF)) {
 
 		this->_searchTransferEncoding();
 		this->_searchContentLength();
 		if (this->_isTransferEncoding) {
-			this->_hasBody = true;
 			this->_checkEndTransferEncoding();
 			return;
 		}
@@ -95,13 +94,17 @@ void	ClientData::_searchContentLength() {
 	if (content_length_pos != std::string::npos) {
 		this->setContentLength (std::atoll(_requestStr.substr(content_length_pos + 16).c_str()));
 		std::cout << "Content-Length found: " << this->_contentLength << std::endl;
+		this->_hasBody = true;
 	}
 }
 
 void	ClientData::_searchTransferEncoding() {
 
-	if (_requestStr.find("Transfer-Encoding: ") != std::string::npos)
-		_isTransferEncoding = true;	
+	if (_requestStr.find("Transfer-Encoding: ") != std::string::npos) {
+		this->_isTransferEncoding = true;	
+		std::cout << "Transfer Encoding found" << std::endl;
+		this->_hasBody = true;
+	}
 }
 
 void	ClientData::_checkEndContentLength() {
@@ -113,5 +116,6 @@ void	ClientData::_checkEndContentLength() {
 
 void	ClientData::_checkEndTransferEncoding() {
 
-	//TODO
+	if (_requestStr.find("0\r\n\r\n"))
+		_isEnded = true;
 }
