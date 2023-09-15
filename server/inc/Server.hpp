@@ -3,13 +3,14 @@
 
 # define DEBUG
 
-#include <iostream>
-#include <map>
+# include <iostream>
+# include <map>
 
-#include "ClientData.hpp"
-#include "Config.hpp"
-#include "Epoll.hpp"
-#include "Request.hpp"
+# include "ClientData.hpp"
+# include "Config.hpp"
+# include "Epoll.hpp"
+# include "Request.hpp"
+# include "Response.hpp"
 
 typedef std::map<int, ClientData>				clientDataMap_t;
 

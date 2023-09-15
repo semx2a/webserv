@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/18 20:13:22 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/15 17:13:32 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ Response& Response::operator=(Response const& rhs)
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
 std::map<int, std::string> const&	Response::getStatusCodes(void) const { return (this->_statusCodes); }
+
+std::string const&					Response::getStatusCode(int code) const { return (this->*(_statusCodes[code])); }
 
 std::vector<std::string> const&		Response::getErrorPages(void) const { return (this->_errorPages); }
 
@@ -106,7 +108,7 @@ void	Response::setResponse(std::string const& response) { this->_response = resp
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void	Response::buildResponse(void) {
+void	buildResponse(Request const&, Config const&, int const&) {
 	
 }
 
@@ -117,3 +119,4 @@ std::ostream& operator<<(std::ostream& o, Response const& rhs)
 	o << rhs.getResponse();
 	return (o);
 }
+	

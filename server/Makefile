@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/08/09 18:36:13 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/15 16:53:28 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,8 @@ SRCS	:=	Config.cpp \
 			main.cpp \
 			Request.cpp \
 			Server.cpp \
-			Socket.cpp
+			Socket.cpp \
+			Response.cpp
 
 #TTPS	:=	print.tpp
 			
