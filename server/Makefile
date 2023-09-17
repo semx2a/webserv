@@ -40,7 +40,7 @@ SRCS	:=	$(addprefix $(CONF)/,		\
 				Socket.cpp) 			\
 			$(addprefix $(REQ)/, 		\
 				Request.cpp)			\
-			$(addprefix $(REP)/,			\
+			$(addprefix $(REP)/,		\
 				Response.cpp)			\
 			$(addprefix $(UTILS)/,		\
 				display.cpp)
@@ -102,11 +102,11 @@ ICYAN			=	\033[3;36m
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PARAMS::
 
-INCLUDE_FLAGS		= $(addprefix -I, \
-						$(CORE) \
-						$(CONF) \
-						$(REQ) \
-						$(REP) \
+INCLUDE_FLAGS		= $(addprefix -I,	\
+						$(CORE)			\
+						$(CONF)			\
+						$(REQ)			\
+						$(REP)			\
 						$(UTILS))
 
 DEPS				= $(OBJS:.o=.d)
