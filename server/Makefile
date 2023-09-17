@@ -32,9 +32,9 @@ NAME	:=	webserv
 
 SRCS	:=	$(addprefix $(CONF)/,		\
 				Config.cpp				\
-				SpecConfig.cpp	\
-				CommonConfig.cpp	\
-				Parser.cpp				\
+				SpecConfig.cpp			\
+				CommonConfig.cpp		\
+				Parser.cpp)				\
 			$(addprefix $(CORE)/,		\
 				ClientData.cpp			\
 				Epoll.cpp 				\

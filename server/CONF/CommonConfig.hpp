@@ -1,5 +1,5 @@
-#ifndef COMMONSERVERCONFIG_hpp
-# define COMMONSERVERCONFIG_HPP
+#ifndef COMMON_CONFIG_hpp
+# define COMMON_CONFIG_HPP
 
 #include <fstream>
 #include <map>
@@ -7,13 +7,13 @@
 #include <string>
 #include <vector>
 
-class CommonServerConfig {
+class CommonConfig {
 
 	public:
-		CommonServerConfig(std::string const& CommonServerConfig_file);
-		CommonServerConfig(CommonServerConfig const&);
-		CommonServerConfig& operator=(CommonServerConfig const& rhs);
-		virtual ~CommonServerConfig();
+		CommonConfig();
+		CommonConfig(CommonConfig const&);
+		CommonConfig& operator=(CommonConfig const& rhs);
+		virtual ~CommonConfig();
 
 		size_t										getClientMaxBodySize() const;
 		std::string const&							getErrorPage() const;
@@ -30,8 +30,6 @@ class CommonServerConfig {
 		void		setLimitExcept(std::vector<std::string> const& limit_except);
 
 	private:
-		CommonServerConfig();
-
 		size_t									_clientMaxBodySize;
 		std::string								_errorPage;
 		std::string								_index;

@@ -1,0 +1,27 @@
+#ifndef SPEC_CONFIG_HPP
+# define SPEC_CONFIG_HPP
+
+#include "CommonConfig.hpp"
+
+class SpecConfig : public CommonConfig {
+
+	public:
+		SpecConfig(std::string const& SpecConfig_file);
+		SpecConfig(SpecConfig const&);
+		SpecConfig& operator=(SpecConfig const& rhs);
+		virtual ~SpecConfig();
+
+		std::map<std::string, int> const&	getListenIpPort(void) const;
+		std::vector<std::string> const&		getServerNames(void) const;
+
+	private:
+		SpecConfig();
+
+		std::map<std::string, int> 	_listenIpPort; // <IP, port>
+		std::vector<std::string>	_serverNames;
+		
+
+
+};
+
+#endif
