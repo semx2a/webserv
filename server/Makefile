@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/08/09 18:36:13 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/17 14:59:51 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 
 PROJ	:=	
 
-ODIR	:=	$(addprefix $(PROJ), .objs)
+ODIR	:=	$(addprefix $(PROJ), .obj)
 
 CONF	:=	$(addprefix $(PROJ), CONF)
 CORE	:=	$(addprefix $(PROJ), CORE)
@@ -100,6 +100,9 @@ BHIWHITE		=	\033[1;37m
 # Italic
 ICYAN			=	\033[3;36m
 
+# Identation
+INDENT			=	awk -F ':' '{ printf "%-61s %s\n", $$1 ":", $$2 }'
+
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PARAMS::
 
 INCLUDE_FLAGS		= $(addprefix -I,	\
@@ -120,15 +123,15 @@ all: header h2 message makeodir $(NAME)
 $(ODIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
 $(NAME): $(OBJS)	
 	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)
-	@echo -e "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 makeodir:
 	@mkdir -p $(ODIR)
-	@echo -e "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
 	
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -141,15 +144,15 @@ push:		header fclean
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo -e "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
 
 clean:		header
 	@rm -rf $(OBJS)
-	@echo -e "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
 fclean:		header clean
 	@rm -f $(NAME)
-	@echo -e "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
 
 header:
 	@echo -e " ______________________________________________________"
