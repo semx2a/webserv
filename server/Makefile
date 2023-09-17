@@ -31,7 +31,10 @@ NAME	:=	webserv
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
 SRCS	:=	$(addprefix $(CONF)/,		\
-				Config.cpp)				\
+				Config.cpp				\
+				SpecConfig.cpp	\
+				CommonConfig.cpp	\
+				Parser.cpp				\
 			$(addprefix $(CORE)/,		\
 				ClientData.cpp			\
 				Epoll.cpp 				\
