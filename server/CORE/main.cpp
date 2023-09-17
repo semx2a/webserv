@@ -10,7 +10,7 @@
 //    return 0;
 //}
 
-#include "../inc/Server.hpp"
+#include "Server.hpp"
 
 //int	main(int ac, char **av)
 int main() {

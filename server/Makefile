@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/08/09 18:36:13 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/17 17:38:55 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,13 +14,15 @@
 
 PROJ	:=	
 
-ODIR	:=	$(addprefix $(PROJ), objs)
+ODIR	:=	$(addprefix $(PROJ), .obj)
 
-SDIR	:=	$(addprefix $(PROJ), srcs)
+CONF	:=	$(addprefix $(PROJ), CONF)
+CORE	:=	$(addprefix $(PROJ), CORE)
+REQ		:=	$(addprefix $(PROJ), REQUEST)
+REP		:=	$(addprefix $(PROJ), RESPONSE)
+UTILS	:=	$(addprefix $(PROJ), UTILS)
 
 # TDIR	:=	$(addprefix $(PROJ), templates))
-
-IDIR	:=	$(addprefix $(PROJ), inc)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 
@@ -28,27 +30,32 @@ NAME	:=	webserv
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
-SRCS	:=	Config.cpp \
-			ClientData.cpp \
-			display.cpp \
-			Epoll.cpp \
-			main.cpp \
-			Request.cpp \
-			Server.cpp \
-			Socket.cpp
+SRCS	:=	$(addprefix $(CONF)/,		\
+				Config.cpp)				\
+			$(addprefix $(CORE)/,		\
+				ClientData.cpp			\
+				Epoll.cpp 				\
+				main.cpp 				\
+				Server.cpp 				\
+				Socket.cpp) 			\
+			$(addprefix $(REQ)/, 		\
+				Request.cpp)			\
+			$(addprefix $(REP)/,		\
+				Response.cpp)			\
+			$(addprefix $(UTILS)/,		\
+				display.cpp)
 
-#TTPS	:=	print.tpp
-			
-			
-OBJS	=	$(addprefix $(ODIR)/, $(SRCS:.cpp=.o))
+OBJS	:=	$(SRCS:%.cpp=$(ODIR)/%.o)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
 
 CPP		:=	c++
 
-WFLAGS	:=	-MMD -Wall -Wextra -Werror -std=c++98
+WFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 
 WCONV	:=	-Wconversion
+
+DFLAGS	:=	-MMD
 
 GFLAG	:=	-g3
 
@@ -93,32 +100,38 @@ BHIWHITE		=	\033[1;37m
 # Italic
 ICYAN			=	\033[3;36m
 
+# Identation
+INDENT			=	awk -F ':' '{ printf "%-61s %s\n", $$1 ":", $$2 }'
+
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PARAMS::
 
-INCLUDE_FLAGS		= $(addprefix -I , $(IDIR))
-DEPS				= $(OBJS:.o=.d)
+INCLUDE_FLAGS		= $(addprefix -I,	\
+						$(CORE)			\
+						$(CONF)			\
+						$(REQ)			\
+						$(REP)			\
+						$(UTILS))
 
-vpath %.cpp $(SDIR) \
-			$(TDIR)
-vpath %.o $(ODIR)
+DEPS				= $(OBJS:.o=.d)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
-all:			header h2 message $(NAME)
+all: header h2 message makeodir $(NAME)
 
-$(ODIR)/%.o:	%.cpp
+-include ${DEPS}
+
+$(ODIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
-$(NAME):		$(OBJS)	
-	@$(CPP) $(WFLAGS) $(OBJS) -o $(NAME)
-	@echo -e "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+$(NAME): $(OBJS)	
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)
+	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
-$(OBJS):		| $(ODIR)
-
-$(ODIR):
+makeodir:
 	@mkdir -p $(ODIR)
-	@echo -e "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
 	
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -131,15 +144,15 @@ push:		header fclean
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo -e "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
 
 clean:		header
-	@rm -rf $(ODIR)
-	@echo -e "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@rm -rf $(OBJS)
+	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
 fclean:		header clean
 	@rm -f $(NAME)
-	@echo -e "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
 
 header:
 	@echo -e " ______________________________________________________"
@@ -150,9 +163,9 @@ header:
 	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
 	@echo -e "|     \_____________________________________________________\ "
 	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
-	@echo -e "|    /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
-	@echo -e "|   /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
-	@echo -e "|  /$(BLACK)                   A T H I E R R Y                 /$(NO_COLOR) / "
+	@echo -e "|    /$(BLACK)                                                   /$(NO_COLOR) / "
+	@echo -e "|   /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
+	@echo -e "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
 	@echo -e "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
 	@echo -e "|/____________________________________________________\/ "
 	@echo -e ""

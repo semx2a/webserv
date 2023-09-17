@@ -25,6 +25,6 @@ void printVector(const std::vector<T>& vec);
 template <typename KeyType, typename ValueType>
 void printMap(const std::map<KeyType, ValueType>& myMap);
 
-# include "../templates/print.tpp"
+# include "print.tpp"
 
 #endif
