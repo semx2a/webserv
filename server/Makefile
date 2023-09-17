@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/17 14:59:51 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/17 17:38:55 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -163,9 +163,9 @@ header:
 	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
 	@echo -e "|     \_____________________________________________________\ "
 	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
-	@echo -e "|    /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
-	@echo -e "|   /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
-	@echo -e "|  /$(BLACK)                   A T H I E R R Y                 /$(NO_COLOR) / "
+	@echo -e "|    /$(BLACK)                                                   /$(NO_COLOR) / "
+	@echo -e "|   /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
+	@echo -e "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
 	@echo -e "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
 	@echo -e "|/____________________________________________________\/ "
 	@echo -e ""
