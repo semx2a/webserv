@@ -1,4 +1,4 @@
-#include "../inc/display.hpp"
+#include "display.hpp"
 
 std::string	printLine(size_t size, const std::string & c) {
 	

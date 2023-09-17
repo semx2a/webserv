@@ -1,6 +1,7 @@
 #ifndef EPOLL_HPP
 # define EPOLL_HPP
 
+#include <algorithm>
 #include <arpa/inet.h>
 #include <iostream>
 #include <vector>

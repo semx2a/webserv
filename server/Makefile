@@ -14,13 +14,15 @@
 
 PROJ	:=	
 
-ODIR	:=	$(addprefix $(PROJ), objs)
+ODIR	:=	$(addprefix $(PROJ), .objs)
 
-SDIR	:=	$(addprefix $(PROJ), srcs)
+CONF	:=	$(addprefix $(PROJ), CONF)
+CORE	:=	$(addprefix $(PROJ), CORE)
+REQ		:=	$(addprefix $(PROJ), REQUEST)
+REP		:=	$(addprefix $(PROJ), RESPONSE)
+UTILS	:=	$(addprefix $(PROJ), UTILS)
 
 # TDIR	:=	$(addprefix $(PROJ), templates))
-
-IDIR	:=	$(addprefix $(PROJ), inc)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 
@@ -28,27 +30,32 @@ NAME	:=	webserv
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
-SRCS	:=	Config.cpp \
-			ClientData.cpp \
-			display.cpp \
-			Epoll.cpp \
-			main.cpp \
-			Request.cpp \
-			Server.cpp \
-			Socket.cpp
+SRCS	:=	$(addprefix $(CONF)/,		\
+				Config.cpp)				\
+			$(addprefix $(CORE)/,		\
+				ClientData.cpp			\
+				Epoll.cpp 				\
+				main.cpp 				\
+				Server.cpp 				\
+				Socket.cpp) 			\
+			$(addprefix $(REQ)/, 		\
+				Request.cpp)			\
+			$(addprefix $(REP)/,			\
+				Response.cpp)			\
+			$(addprefix $(UTILS)/,		\
+				display.cpp)
 
-#TTPS	:=	print.tpp
-			
-			
-OBJS	=	$(addprefix $(ODIR)/, $(SRCS:.cpp=.o))
+OBJS	:=	$(SRCS:%.cpp=$(ODIR)/%.o)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
 
 CPP		:=	c++
 
-WFLAGS	:=	-MMD -Wall -Wextra -Werror -std=c++98
+WFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 
 WCONV	:=	-Wconversion
+
+DFLAGS	:=	-MMD
 
 GFLAG	:=	-g3
 
@@ -95,28 +102,31 @@ ICYAN			=	\033[3;36m
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PARAMS::
 
-INCLUDE_FLAGS		= $(addprefix -I , $(IDIR))
-DEPS				= $(OBJS:.o=.d)
+INCLUDE_FLAGS		= $(addprefix -I, \
+						$(CORE) \
+						$(CONF) \
+						$(REQ) \
+						$(REP) \
+						$(UTILS))
 
-vpath %.cpp $(SDIR) \
-			$(TDIR)
-vpath %.o $(ODIR)
+DEPS				= $(OBJS:.o=.d)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
-all:			header h2 message $(NAME)
+all: header h2 message makeodir $(NAME)
 
-$(ODIR)/%.o:	%.cpp
+-include ${DEPS}
+
+$(ODIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
-$(NAME):		$(OBJS)	
-	@$(CPP) $(WFLAGS) $(OBJS) -o $(NAME)
+$(NAME): $(OBJS)	
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)
 	@echo -e "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
-$(OBJS):		| $(ODIR)
-
-$(ODIR):
+makeodir:
 	@mkdir -p $(ODIR)
 	@echo -e "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 	
@@ -134,7 +144,7 @@ push:		header fclean
 	@echo -e "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
 
 clean:		header
-	@rm -rf $(ODIR)
+	@rm -rf $(OBJS)
 	@echo -e "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
 
 fclean:		header clean

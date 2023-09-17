@@ -3,7 +3,15 @@
 ## General 
 
 Authorized C functions : execve, dup, dup2, pipe, strerror, gai_strerror, errno, dup, dup2, fork, socketpair, htons, htonl, ntohs, ntohl, select, poll, epoll (epoll_create, epoll_ctl, epoll_wait), kqueue (kqueue, kevent), socket, accept, listen, send, recv, chdir bind, connect, getaddrinfo, freeaddrinfo, setsockopt, getsockname, getprotobyname, fcntl, close, read, write, waitpid, kill, signal, access, stat, opendir, readdir and closedir.
+
 - [ ]  Your server must never block and the client can be bounced properly if necessary. The important thing is resilience. Your server should never die.
+
+- [ ] You must provide some configuration files and default basic files to test and demonstrate every feature works during evaluation.
+
+- [ ] If you’ve got a question about one behavior, you should compare your program behavior with NGINX’s. For example, check how does server_name work.
+
+- [ ] We’ve shared with you a small tester. It’s not mandatory to pass it if everything works fine with your browser and tests, but it can help you hunt some bugs.
+Do not test with only one program. Write your tests with a more convenient language such as Python or Golang, and so forth. Even in C or C++ if you want to
 
 ### Polling
 - [ ]  It must be non-blocking and use only 1 poll() (or equivalent) for all the I/O operations between the client and the server (listen included). poll() (or equivalent) must check read and write at the same time.
@@ -82,13 +90,11 @@ Setup routes with one or multiple of the following rules/configuration (routes w
 - [ ]  Because you won’t call the CGI directly, use the full path as PATH_INFO.
 
 - [ ]  Just remember that, for chunked request, your server needs to unchunk it, the CGI will expect EOF as end of the body.
-- [ ]  Same things for the output of the CGI. If no content_length is returned from the CGI, EOF will mark the end of the returned data.
-- [ ]  Your program should call the CGI with the file requested as first argument.
-- [ ]  The CGI should be run in the correct directory for relative path file access.
-- [ ]  Your server should work with one CGI (php-CGI, Python, and so forth).
 
-You must provide some configuration files and default basic files to test and demonstrate every feature works during evaluation.
-If you’ve got a question about one behavior, you should compare your program behavior with NGINX’s.
-For example, check how does server_name work.
-We’ve shared with you a small tester. It’s not mandatory to pass it if everything works fine with your browser and tests, but it can help you hunt some bugs.
-Do not test with only one program. Write your tests with a more convenient language such as Python or Golang, and so forth. Even in C or C++ if you want to
+- [ ]  Same things for the output of the CGI. If no content_length is returned from the CGI, EOF will mark the end of the returned data.
+
+- [ ]  Your program should call the CGI with the file requested as first argument.
+
+- [ ]  The CGI should be run in the correct directory for relative path file access.
+
+- [ ]  Your server should work with one CGI (php-CGI, Python, and so forth).

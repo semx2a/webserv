@@ -18,7 +18,8 @@
 # include <vector>
 # include <map>
 
-# include "Macros.hpp"
+# include "macros.hpp"
+
 class Response {
 
 	public:
