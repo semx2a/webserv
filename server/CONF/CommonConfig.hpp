@@ -1,4 +1,4 @@
-#ifndef COMMON_CONFIG_hpp
+#ifndef COMMON_CONFIG_HPP
 # define COMMON_CONFIG_HPP
 
 #include <fstream>

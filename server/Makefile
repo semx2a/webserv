@@ -150,7 +150,7 @@ push:		header fclean
 	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
 
 clean:		header
-	@rm -rf $(OBJS)
+	@rm -rf $(ODIR)
 	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
 fclean:		header clean

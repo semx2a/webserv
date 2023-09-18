@@ -2,15 +2,13 @@
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-SpecConfig::SpecConfig(void) {}
-
-SpecConfig::SpecConfig(std::string const &SpecServerConf_file) : _listenIpPort(), _serverNames() {
+SpecConfig::SpecConfig() : CommonConfig(), _listenIpPort(), _serverNames() {
 
 	this->_listenIpPort["127.0.0.1"] = 80;
 	this->_serverNames.push_back("localhost");
 }
 
-SpecConfig::SpecConfig(SpecConfig const &rhs) {
+SpecConfig::SpecConfig(SpecConfig const &rhs) : CommonConfig() {
 
 	*this = rhs;
 }
@@ -18,10 +16,7 @@ SpecConfig::SpecConfig(SpecConfig const &rhs) {
 SpecConfig &	SpecConfig::operator=(SpecConfig const & rhs) {
 
 	if (this != &rhs) {
-
-
 	}
-
 	return *this;
 } 
 

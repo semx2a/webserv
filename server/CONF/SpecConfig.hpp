@@ -6,8 +6,8 @@
 class SpecConfig : public CommonConfig {
 
 	public:
-		SpecConfig(std::string const& SpecConfig_file);
-		SpecConfig(SpecConfig const&);
+		SpecConfig();
+		SpecConfig(SpecConfig const& rhs);
 		SpecConfig& operator=(SpecConfig const& rhs);
 		virtual ~SpecConfig();
 
@@ -15,8 +15,6 @@ class SpecConfig : public CommonConfig {
 		std::vector<std::string> const&		getServerNames(void) const;
 
 	private:
-		SpecConfig();
-
 		std::map<std::string, int> 	_listenIpPort; // <IP, port>
 		std::vector<std::string>	_serverNames;
 		

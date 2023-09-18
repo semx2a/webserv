@@ -2,10 +2,10 @@
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORRS::
 
-Parser::Parser (std::string const& CommonConfig_file) : _CommonConfig(), _SpecConfigs() {
+Parser::Parser (std::string const& conf_filename) : _CommonConfig(), _SpecConfigs() {
 
 	try {
-		parse(CommonConfig_file);
+		parse(conf_filename);
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
@@ -33,29 +33,37 @@ std::vector<SpecConfig> const &	Parser::getSpecConfigs(void) const { return this
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void	Parser::parse(std::string const& CommonConfig_file) {
+void	Parser::parse(std::string const& conf_filename) {
 
-	std::ifstream		file(CommonConfig_file.c_str());
+	std::ifstream		file(conf_filename.c_str());
 	std::stringstream	stream;
 
-	file.open(CommonConfig_file.c_str());
+	file.open(conf_filename.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("Error: Cannot open file " + CommonConfig_file);
+		throw Parser::Error("Error: Cannot open file " + conf_filename);
 	
 	stream << file.rdbuf();
-	file.close();
 
 	std::string line;
-	
-	while (std::getline(stream, line, '\n')) {
+	while (std::getline(stream, line, 'n')) {
 
-		if (scope == false)
-		{
-			if  (line == "server") {
-				
-			}
+		if (*line.begin() == '#')
+			continue;
+		if (line.find("server") != std::string::npos) {
+			// SpecConfig
+		}
+		else {
+			// CommonConfig
 		}
 	}
 	
 }
 
+
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
+
+Parser::Error::Error(std::string const& msg) : _msg(msg) {}
+
+Parser::Error::~Error() throw() {}
+
+const char* Parser::Error::what() const throw() { return _msg.c_str(); }
