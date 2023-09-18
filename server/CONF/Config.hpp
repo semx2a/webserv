@@ -2,6 +2,7 @@
 # define CONFIG_HPP
 
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>

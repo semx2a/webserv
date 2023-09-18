@@ -211,7 +211,7 @@ void Request::parser(std::vector<char> str_vec) {
 std::ostream &operator<<(std::ostream &o, Request const &r) {
 
 	if (r.getIsFirstLine()) {
-		o << "  " << printLine(60, ":") << std::endl << std::endl;
+		o << "  " << str_of(60, ":") << std::endl << std::endl;
 		o << "method: " 	<< r.getMethod() << std::endl;
 		o << "target: "		<< r.getTarget() << std::endl;
 		o << "version: "	<< r.getVersion() << std::endl;
@@ -221,12 +221,12 @@ std::ostream &operator<<(std::ostream &o, Request const &r) {
 		
 	if (r.getIsHeader()) {
 		o << "headers: "	<< std::endl;
-		printMap(r.getHeaders());
+		print_map_of_vectors(r.getHeaders());
 	}
 	
 	if (r.getIsBody()) {
 		o << "body: " 		<< std::endl;
-		printVector(r.getBody());
+		print_vector(r.getBody());
 	}
 
 	return o;

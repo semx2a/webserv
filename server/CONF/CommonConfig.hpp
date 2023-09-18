@@ -2,6 +2,7 @@
 # define COMMON_CONFIG_HPP
 
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
@@ -16,7 +17,7 @@ class CommonConfig {
 		virtual ~CommonConfig();
 
 		size_t										getClientMaxBodySize() const;
-		std::map<int, std::string> const &			getErrorPage() const;
+		std::map<int, std::string> const &			getErrorPages() const;
 		std::vector<std::string> const&				getIndex() const;
 		std::string const&							getRoot() const;
 		std::map<std::string, std::string> const&	getLocations() const;

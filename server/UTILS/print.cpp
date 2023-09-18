@@ -1,14 +1,13 @@
-#include "display.hpp"
+#include "print.hpp"
 
-std::string	printLine(size_t size, const std::string & c) {
+std::string	str_of(size_t size, const std::string & c) {
 	
 	std::string	buffer;
 
 	buffer.reserve(size);
-	for (size_t x = 0; x < size; x++) {
+	for (size_t x = 0; x < size; ++x) {
 		buffer.append(c);
 	}
-	
 	return buffer;
 }
 
@@ -34,12 +33,12 @@ void	log(int client_fd, std::string str)
 	size_t	len_between	= total_len - (header_str.length() + date_str.length() + 3);
 	size_t	len 		= total_len - (str.length() + 2);
 	
-	std::cout << "  " << printLine(total_len , "_") << std::endl;
+	std::cout << "  " << str_of(total_len , "_") << std::endl;
 
-	std::cout << " |" << ORANGE << date_str << printLine(len_between, " ") << CYAN << header_str << NO_COLOR << "|" << std::endl;
-	std::cout << " |" << PURPLE << str << NO_COLOR << printLine(len, " ") << "|" << std::endl;
+	std::cout << " |" << ORANGE << date_str << str_of(len_between, " ") << CYAN << header_str << NO_COLOR << "|" << std::endl;
+	std::cout << " |" << PURPLE << str << NO_COLOR << str_of(len, " ") << "|" << std::endl;
 	
-	std::cout << "  " << printLine(total_len, "‾") << std::endl;
+	std::cout << "  " << str_of(total_len, "‾") << std::endl;
 }
 
 
@@ -57,13 +56,13 @@ std::string custom_width (int width, char c, std::string const&  content) {
 	return result;
 }
 
-void	display_buffer (std::string buffer) {
+void	print_str (std::string buffer) {
 
 	std::string const& str ("Received: ");
 	std::cout << str << buffer << std::endl;
 }
 
-void	display_buffer (std::vector <char>& buffer) {
+void	print_vector_of_char (std::vector <char>& buffer) {
 
 	std::string const& str ("Received: ");
 	std::cout << str << &buffer[0] << std::endl;
@@ -86,5 +85,4 @@ void	display_wait () {
 //	std::string const& str (" Waiting for connections...");
 //	std::cout << "\n" << GREEN << custom_width (68, ':', str) << str << NO_COLOR << std::endl;
 }
-
 

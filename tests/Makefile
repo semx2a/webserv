@@ -12,9 +12,9 @@
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
 
-PROJ	:=	
+PROJ	:=	../server/
 
-ODIR	:=	$(addprefix $(PROJ), .obj)
+ODIR	:=	.obj
 
 CONF	:=	$(addprefix $(PROJ), CONF)
 CORE	:=	$(addprefix $(PROJ), CORE)
@@ -22,15 +22,14 @@ REQ		:=	$(addprefix $(PROJ), REQUEST)
 REP		:=	$(addprefix $(PROJ), RESPONSE)
 UTILS	:=	$(addprefix $(PROJ), UTILS)
 
-# TDIR	:=	$(addprefix $(PROJ), templates))
-
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 
-NAME	:=	webserv
+NAME	:=	parsing_tester
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
-SRCS	:=	$(addprefix $(CONF)/,		\
+SRCS	:=	parsing_tester.cpp					\
+			$(addprefix $(CONF)/,		\
 				Config.cpp				\
 				SpecConfig.cpp			\
 				CommonConfig.cpp		\
@@ -38,7 +37,6 @@ SRCS	:=	$(addprefix $(CONF)/,		\
 			$(addprefix $(CORE)/,		\
 				ClientData.cpp			\
 				Epoll.cpp 				\
-				main.cpp 				\
 				Server.cpp 				\
 				Socket.cpp) 			\
 			$(addprefix $(REQ)/, 		\
@@ -123,13 +121,13 @@ all: header h2 message $(NAME)
 
 $(ODIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
+	@$(CPP) $(INCLUDE_FLAGS) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
 -include ${DEPS}
 
 $(NAME): $(ODIR) $(OBJS)	
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)
+	@$(CPP) $(DFLAGS) $(OBJS) -o $(NAME)
 	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 $(ODIR): 
@@ -149,7 +147,7 @@ push:		header fclean
 	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
 
 clean:		header
-	@rm -rf $(ODIR)
+	@rm -rf $(ODIR) server
 	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
 fclean:		header clean

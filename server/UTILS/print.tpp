@@ -13,7 +13,7 @@
 #include "print.hpp"
 
 template <typename T>
-void printVector(const std::vector<T>& vec) {
+void print_vector(const std::vector<T>& vec) {
 	
     typename std::vector<T>::const_iterator it;
     
@@ -26,16 +26,26 @@ void printVector(const std::vector<T>& vec) {
 }
 
 template <typename KeyType, typename ValueType>
-void printMap(const std::map<KeyType, ValueType>& myMap) {
+void print_map(const std::map<KeyType, ValueType>& myMap) {
 
-    typename std::map<KeyType, ValueType>::const_iterator it;
+	typename std::map<KeyType, ValueType>::const_iterator it;
+	
+	for (it = myMap.begin(); it != myMap.end(); ++it) {
+		std::cout << "map[" << it->first << "] = " << it->second << std::endl;
+	}
+}
+
+template <typename KeyType, typename T>
+void print_map_of_vectors(const std::map<KeyType, T>& myMap) {
+
+    typename std::map<KeyType, T>::const_iterator it;
     
     for (it = myMap.begin(); it != myMap.end(); ++it) {
         
         std::cout << RED << it->first << std::endl;
         
         std::cout << GREEN;
-        printVector(it->second);
+        print_vector(it->second);
         std::cout << NO_COLOR << std::endl;
     }
 }
