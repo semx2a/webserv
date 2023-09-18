@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Config::Config() {
+Config::Config() : _parser("../neoserv/conf/mandatory.conf") {
 
 	_ports.push_back(8080);
 	_ports.push_back(8081);
@@ -11,9 +11,8 @@ Config::Config() {
 	_ports.push_back(8084);
 }
 
-Config::Config(std::string const& conf_file) {
+Config::Config(std::string const& conf_file) : _parser(conf_file){
 
-	(void) conf_file;
 	_ports.push_back(8080);
 	_ports.push_back(8081);
 	_ports.push_back(8082);
@@ -21,7 +20,7 @@ Config::Config(std::string const& conf_file) {
 	_ports.push_back(8084);
 }
 
-Config::Config(Config const& rhs) { *this = rhs; }
+Config::Config(Config const& rhs) : _parser(rhs.getParser()) { *this = rhs; }
 
 Config& Config::operator=(Config const& rhs) { 
 
@@ -37,5 +36,7 @@ Config::~Config() {
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
 std::vector<int>&			Config::getPorts() { return _ports; }
+
+Parser const&				Config::getParser() const { return _parser; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS

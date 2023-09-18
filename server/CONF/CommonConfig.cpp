@@ -4,14 +4,15 @@
 
 CommonConfig::CommonConfig() :
 _clientMaxBodySize(1048576),
-_errorPage("error_page.html"),
-_index("index.neoserv.html"),
 _autoindex("off") {
 
 	this->_locations["/"] = "../www/html";
-	this->_limit_except.push_back("GET");
-	this->_limit_except.push_back("POST");
-	this->_limit_except.push_back("DELETE");
+	this->_errorPages[404] = "../www/html/error/404.html";
+	//NOTE: mettre valeurs par defaut APRES le parsing, SI le vecteur est vide (pareil pour les autres vecteurs)
+	this->_index.push_back("index.html");
+	this->_authorizedMethods.push_back("GET");
+	this->_authorizedMethods.push_back("POST");
+	this->_authorizedMethods.push_back("DELETE");
 }
 
 CommonConfig::CommonConfig(CommonConfig const& rhs) { *this = rhs; }
@@ -30,29 +31,78 @@ CommonConfig::~CommonConfig() {}
 
 size_t										CommonConfig::getClientMaxBodySize(void) const { return this->_clientMaxBodySize; }
  
-std::string const &							CommonConfig::getErrorPage(void) const { return this->_errorPage; }
+std::map<int, std::string> const &			CommonConfig::getErrorPage(void) const { return this->_errorPages; }
 
-std::string const & 						CommonConfig::getIndex(void) const { return this->_index; }
+std::vector<std::string> const & 			CommonConfig::getIndex(void) const { return this->_index; }
+
+std::string const &							CommonConfig::getRoot(void) const { return this->_root; }
 
 std::map<std::string, std::string> const &	CommonConfig::getLocations(void) const { return this->_locations; }
 
 bool										CommonConfig::getAutoindex(void) const { return this->_autoindex; }
 
-std::vector<std::string> const &			CommonConfig::getLimitExcept(void) const { return this->_limit_except; }
+std::vector<std::string> const &			CommonConfig::getAuthorizedMethods(void) const { return this->_authorizedMethods; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
-void	CommonConfig::setClientMaxBodySize(size_t clientMaxBodySize) { this->_clientMaxBodySize = clientMaxBodySize; }
+void	CommonConfig::setClientMaxBodySize(std::string const& line) {
+	
+	std::stringstream	stream(line);
+	std::string			tmp;
 
-void	CommonConfig::setErrorPage(std::string const &errorPage) { this->_errorPage = errorPage; }
+	stream >> tmp >> this->_clientMaxBodySize;
+}
 
-void	CommonConfig::setIndex(std::string const &index) { this->_index = index; }
+void	CommonConfig::setErrorPage(std::string const &line) { 
 
-void	CommonConfig::setLocation(std::string const &location, std::string const &path) { this->_locations[location] = path; }
+	std::stringstream	stream(line);
+	std::string			tmp;
 
-void	CommonConfig::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
+	//todo
+}
 
-void	CommonConfig::setLimitExcept(std::vector<std::string> const &limit_except) { this->_limit_except = limit_except; }
+void	CommonConfig::setIndex(std::string const &line) {
+
+	std::stringstream	stream(line);
+	std::string			tmp;
+
+	stream >> tmp;
+	while (stream >> tmp) {
+		this->_index.push_back(tmp);
+	}
+}
+
+void	CommonConfig::setRoot(std::string const &line) { 
+
+	std::stringstream	stream(line);
+	std::string			tmp;
+
+	stream >> tmp >> this->_root;
+}
+
+void	CommonConfig::setAutoindex(std::string const &line) {
+
+(void)line;
+// find on/off
+}
+
+void	CommonConfig::setAuthorizedMethods(std::string const& line) { 
+
+	std::stringstream	stream(line);
+	std::string			tmp;
+
+	stream >> tmp;
+	while (stream >> tmp) {
+		this->_authorizedMethods.push_back(tmp);
+	}
+}
+
+void	CommonConfig::setLocation(std::stringstream& stream) { 
+	
+	(void)stream;
+//	go through lines until closing bracket
+//	this->_locations[location] = path;
+}
 
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS

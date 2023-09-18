@@ -121,12 +121,12 @@ DEPS				= $(OBJS:.o=.d)
 
 all: header h2 message makeodir $(NAME)
 
--include ${DEPS}
-
 $(ODIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+
+-include ${DEPS}
 
 $(NAME): $(OBJS)	
 	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)

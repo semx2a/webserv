@@ -11,8 +11,10 @@ class SpecConfig : public CommonConfig {
 		SpecConfig& operator=(SpecConfig const& rhs);
 		virtual ~SpecConfig();
 
-		std::map<std::string, int> const&	getListenIpPort(void) const;
-		std::vector<std::string> const&		getServerNames(void) const;
+		std::map<std::string, int> const &		getListenIpPort(void) const;
+		std::vector<std::string> const &		getServerNames(void) const;
+
+		void	setListIpPort(std::string const& line);
 
 	private:
 		std::map<std::string, int> 	_listenIpPort; // <IP, port>

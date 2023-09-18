@@ -25,7 +25,7 @@ SpecConfig::~SpecConfig(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::map<std::string, int> const &	SpecConfig::getListenIpPort(void) const { return this->_listenIpPort; }
+std::map<std::string, int> const &		SpecConfig::getListenIpPort(void) const { return this->_listenIpPort; }
 
 std::vector<std::string> const &		SpecConfig::getServerNames(void) const { return this->_serverNames; }
 

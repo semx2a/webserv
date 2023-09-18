@@ -16,26 +16,29 @@ class CommonConfig {
 		virtual ~CommonConfig();
 
 		size_t										getClientMaxBodySize() const;
-		std::string const&							getErrorPage() const;
-		std::string const&							getIndex() const;
+		std::map<int, std::string> const &			getErrorPage() const;
+		std::vector<std::string> const&				getIndex() const;
+		std::string const&							getRoot() const;
 		std::map<std::string, std::string> const&	getLocations() const;
 		bool										getAutoindex() const;
-		std::vector<std::string> const&				getLimitExcept() const;
+		std::vector<std::string> const&				getAuthorizedMethods() const;
 
-		void		setClientMaxBodySize(size_t clientMaxBodySize);
-		void		setErrorPage(std::string const& errorPage);
-		void		setIndex(std::string const& index);
-		void		setLocation(std::string const& location, std::string const& path);
-		void		setAutoindex(bool autoindex);
-		void		setLimitExcept(std::vector<std::string> const& limit_except);
+		void		setClientMaxBodySize(std::string const& line);
+		void		setErrorPage(std::string const& line);
+		void		setIndex(std::string const& line);
+		void		setRoot(std::string const& line);
+		void		setAutoindex(std::string const& line);
+		void		setAuthorizedMethods(std::string const& line);
+		void		setLocation(std::stringstream& stream);
 
 	private:
 		size_t									_clientMaxBodySize;
-		std::string								_errorPage;
-		std::string								_index;
+		std::map<int, std::string>				_errorPages;
+		std::vector<std::string>				_index;
+		std::string								_root;
 		std::map<std::string, std::string>		_locations;
 		bool									_autoindex;
-		std::vector<std::string>				_limit_except;
+		std::vector<std::string>				_authorizedMethods;
 
 };
 

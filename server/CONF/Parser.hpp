@@ -12,30 +12,44 @@
 class Parser {
 
 	public:
+		Parser(Parser const& rhs);
+		Parser&	operator=(Parser const& rhs);
 		Parser(std::string const& conf_filename);
 		~Parser();
 
 		CommonConfig const &				getCommonConfig(void) const;
 		std::vector<SpecConfig> const &		getSpecConfigs(void) const;
+		std::string const &					getConfFileName(void) const;
+		size_t								getLinesRead(void) const;
 
-		void	parse(std::string const& conf_filename);
-
-		class Error {
-			public:
-				Error(std::string const& msg);
-				~Error() throw();
-				const char* what() const throw();
-			private:
-				std::string _msg;
-		};
+		void	parse();
 
 	private:
 		Parser();
-		Parser(Parser const& rhs);
-		Parser&	operator=(Parser const& rhs);
 
+		size_t						_linesRead;
+		std::string const&			_confFilename;
 		CommonConfig				_CommonConfig;
 		std::vector<SpecConfig>		_SpecConfigs;
+
+		void	parseSpecConfig(std::stringstream& stream);
+	
+	public:
+		class Error : public std::exception {
+			public:
+				Error(std::string msg);
+				virtual ~Error() throw();
+				virtual const char* what() const throw();
+			protected:
+				std::string _msg;
+		};
+
+		class InvalidParam : public Error {
+			public:
+				InvalidParam(std::string const& param, std::string const& confFilename, size_t linesRead);
+				virtual ~InvalidParam() throw();
+		};
+
 };
 
 #endif
