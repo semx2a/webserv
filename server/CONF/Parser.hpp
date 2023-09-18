@@ -28,7 +28,7 @@ class Parser {
 		Parser();
 
 		size_t						_linesRead;
-		std::string const&			_confFilename;
+		std::string		 			_confFilename;
 		CommonConfig				_CommonConfig;
 		std::vector<SpecConfig>		_SpecConfigs;
 

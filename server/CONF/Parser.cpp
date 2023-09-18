@@ -13,19 +13,22 @@ Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilena
 }
 
 Parser::Parser(Parser const &rhs) : _linesRead(rhs.getLinesRead()), _confFilename(rhs.getConfFileName()), _CommonConfig(), _SpecConfigs() {
-	//*this = rhs;
+	*this = rhs;
 }
 
 Parser &	Parser::operator=(Parser const & rhs) {
 
 	if (this != &rhs) {
 
-		//TODO
+		this->_linesRead = rhs.getLinesRead();
+		this->_confFilename = rhs.getConfFileName();
+		this->_CommonConfig = rhs.getCommonConfig();
+		this->_SpecConfigs = rhs.getSpecConfigs();
 	}
 	return *this;
 }
 
-Parser::~Parser(void) {}	
+Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
@@ -57,11 +60,12 @@ void	Parser::parse() {
 			parseSpecConfig(stream);
 		}
 		//else if line with config outside the scope
+		else if (line.find_first_not_of("\t\n ") <= line.find('#'))
+			continue;
 		else {
 			throw Parser::Error("Error: Invalid config file");
 		}
 	}
-	
 }
 
 void	Parser::parseSpecConfig(std::stringstream& stream) {

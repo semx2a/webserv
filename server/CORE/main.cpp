@@ -18,7 +18,7 @@ int main() {
 	// TODO : check argc
 	try {
 		//TODO : handle av[1] or default conf
-		Server	webserv("../conf/mandatory.conf");
+		Server	webserv;
 		
 		webserv.connect();
 	}

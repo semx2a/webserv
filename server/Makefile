@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/17 17:38:55 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/18 17:35:10 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -119,7 +119,7 @@ DEPS				= $(OBJS:.o=.d)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
-all: header h2 message makeodir $(NAME)
+all: header h2 message $(NAME)
 
 $(ODIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
@@ -128,15 +128,14 @@ $(ODIR)/%.o: %.cpp
 
 -include ${DEPS}
 
-$(NAME): $(OBJS)	
+$(NAME): $(ODIR) $(OBJS)	
 	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)
 	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
-makeodir:
+$(ODIR): 
 	@mkdir -p $(ODIR)
 	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
 	
-
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
 
 update:		header fclean
