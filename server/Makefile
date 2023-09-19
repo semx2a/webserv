@@ -182,13 +182,21 @@ clean:		header
 	@rm -rf $(ODIR)
 	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
-cleantest:	header clean
-	@rm -rf $(TODIR)
-	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
-
-fcleantest: header fclean cleantest
+fclean: header clean
 	@rm -f $(TNAME)
 	@echo "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+
+re: header fclean all
+
+cleantest:	header
+	@rm -rf $(TODIR) $(ODIR)
+	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+
+fcleantest: cleantest
+	@rm -f $(TNAME)
+	@echo "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+
+retest:	fcleantest test
 
 header:
 	@echo " ______________________________________________________"
@@ -211,13 +219,6 @@ h2:
 
 message:
 	@make -q $(NAME) && echo "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
-
-re:		header fclean 
-	@make all 
-
-retest:	header fclean fcleantest
-	@make test 
-
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::DEBUG::
 #
