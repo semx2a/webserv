@@ -25,6 +25,7 @@ void	DisplayCommonConfig(CommonConfig const& config) {
 void	DisplaySpecConfig(SpecConfig& specConfig) {
 
 	std::cout << "\033[1;31m--- SpecConfig ---\033[0m" << std::endl;
+	(void)specConfig;
 }
 
 int	main() {
