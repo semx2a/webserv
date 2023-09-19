@@ -6,6 +6,8 @@ Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilena
 
 	try {
 		parse();
+		std::cout << "neoserv: the configuration file " << this->_confFilename << " syntax is ok" << std::endl;
+		std::cout << "neoserv: configuration file " << this->_confFilename << " test is successful" << std::endl;
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;

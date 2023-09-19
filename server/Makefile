@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/18 17:35:10 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/19 23:52:24 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -163,7 +163,7 @@ $(TODIR)%.o: $(TDIR)%.cpp
 -include ${TDEP}
 
 $(TNAME): $(OBJ) $(TOBJ)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(NAME)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
 	@echo "$(HIGREEN)test exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -183,7 +183,7 @@ clean:		header
 	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
 fclean: header clean
-	@rm -f $(TNAME)
+	@rm -f $(NAME)
 	@echo "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
 
 re: header fclean all
@@ -192,9 +192,9 @@ cleantest:	header
 	@rm -rf $(TODIR) $(ODIR)
 	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
-fcleantest: cleantest
+fcleantest: cleantest8
 	@rm -f $(TNAME)
-	@echo "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo "$(HIORANGE)$(TNAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
 
 retest:	fcleantest test
 
