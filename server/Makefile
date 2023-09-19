@@ -14,15 +14,14 @@
 
 PROJ	:=	
 
-ODIR	:=	$(addprefix $(PROJ), .obj)
+SDIR	:=	$(addprefix $(PROJ), src/)
+ODIR	:=	$(addprefix $(PROJ), obj/)
 
-CONF	:=	$(addprefix $(PROJ), CONF)
-CORE	:=	$(addprefix $(PROJ), CORE)
-REQ		:=	$(addprefix $(PROJ), REQUEST)
-REP		:=	$(addprefix $(PROJ), RESPONSE)
-UTILS	:=	$(addprefix $(PROJ), UTILS)
-
-# TDIR	:=	$(addprefix $(PROJ), templates))
+CONF	:=	$(addprefix $(SDIR), conf/)
+CORE	:=	$(addprefix $(SDIR), core/)
+REQ		:=	$(addprefix $(SDIR), request/)
+REP		:=	$(addprefix $(SDIR), response/)
+UTILS	:=	$(addprefix $(SDIR), utils/)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
 
@@ -30,25 +29,27 @@ NAME	:=	webserv
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
-SRCS	:=	$(addprefix $(CONF)/,		\
+SRC		:=	$(addprefix $(CONF),		\
 				Config.cpp				\
 				SpecConfig.cpp			\
 				CommonConfig.cpp		\
 				Parser.cpp)				\
-			$(addprefix $(CORE)/,		\
+			$(addprefix $(CORE),		\
 				ClientData.cpp			\
 				Epoll.cpp 				\
 				main.cpp 				\
 				Server.cpp 				\
 				Socket.cpp) 			\
-			$(addprefix $(REQ)/, 		\
+			$(addprefix $(REQ), 		\
 				Request.cpp)			\
-			$(addprefix $(REP)/,		\
+			$(addprefix $(REP),			\
 				Response.cpp)			\
-			$(addprefix $(UTILS)/,		\
+			$(addprefix $(UTILS),		\
 				print.cpp)
 
-OBJS	:=	$(SRCS:%.cpp=$(ODIR)/%.o)
+#SRC		:=	$(addprefix $(SDIR), $(FILES))
+#OBJ		:=	$(subst $(ODIR), $(SDIR), SRC:%.cpp=%.o)
+OBJ := $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(SRC))
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
 
@@ -108,79 +109,81 @@ INDENT			=	awk -F ':' '{ printf "%-61s %s\n", $$1 ":", $$2 }'
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PARAMS::
 
-INCLUDE_FLAGS		= $(addprefix -I,	\
+INCLUDE_FLAGS	= $(addprefix -I,	\
 						$(CORE)			\
 						$(CONF)			\
 						$(REQ)			\
 						$(REP)			\
 						$(UTILS))
 
-DEPS				= $(OBJS:.o=.d)
+DEP				= $(OBJ:.o=.d)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
 all: header h2 message $(NAME)
 
-$(ODIR)/%.o: %.cpp
+$(ODIR):
+	@mkdir -p $(dir $@)
+	@echo "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+
+$(OBJ): | $(ODIR)
+
+$(ODIR)%.o: $(SDIR)%.cpp
 	@mkdir -p $(dir $@)
 	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
--include ${DEPS}
+-include ${DEP}
 
-$(NAME): $(ODIR) $(OBJS)	
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJS) -o $(NAME)
-	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
+$(NAME): $(OBJ)	
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJ) -o $(NAME)
+	@echo "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
-$(ODIR): 
-	@mkdir -p $(ODIR)
-	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
-	
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
 
 update:		header fclean
 	@git pull
 
 push:		header fclean
-	@echo -e "$(HIGREEN)"
+	@echo "$(HIGREEN)"
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
 
 clean:		header
 	@rm -rf $(ODIR)
-	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
 fclean:		header clean
 	@rm -f $(NAME)
-	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
 
 header:
-	@echo -e " ______________________________________________________"
-	@echo -e "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
-	@echo -e "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
-	@echo -e "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
-	@echo -e "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
-	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
-	@echo -e "|     \_____________________________________________________\ "
-	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
-	@echo -e "|    /$(BLACK)                                                   /$(NO_COLOR) / "
-	@echo -e "|   /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
-	@echo -e "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
-	@echo -e "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
-	@echo -e "|/____________________________________________________\/ "
-	@echo -e ""
+	@echo " ______________________________________________________"
+	@echo "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
+	@echo "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
+	@echo "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
+	@echo "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
+	@echo "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
+	@echo "|     \_____________________________________________________\ "
+	@echo "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
+	@echo "|    /$(BLACK)                                                   /$(NO_COLOR) / "
+	@echo "|   /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
+	@echo "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
+	@echo "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
+	@echo "|/____________________________________________________\/ "
+	@echo ""
 
 h2:
-	@echo -e "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
+	@echo "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
 
 message:
-	@make -q $(NAME) && echo -e "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
+	@make -q $(NAME) && echo "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
 
 re:		header fclean 
 	@make all 
 
--include $(DEPS)
+-include $(DEP)
 
 .PHONY:	all bonus clean fclean re push update o_dir h1 h2 header 
