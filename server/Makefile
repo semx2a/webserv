@@ -37,7 +37,6 @@ SRC		:=	$(addprefix $(CONF),		\
 			$(addprefix $(CORE),		\
 				ClientData.cpp			\
 				Epoll.cpp 				\
-				main.cpp 				\
 				Server.cpp 				\
 				Socket.cpp) 			\
 			$(addprefix $(REQ), 		\
@@ -47,9 +46,11 @@ SRC		:=	$(addprefix $(CONF),		\
 			$(addprefix $(UTILS),		\
 				print.cpp)
 
-#SRC		:=	$(addprefix $(SDIR), $(FILES))
-#OBJ		:=	$(subst $(ODIR), $(SDIR), SRC:%.cpp=%.o)
-OBJ := $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(SRC))
+OBJ 	:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(SRC))
+
+MAIN	:=	$(addprefix $(SDIR), main.cpp)
+MAIN_OBJ := $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(MAIN))
+MAIN_DEP := $(patsubst $(SDIR)%.cpp,$(ODIR)%.d,$(MAIN))
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
 
@@ -135,8 +136,8 @@ $(ODIR)%.o: $(SDIR)%.cpp
 
 -include ${DEP}
 
-$(NAME): $(OBJ)	
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJ) -o $(NAME)
+$(NAME): $(OBJ)	$(MAIN_OBJ)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(OBJ) $(MAIN_OBJ) -o $(NAME)
 	@echo "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -184,6 +185,44 @@ message:
 re:		header fclean 
 	@make all 
 
--include $(DEP)
+
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::DEBUG::
+
+TDIR	:=	$(addprefix $(PROJ), test/)
+
+TSDIR	:= $(addprefix $(TDIR), src/)
+TSRC	:= $(addprefix $(TDIR), parsing_tester.cpp)
+
+TODIR	:= $(addprefix $(TDIR), obj/)
+TOBJ	:= $(patsubst $(TDIR)%.cpp,$(TODIR)%.o,$(TSRC))
+#TOBJ 	+= $(OBJ)
+
+TDEP	:= $(patsubst $(TSDIR)%.cpp,$(TODIR)%.d,$(TSRC))
+
+$(TOBJ): | $(TODIR)
+
+$(TODIR):
+	@mkdir -p $(dir $@)
+	@echo "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+
+$(TODIR)%.o: $(TSDIR)%.cpp
+	@mkdir -p $(dir $@)
+	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) $(DFLAGS) $(TOBJ) -c $< -o $@ 
+	@echo "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+
+debug_parsing: $(OBJ) $(TOBJ)
+	$(info TOBJ is $(TOBJ))
+	@$(CPP) $(WFLAGS) $(OBJ) $(TOBJ) -o $(NAME)
+	@echo "$(HIGREEN)debug parsing:[OK]$(NO_COLOR)" | $(INDENT)
+
+clean_debug_parsing:
+	@rm -rf $(TODIR) $(ODIR) 
+	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+
+fclean_debug_parsing: clean_debug_parsing
+	@rm -f $(NAME)
+	@echo "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+
+re_debug_parsing: fclean_debug_parsing debug_parsing
 
 .PHONY:	all bonus clean fclean re push update o_dir h1 h2 header 
