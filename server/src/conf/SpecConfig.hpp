@@ -19,9 +19,8 @@ class SpecConfig : public CommonConfig {
 	private:
 		std::map<std::string, int> 	_listenIpPort; // <IP, port>
 		std::vector<std::string>	_serverNames;
-		
-
-
 };
+
+std::ostream &	operator<<(std::ostream & o, SpecConfig const & sc);
 
 #endif

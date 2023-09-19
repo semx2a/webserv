@@ -56,33 +56,48 @@ std::string custom_width (int width, char c, std::string const&  content) {
 	return result;
 }
 
-void	print_str (std::string buffer) {
+std::string	print_str (std::string buffer) {
 
-	std::string const& str ("Received: ");
-	std::cout << str << buffer << std::endl;
+	std::stringstream sstr;
+
+	std::string str ("Received: ");
+	sstr << str << buffer;
+	return sstr.str();
 }
 
-void	print_vector_of_char (std::vector <char>& buffer) {
+std::string		print_vector_of_char (std::vector <char>& buffer) {
 
-	std::string const& str ("Received: ");
-	std::cout << str << &buffer[0] << std::endl;
+	std::stringstream sstr;
+
+	std::string	 str ("Received: ");
+	sstr << str << &buffer[0];
+	return sstr.str();
 }
 
-void	display_client_added () {
+std::string		print_client_added () {
 
-	std::string const& str ("New client added");
-	std::cout << PURPLE << str << NO_COLOR << std::endl;
+	std::stringstream sstr;
+
+	std::string	 str ("New client added");
+	sstr << PURPLE << str << NO_COLOR;
+	return sstr.str();
 }
 
-void	display_end_connexion () {
+std::string		print_end_connexion () {
 
-	std::string const& str ("End of connection with a client");
-	std::cout << PURPLE << str << NO_COLOR << std::endl;
+	std::stringstream sstr;
+
+	std::string	 str ("End of connection with a client");
+	sstr << PURPLE << str << NO_COLOR;
+	return sstr.str();
 }
 
-void	display_wait () {
+std::string		print_wait () {
 
-//	std::string const& str (" Waiting for connections...");
-//	std::cout << "\n" << GREEN << custom_width (68, ':', str) << str << NO_COLOR << std::endl;
+	std::stringstream sstr;
+
+	std::string	 str (" Waiting for connections...");
+	sstr << "\n" << GREEN << custom_width (68, ':', str) << str << NO_COLOR;
+	return sstr.str();
 }
 

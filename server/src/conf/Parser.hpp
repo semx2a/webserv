@@ -29,8 +29,8 @@ class Parser {
 
 		size_t						_linesRead;
 		std::string		 			_confFilename;
-		CommonConfig				_CommonConfig;
-		std::vector<SpecConfig>		_SpecConfigs;
+		CommonConfig				_commonConfig;
+		std::vector<SpecConfig>		_specConfigs;
 
 		void	parseSpecConfig(std::stringstream& stream);
 	

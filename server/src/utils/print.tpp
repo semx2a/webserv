@@ -13,39 +13,45 @@
 #include "print.hpp"
 
 template <typename T>
-void print_vector(const std::vector<T>& vec) {
+std::string	 print_vector(const std::vector<T>& vec) {
 	
     typename std::vector<T>::const_iterator it;
+	std::stringstream 						sstream;
     
 	for (it = vec.begin(); it != vec.end(); ++it) {
         
-        std::cout << *it << std::endl;
+        sstream << *it << " ";
     }
     
-	std::cout << std::endl;
+	sstream << std::endl;
+	return sstream.str();
 }
 
 template <typename KeyType, typename ValueType>
-void print_map(const std::map<KeyType, ValueType>& myMap) {
+std::string	 print_map(const std::map<KeyType, ValueType>& myMap) {
 
-	typename std::map<KeyType, ValueType>::const_iterator it;
+	typename std::map<KeyType, ValueType>::const_iterator	it;
+	std::stringstream 										sstream;
 	
 	for (it = myMap.begin(); it != myMap.end(); ++it) {
-		std::cout << "map[" << it->first << "] = " << it->second << std::endl;
+		sstream << "map[" << it->first << "] = " << it->second << " ";
 	}
+	return sstream.str();
 }
 
 template <typename KeyType, typename T>
-void print_map_of_vectors(const std::map<KeyType, T>& myMap) {
+std::string	 print_map_of_vectors(const std::map<KeyType, T>& myMap) {
 
-    typename std::map<KeyType, T>::const_iterator it;
+    typename std::map<KeyType, T>::const_iterator	it;
+	std::stringstream 								sstream;
     
     for (it = myMap.begin(); it != myMap.end(); ++it) {
         
-        std::cout << RED << it->first << std::endl;
+        sstream << RED << it->first << std::endl;
         
-        std::cout << GREEN;
+        sstream << GREEN;
         print_vector(it->second);
-        std::cout << NO_COLOR << std::endl;
+        sstream << NO_COLOR << std::endl;
     }
+	return sstream.str();
 }

@@ -2,7 +2,7 @@
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORRS::
 
-Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _CommonConfig(), _SpecConfigs()  {
+Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _commonConfig(), _specConfigs()  {
 
 	try {
 		parse();
@@ -12,7 +12,7 @@ Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilena
 	}
 }
 
-Parser::Parser(Parser const &rhs) : _linesRead(rhs.getLinesRead()), _confFilename(rhs.getConfFileName()), _CommonConfig(), _SpecConfigs() {
+Parser::Parser(Parser const &rhs) : _linesRead(rhs.getLinesRead()), _confFilename(rhs.getConfFileName()), _commonConfig(), _specConfigs() {
 	*this = rhs;
 }
 
@@ -22,8 +22,8 @@ Parser &	Parser::operator=(Parser const & rhs) {
 
 		this->_linesRead = rhs.getLinesRead();
 		this->_confFilename = rhs.getConfFileName();
-		this->_CommonConfig = rhs.getCommonConfig();
-		this->_SpecConfigs = rhs.getSpecConfigs();
+		this->_commonConfig = rhs.getCommonConfig();
+		this->_specConfigs = rhs.getSpecConfigs();
 	}
 	return *this;
 }
@@ -32,9 +32,9 @@ Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-CommonConfig const &			Parser::getCommonConfig(void) const { return this->_CommonConfig; }
+CommonConfig const &			Parser::getCommonConfig(void) const { return this->_commonConfig; }
 
-std::vector<SpecConfig> const &	Parser::getSpecConfigs(void) const { return this->_SpecConfigs; }
+std::vector<SpecConfig> const &	Parser::getSpecConfigs(void) const { return this->_specConfigs; }
 
 std::string const &				Parser::getConfFileName(void) const { return this->_confFilename; }
 
@@ -107,6 +107,8 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 			throw Parser::InvalidParam(param, _confFilename, _linesRead);
 		}
 	}
+	_specConfigs.push_back(server);
+	std::cout << _specConfigs[0] << std::endl;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::

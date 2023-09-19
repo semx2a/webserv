@@ -63,21 +63,21 @@ void			log (int client_fd, std::string str);
 std::string		str_of(size_t size, const std::string & c);
 std::string		custom_width (int width, char c, std::string const& content);
 
-void			print_vector_of_char (std::vector <char>& buffer);
-void			print_str (std::string buffer);
+std::string 	print_vector_of_char (std::vector <char>& buffer);
+std::string 	print_str (std::string buffer);
 
-void	   	 	display_client_added ();
-void	   	 	display_end_connexion ();
-void	   	 	display_wait ();
+std::string	   	print_client_added ();
+std::string	   	print_end_connexion ();
+std::string	   	print_wait ();
 
 template <typename T>
-void print_vector(const std::vector<T>& vec);
+std::string print_vector(const std::vector<T>& vec);
 
 template <typename KeyType, typename ValueType>
-void print_map(const std::map<KeyType, ValueType>& myMap);
+std::string print_map(const std::map<KeyType, ValueType>& myMap);
 
 template <typename KeyType, typename T>
-void print_map_of_vectors(const std::map<KeyType, T>& myMap);
+std::string print_map_of_vectors(const std::map<KeyType, T>& myMap);
 
 # include "print.tpp"
 

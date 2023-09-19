@@ -32,3 +32,13 @@ std::vector<std::string> const &		SpecConfig::getServerNames(void) const { retur
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
 
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::
+
+std::ostream &	operator<<(std::ostream & o, SpecConfig const & sc) {
+
+	std::cout << "coucou" << std::endl;
+	o << RED << "listenIpPort =\t" << GREEN << print_map(sc.getListenIpPort()) << std::endl;
+	o << RED << "serverNames =\t" << GREEN << print_vector(sc.getServerNames()) << std::endl;
+	return o;
+}

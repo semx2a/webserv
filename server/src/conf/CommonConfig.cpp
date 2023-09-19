@@ -6,7 +6,6 @@ CommonConfig::CommonConfig() :
 _clientMaxBodySize(1048576),
 _autoindex("off") {
 
-std::cout << "ClientMaxBodySize: " << this->_clientMaxBodySize << std::endl;
 	this->_locations["/"] = "../www/html";
 	this->_errorPages[404] = "../www/html/error/404.html";
 	//NOTE: mettre valeurs par defaut APRES le parsing, SI le vecteur est vide (pareil pour les autres vecteurs)
@@ -48,11 +47,10 @@ std::vector<std::string> const &			CommonConfig::getAuthorizedMethods(void) cons
 
 void	CommonConfig::setClientMaxBodySize(std::string const& line) {
 	
-(void)line;
-//	std::stringstream	stream(line);
-//	std::string			tmp;
-//
-//	stream >> tmp >> this->_clientMaxBodySize;
+	std::stringstream	stream(line);
+	std::string			tmp;
+
+	stream >> tmp >> this->_clientMaxBodySize;
 }
 
 void	CommonConfig::setErrorPage(std::string const &line) { 
@@ -106,6 +104,20 @@ void	CommonConfig::setLocation(std::stringstream& stream) {
 //	this->_locations[location] = path;
 }
 
-
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::
+
+std::ostream &	operator<<(std::ostream & o, CommonConfig const & cc) {
+
+	o << HIPURPLE << "clientMaxBodySize: " << NO_COLOR << cc.getClientMaxBodySize() << std::endl;
+	o << HIPURPLE << "errorPages: " << NO_COLOR << print_map(cc.getErrorPages()) << std::endl;
+	o << HIPURPLE << "index: " << NO_COLOR << print_vector(cc.getIndex()) << std::endl;
+	o << HIPURPLE << "root: " << NO_COLOR << cc.getRoot() << std::endl;
+	o << HIPURPLE << "locations: " << NO_COLOR << print_map(cc.getLocations()) << std::endl;
+	o << HIPURPLE << "autoindex: " << NO_COLOR << cc.getAutoindex() << std::endl;
+	o << HIPURPLE << "authorizedMethods: " << NO_COLOR << print_vector(cc.getAuthorizedMethods()) << std::endl;
+	return o;
+
+}

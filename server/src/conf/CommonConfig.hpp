@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "print.hpp"
+
 class CommonConfig {
 
 	public:
@@ -42,5 +44,7 @@ class CommonConfig {
 		std::vector<std::string>				_authorizedMethods;
 
 };
+
+std::ostream &	operator<<(std::ostream & o, CommonConfig const & cc);
 
 #endif
