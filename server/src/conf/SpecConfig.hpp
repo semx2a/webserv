@@ -17,8 +17,8 @@ class SpecConfig : public CommonConfig {
 		std::map<std::string, int> const &		getListenIpPort(void) const;
 		std::vector<std::string> const &		getServerNames(void) const;
 
-		void	setListIpPort(std::string const& line);
-		void	setServerName(std::string const& line);
+		void	setListIpPort(std::string const& ip, int port);
+		void	setServerName(std::string const& serverName);
 
 
 	private:

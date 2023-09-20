@@ -4,7 +4,8 @@
 
 SpecConfig::SpecConfig() : CommonConfig(), _listenIpPort(), _serverNames() {
 
-	this->_listenIpPort["127.0.0.1"] = 80;
+//If the directive is not present then either *:80 is used if nginx runs with the superuser privileges, or *:8000 otherwise.
+	this->_listenIpPort["*"] = 80;
 	this->_serverNames.push_back("localhost");
 }
 
@@ -32,46 +33,11 @@ std::map<std::string, int> const &		SpecConfig::getListenIpPort(void) const { re
 
 std::vector<std::string> const &		SpecConfig::getServerNames(void) const { return this->_serverNames; }
 
-void	SpecConfig::setListIpPort(std::string const& line) {
-	
-	std::stringstream	stream(line);
-	std::string			listen;
-	std::string			ip;
-	int					port;
+void	SpecConfig::setListIpPort(std::string const& ip, int port) { this->_listenIpPort[ip] = port; }
 
-	std::map<std::string, int>::iterator it = this->_listenIpPort.begin();
-	if (it->first == "127.0.0.1" && it->second == 80)
-		this->_listenIpPort.erase(it);
-
-	stream >> listen;
-	if (stream.str().find(':') != std::string::npos)
-	{
-		std::getline(stream, ip, ':');
-		ip = ip.substr(ip.find_first_not_of(" \t"), ip.size());
-		if (!Parser::isValidIPv4(ip) && !Parser::isValidIPv6(ip))
-			throw Parser::InvalidParam(ip, "listen", 0);
-	}
-	stream >> port;
-	this->_listenIpPort[ip] = port;
-}
-
-void	SpecConfig::setServerName(std::string const& line) {
-
-	std::stringstream	stream(line);
-	std::string			tmp;
-	std::string			serverName;
-
-	std::vector<std::string>::iterator it = this->_serverNames.begin();
-	if (*it == "localhost")
-		this->_serverNames.erase(it);
-	
-	stream >> tmp >> serverName;
-	this->_serverNames.push_back(serverName);
-}
+void	SpecConfig::setServerName(std::string const& serverName) { this->_serverNames.push_back(serverName); }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
-
-
 
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::

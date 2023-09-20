@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/20 11:28:52 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/20 17:27:52 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,21 @@
 
 template <typename T>
 std::string	 print_vector(const std::vector<T>& vec) {
+	
+    typename std::vector<T>::const_iterator it;
+	std::stringstream 						sstream;
+    
+	for (it = vec.begin(); it != vec.end(); ++it) {
+        
+        sstream << *it;
+		if (it + 1 != vec.end())
+			sstream << ", ";
+    }
+	return sstream.str();
+}
+
+template <typename T>
+std::string	 print_classVector(const std::vector<T>& vec) {
 	
     typename std::vector<T>::const_iterator it;
 	std::stringstream 						sstream;

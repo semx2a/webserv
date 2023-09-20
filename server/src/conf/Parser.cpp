@@ -60,6 +60,7 @@ void	Parser::parse() {
 	std::string line;
 	while (std::getline(stream, line, '\n')) {
 
+		this->_linesRead++;
 		if (line.find("server {") != std::string::npos) {
 			parseSpecConfig(stream);
 		}
@@ -79,31 +80,26 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 
 	while (std::getline(stream, line, '\n')) {
 
-		_linesRead++;
-		std::cout << _linesRead << " " << line << std::endl;
+		this->_linesRead++;
 		if (line.find("location") != std::string::npos) {
 			// find location, in another function that getline until the closing bracket
 		}
 		else if (line.find(';') != line.find('\n') - 1)
 		{
 			if (line.find('}') != std::string::npos && line.find_first_not_of("} \t") == std::string::npos) {
-				std::cout << "end of server scope" << std::endl;
 				break ;
 			}	
 			else if (line.find("listen") != std::string::npos) {
-				std::cout << "listen" << std::endl;
-				server.setListIpPort(line);
+				this->parseListen(line, server);
+				//this->isValidIPv6(server.getListenIpPort().begin()->first);
 			}
 			else if (line.find("server_name") != std::string::npos) {
-				std::cout << "serverName" << std::endl;
 				server.setServerName(line);
 			}
 			else if (line.find("error_page") != std::string::npos) {
-				std::cout << "errorPage" << std::endl;
 				server.setErrorPage(line);
 			}
 			else if (line.find("root") != std::string::npos) {
-				std::cout << "root" << std::endl;
 				server.setRoot(line);
 			}
 		}
@@ -113,89 +109,125 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 		else {
 			std::string param = line.substr(0, line.find_first_of(" \t"));
 			param.substr(0, param.find_first_of(";"));
-			throw Parser::InvalidParam(param, _confFilename, _linesRead);
+			std::string err = "Error: Invalid parameter " + param;
+			throw Parser::InvalidParam(err, *this);
 		}
 	}	
 	this->_specConfigs.push_back(server);
 }
 
-bool Parser::isValidIPv4(const std::string& str) {
+void	Parser::parseListen(std::string const& line, SpecConfig& server) {
+
+	std::stringstream	stream(line);
+	std::string			listen;
+	std::string			ip;
+	int					port(80); //If only address is given, the port 80 is used.
+
+//	std::map<std::string, int>::iterator it = this->_listenIpPort.begin();
+//	if (it->first == "127.0.0.1" && it->second == 80)
+//		this->_listenIpPort.erase(it);
+
+	stream >> listen;
+	if (stream.str().find(':') != std::string::npos)
+	{
+		std::getline(stream, ip, ':');
+		ip = ip.substr(ip.find_first_not_of(" \t"), ip.size());
+		this->isValidIPv4(ip);
+	}
+	stream >> port;
+	server.setListIpPort(ip, port);
+}
+
+void Parser::parseServerName(std::string const& line, SpecConfig& server) {
+
+	std::stringstream	stream(line);
+	std::string			tmp;
+	std::string			serverName;
+
+//	std::vector<std::string>::iterator it = server.getServerNames().begin();
+//	if (*it == "localhost")
+//		server.getServerNames().erase(it);
 	
-	std::istringstream iss(str);
+	stream >> tmp >> serverName;
+	serverName = serverName.substr(0, serverName.find_first_of(";"));
+	server.setServerName(serverName);
+}
+
+void Parser::isValidIPv4(const std::string& ip) {
+	
+	std::istringstream iss(ip);
 	std::string octet;
+	std::string err("Invalid IP address " + ip);
 	int count = 0;
 
 	while (std::getline(iss, octet, '.')) {
 		++count;
 
 		if (count > 4) {
-			return false;
+			throw Parser::InvalidParam(err, *this);
 		}
 
 		for (std::string::const_iterator it = octet.begin(); it != octet.end(); ++it) {
 			if (!std::isdigit(*it)) {
-				return false;
+				throw Parser::InvalidParam(err, *this);
 			}
 		}
 
 		int num = std::atoi(octet.c_str());
 		if (num < 0 || num > 255) {
-			return false;
+			throw Parser::InvalidParam(err, *this);
 		}
 	}
 
 	if (count != 4) {
-		return false;
+		throw Parser::InvalidParam(err, *this);
 	}
-
-	return true;
 }
 
-bool Parser::isValidIPv6(const std::string& str) {
+void Parser::isValidIPv6(const std::string& ip) {
 	
-	std::istringstream iss(str);
+	std::istringstream iss(ip);
 	std::string block;
+	std::string err("Invalid IP address " + ip);
 	int count = 0;
 	int doubleColonCount = 0;
 
-	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+	for (std::string::const_iterator it = ip.begin(); it != ip.end(); ++it) {
 		if (*it == ':') {
-			if (it + 1 != str.end() && *(it + 1) == ':') {
+			if (it + 1 != ip.end() && *(it + 1) == ':') {
 				++doubleColonCount;
 			}
 		}
 	}
 
 	if (doubleColonCount > 1) {
-		return false;
+		throw Parser::InvalidParam(err, *this);
 	}
 	while (std::getline(iss, block, ':')) {
 		
 		++count;
 
 		if (count > 8) {
-			return false;
+			throw Parser::InvalidParam(err, *this);
 		}
 		if (block.empty()) {
 			continue;
 		}
 		if (block.length() > 4) {
-			return false;
+			throw Parser::InvalidParam(err, *this);
 		}
 
 		for (std::string::const_iterator it = block.begin(); it != block.end(); ++it) {
 			char c = std::tolower(*it);
 			if (!std::isdigit(c) && (c < 'a' || c > 'f')) {
-				return false;
+				throw Parser::InvalidParam(err, *this);
 			}
 		}
 	}
 
 	if (count < 8 && doubleColonCount == 0) {
-		return false;
+		throw Parser::InvalidParam(err, *this);
 	}
-
-	return true;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
@@ -206,13 +238,13 @@ Parser::Error::~Error() throw() {}
 
 const char* Parser::Error::what() const throw() { return _msg.c_str(); }
 
-Parser::InvalidParam::InvalidParam(std::string const& param, std::string const& confFilename, size_t linesRead) : Error("") { 
+Parser::InvalidParam::InvalidParam(std::string const& err, Parser const &p) : Error("") { 
 
 	std::stringstream stream;
 
-	stream << "invalid parameter \"" << param + " in " + confFilename + ":";
-	stream << linesRead << std::endl;
-	stream << "neoserv: configuration file " << confFilename << " test failed" << std::endl;
+	stream << "neoserv: " << err << " in " + p.getConfFileName() + ":";
+	stream << p.getLinesRead() << std::endl;
+	stream << "neoserv: configuration file " << p.getConfFileName() << " test failed" << std::endl;
 
 	_msg = stream.str();
 }

@@ -25,7 +25,7 @@ int	main() {
 	std::cout << parser.getCommonConfig() << std::endl;
 
 	std::cout << RED << "--- SpecConfig ---" << NO_COLOR << std::endl;
-	std::cout << print_vector(parser.getSpecConfigs()) << std::endl;
+	std::cout << print_classVector(parser.getSpecConfigs()) << std::endl;
 
 	return 0;
 }

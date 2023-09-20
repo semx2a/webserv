@@ -26,9 +26,11 @@ class Parser {
 		std::string const &					getConfFileName(void) const;
 		size_t								getLinesRead(void) const;
 
-		void		parse();
-		static bool	isValidIPv4(const std::string& str);
-		static bool	isValidIPv6(const std::string& str);
+		void	parse();
+		void	parseListen(std::string const& line, SpecConfig& specConfig);
+		void	parseServerName(std::string const& line, SpecConfig& specConfig);
+		void	isValidIPv4(const std::string& str);
+		void	isValidIPv6(const std::string& str);
 
 
 	private:
@@ -53,7 +55,7 @@ class Parser {
 
 		class InvalidParam : public Error {
 			public:
-				InvalidParam(std::string const& param, std::string const& confFilename, size_t linesRead);
+				InvalidParam(std::string const& err, Parser const& p);
 				virtual ~InvalidParam() throw();
 		};
 
