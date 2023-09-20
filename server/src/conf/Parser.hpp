@@ -18,7 +18,7 @@ class Parser {
 		~Parser();
 
 		CommonConfig const &				getCommonConfig(void) const;
-		std::vector<SpecConfig> const &		getSpecConfigs(void) const;
+		std::vector<SpecConfig> const &	getSpecConfigs(void) const;
 		std::string const &					getConfFileName(void) const;
 		size_t								getLinesRead(void) const;
 
@@ -27,10 +27,10 @@ class Parser {
 	private:
 		Parser();
 
-		size_t						_linesRead;
-		std::string		 			_confFilename;
-		CommonConfig				_commonConfig;
-		std::vector<SpecConfig>		_specConfigs;
+		size_t					_linesRead;
+		std::string		 		_confFilename;
+		CommonConfig			_commonConfig;
+		std::vector<SpecConfig>	_specConfigs;
 
 		void	parseSpecConfig(std::stringstream& stream);
 	

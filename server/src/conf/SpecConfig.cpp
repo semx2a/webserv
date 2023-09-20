@@ -16,6 +16,9 @@ SpecConfig::SpecConfig(SpecConfig const &rhs) : CommonConfig() {
 SpecConfig &	SpecConfig::operator=(SpecConfig const & rhs) {
 
 	if (this != &rhs) {
+		
+		this->_listenIpPort = rhs.getListenIpPort();
+		this->_serverNames = rhs.getServerNames();
 	}
 	return *this;
 } 

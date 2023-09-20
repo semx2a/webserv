@@ -2,6 +2,8 @@
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORRS::
 
+Parser::Parser() : _linesRead(0), _confFilename(), _commonConfig(), _specConfigs() {}
+
 Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _commonConfig(), _specConfigs()  {
 
 	try {
@@ -34,13 +36,13 @@ Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-CommonConfig const &			Parser::getCommonConfig(void) const { return this->_commonConfig; }
+CommonConfig const &				Parser::getCommonConfig(void) const { return this->_commonConfig; }
 
-std::vector<SpecConfig> const &	Parser::getSpecConfigs(void) const { return this->_specConfigs; }
+std::vector<SpecConfig> const &		Parser::getSpecConfigs(void) const { return this->_specConfigs; }
 
-std::string const &				Parser::getConfFileName(void) const { return this->_confFilename; }
+std::string const &					Parser::getConfFileName(void) const { return this->_confFilename; }
 
-size_t							Parser::getLinesRead(void) const { return this->_linesRead; }
+size_t								Parser::getLinesRead(void) const { return this->_linesRead; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
@@ -72,7 +74,7 @@ void	Parser::parse() {
 
 void	Parser::parseSpecConfig(std::stringstream& stream) {
 
-	SpecConfig	server;
+	SpecConfig 	server;
 	std::string line;
 
 	while (std::getline(stream, line, '\n')) {
@@ -109,8 +111,7 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 			throw Parser::InvalidParam(param, _confFilename, _linesRead);
 		}
 	}
-	_specConfigs.push_back(server);
-	std::cout << _specConfigs[0] << std::endl;
+	this->_specConfigs.push_back(server);
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::

@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/19 23:52:24 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/20 11:18:52 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -134,14 +134,14 @@ $(OBJ): | $(ODIR)
 
 $(ODIR)%.o: $(SDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(INC) -c $< -o $@ 
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
 	@echo "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
 -include ${DEP}
 -include ${MDEP}
 
 $(NAME): $(OBJ)	$(MOBJ)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(MOBJ) -o $(NAME)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(OBJ) $(MOBJ) -o $(NAME)
 	@echo "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
@@ -156,7 +156,7 @@ $(TOBJ): | $(TODIR)
 
 $(TODIR)%.o: $(TDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(INC) -c $< -o $@ 
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
 	@echo "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
 -include ${DEP}
@@ -212,7 +212,11 @@ header:
 	@echo "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
 	@echo "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
 	@echo "|/____________________________________________________\/ "
-	@echo ""
+	@echo "  \                \ \                 \ \            \ "
+	@echo "   \                \ \                 \ \            \ "
+	@echo "    \                \ \                 \ \            \ "
+	@echo "     \________________\_\__             __\_\____________\ "
+	@echo "                           🮡  _________/                    "
 
 h2:
 	@echo "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
