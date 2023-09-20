@@ -2,9 +2,9 @@
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORRS::
 
-Parser::Parser() : _linesRead(0), _confFilename(), _commonConfig(), _specConfigs() {}
+Parser::Parser() : _linesRead(0), _confFilename(), _serverContexts() {}
 
-Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _commonConfig(), _specConfigs()  {
+Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _serverContexts() {
 
 	try {
 		parse();
@@ -16,7 +16,7 @@ Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilena
 	}
 }
 
-Parser::Parser(Parser const &rhs) : _linesRead(rhs.getLinesRead()), _confFilename(rhs.getConfFileName()), _commonConfig(), _specConfigs() {
+Parser::Parser(Parser const &rhs) {
 	*this = rhs;
 }
 
@@ -26,8 +26,7 @@ Parser &	Parser::operator=(Parser const & rhs) {
 
 		this->_linesRead = rhs.getLinesRead();
 		this->_confFilename = rhs.getConfFileName();
-		this->_commonConfig = rhs.getCommonConfig();
-		this->_specConfigs = rhs.getSpecConfigs();
+		this->_serverContexts = rhs.getServerContexts();
 	}
 	return *this;
 }
@@ -36,9 +35,7 @@ Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-CommonConfig const &				Parser::getCommonConfig(void) const { return this->_commonConfig; }
-
-std::vector<SpecConfig> const &		Parser::getSpecConfigs(void) const { return this->_specConfigs; }
+std::vector<ServerContext> const &		Parser::getServerContexts(void) const { return this->_serverContexts; }
 
 std::string const &					Parser::getConfFileName(void) const { return this->_confFilename; }
 
@@ -62,7 +59,7 @@ void	Parser::parse() {
 
 		this->_linesRead++;
 		if (line.find("server {") != std::string::npos) {
-			parseSpecConfig(stream);
+			parseServerContext(stream);
 		}
 		//else if line with config outside the scope
 		else if (line.find_first_not_of("\t\n ") <= line.find('#'))
@@ -73,9 +70,9 @@ void	Parser::parse() {
 	}
 }
 
-void	Parser::parseSpecConfig(std::stringstream& stream) {
+void	Parser::parseServerContext(std::stringstream& stream) {
 
-	SpecConfig 	server;
+	ServerContext 	server;
 	std::string line;
 
 	while (std::getline(stream, line, '\n')) {
@@ -91,10 +88,10 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 			}	
 			else if (line.find("listen") != std::string::npos) {
 				this->parseListen(line, server);
-				//this->isValidIPv6(server.getListenIpPort().begin()->first);
+				//this->isValidIPv6(server.getListen().begin()->first);
 			}
 			else if (line.find("server_name") != std::string::npos) {
-				server.setServerName(line);
+				this->parseServerName(line, server);
 			}
 			else if (line.find("error_page") != std::string::npos) {
 				server.setErrorPage(line);
@@ -113,19 +110,19 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 			throw Parser::InvalidParam(err, *this);
 		}
 	}	
-	this->_specConfigs.push_back(server);
+	this->_serverContexts.push_back(server);
 }
 
-void	Parser::parseListen(std::string const& line, SpecConfig& server) {
+void	Parser::parseListen(std::string const& line, ServerContext& server) {
 
 	std::stringstream	stream(line);
 	std::string			listen;
 	std::string			ip;
 	int					port(80); //If only address is given, the port 80 is used.
 
-//	std::map<std::string, int>::iterator it = this->_listenIpPort.begin();
+//	std::map<std::string, int>::iterator it = this->_listen.begin();
 //	if (it->first == "127.0.0.1" && it->second == 80)
-//		this->_listenIpPort.erase(it);
+//		this->_listen.erase(it);
 
 	stream >> listen;
 	if (stream.str().find(':') != std::string::npos)
@@ -135,10 +132,11 @@ void	Parser::parseListen(std::string const& line, SpecConfig& server) {
 		this->isValidIPv4(ip);
 	}
 	stream >> port;
-	server.setListIpPort(ip, port);
+	if (!ip.empty() && port != 80)
+		server.setListen(ip, port);
 }
 
-void Parser::parseServerName(std::string const& line, SpecConfig& server) {
+void Parser::parseServerName(std::string const& line, ServerContext& server) {
 
 	std::stringstream	stream(line);
 	std::string			tmp;

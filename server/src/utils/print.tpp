@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/20 17:27:52 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/20 19:25:34 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ std::string	 print_classVector(const std::vector<T>& vec) {
     
 	for (it = vec.begin(); it != vec.end(); ++it) {
         
+		sstream << BLUE <<"---- vec[" << it - vec.begin() << "] ----" << std::endl;
         sstream << *it;
+		sstream << std::endl;
     }
 	return sstream.str();
 }

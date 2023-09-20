@@ -8,10 +8,9 @@
 # include <sstream>
 # include <string>
 
-# include "CommonConfig.hpp"
-# include "SpecConfig.hpp"
+# include "ServerContext.hpp"
 
-class SpecConfig;
+class ServerContext;
 
 class Parser {
 
@@ -21,14 +20,13 @@ class Parser {
 		Parser(std::string const& conf_filename);
 		~Parser();
 
-		CommonConfig const &				getCommonConfig(void) const;
-		std::vector<SpecConfig> const &		getSpecConfigs(void) const;
+		std::vector<ServerContext> const &	getServerContexts(void) const;
 		std::string const &					getConfFileName(void) const;
 		size_t								getLinesRead(void) const;
 
 		void	parse();
-		void	parseListen(std::string const& line, SpecConfig& specConfig);
-		void	parseServerName(std::string const& line, SpecConfig& specConfig);
+		void	parseListen(std::string const& line, ServerContext& specConfig);
+		void	parseServerName(std::string const& line, ServerContext& serverContext);
 		void	isValidIPv4(const std::string& str);
 		void	isValidIPv6(const std::string& str);
 
@@ -36,12 +34,11 @@ class Parser {
 	private:
 		Parser();
 
-		size_t					_linesRead;
-		std::string		 		_confFilename;
-		CommonConfig			_commonConfig;
-		std::vector<SpecConfig>	_specConfigs;
+		size_t						_linesRead;
+		std::string		 			_confFilename;
+		std::vector<ServerContext>	_serverContexts;
 
-		void	parseSpecConfig(std::stringstream& stream);
+		void	parseServerContext(std::stringstream& stream);
 	
 	public:
 		class Error : public std::exception {
