@@ -20,7 +20,14 @@ CommonConfig::CommonConfig(CommonConfig const& rhs) { *this = rhs; }
 CommonConfig& CommonConfig::operator=(CommonConfig const& rhs) { 
 
 	if (this != &rhs) {
-
+		
+		this->_clientMaxBodySize = rhs.getClientMaxBodySize();
+		this->_errorPages = rhs.getErrorPages();
+		this->_index = rhs.getIndex();
+		this->_root = rhs.getRoot();
+		this->_locations = rhs.getLocations();
+		this->_autoindex = rhs.getAutoindex();
+		this->_authorizedMethods = rhs.getAuthorizedMethods();
 	}
 	return *this;
 }

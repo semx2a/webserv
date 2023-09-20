@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:47:12 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/19 19:03:37 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/20 11:42:39 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@
 # define BHIWHITE 	"\033[1;37m "
 
 // Italic
-# define ICYAN 		"\033[3;36m"
+# define ICYAN 		"\033[3;36m "
 
 
 void			log (int client_fd, std::string str);
@@ -72,9 +72,6 @@ std::string	   	print_wait ();
 
 template <typename T>
 std::string print_vector(const std::vector<T>& vec);
-
-template <typename T>
-void	 print_classVector(const std::vector<T>& vec);
 
 template <typename KeyType, typename ValueType>
 std::string print_map(const std::map<KeyType, ValueType>& myMap);

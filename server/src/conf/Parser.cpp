@@ -87,7 +87,7 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 		{
 			if (line.find('}') != std::string::npos && line.find_first_not_of("} \t") == std::string::npos) {
 				//end of server config
-				return;
+				break ;
 			}	
 			else if (line.find("listen") != std::string::npos) {
 				// set listen
@@ -110,7 +110,7 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 			param.substr(0, param.find_first_of(";"));
 			throw Parser::InvalidParam(param, _confFilename, _linesRead);
 		}
-	}
+	}	
 	this->_specConfigs.push_back(server);
 }
 

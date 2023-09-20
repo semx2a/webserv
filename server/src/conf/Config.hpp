@@ -24,8 +24,6 @@ class Config {
 	private:
 		std::vector<int>			_ports;
 		Parser						_parser;
-		
-		
 };
 
 #endif

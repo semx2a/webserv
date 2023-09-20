@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/20 11:18:52 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/20 11:25:45 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -192,7 +192,7 @@ cleantest:	header
 	@rm -rf $(TODIR) $(ODIR)
 	@echo "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
-fcleantest: cleantest8
+fcleantest: cleantest
 	@rm -f $(TNAME)
 	@echo "$(HIORANGE)$(TNAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
 

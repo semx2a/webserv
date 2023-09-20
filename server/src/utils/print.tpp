@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/19 19:09:51 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/20 11:28:52 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ std::string	 print_vector(const std::vector<T>& vec) {
         
         sstream << *it << " ";
     }
-    
-	sstream << std::endl;
+
 	return sstream.str();
 }
 
