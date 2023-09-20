@@ -32,6 +32,27 @@ std::map<std::string, int> const &		SpecConfig::getListenIpPort(void) const { re
 
 std::vector<std::string> const &		SpecConfig::getServerNames(void) const { return this->_serverNames; }
 
+void	SpecConfig::setListIpPort(std::string const& line) {
+	
+	std::stringstream	stream(line);
+	std::string			tmp;
+	std::string			ip;
+	int					port;
+
+	stream >> tmp >> ip >> port;
+	this->_listenIpPort[ip] = port;
+}
+
+void	SpecConfig::setServerName(std::string const& line) {
+
+	std::stringstream	stream(line);
+	std::string			tmp;
+	std::string			serverName;
+
+	stream >> tmp >> serverName;
+	this->_serverNames.push_back(serverName);
+}
+
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
 
