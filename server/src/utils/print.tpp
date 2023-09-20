@@ -22,10 +22,6 @@ std::string	 print_vector(const std::vector<T>& vec) {
         
         sstream << *it << " ";
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 	return sstream.str();
 }
 

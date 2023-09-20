@@ -15,14 +15,6 @@ void	DisplayParserContents(Parser const& parser) {
 
 int	main() {
 
-<<<<<<< Updated upstream
-	Config 	config;
-	//Parser const &					parser = config.getParser();
-
-	DisplayParserContents(config.getParser());
-	std::cout << config.getParser().getCommonConfig() << std::endl;
-	std::cout << print_vector(config.getParser().getSpecConfigs()) << std::endl;
-=======
 	Config 							config;
 	Parser const &					parser = config.getParser();
 
@@ -34,7 +26,6 @@ int	main() {
 
 	std::cout << HIORANGE << "--- SpecConfig ---" << NO_COLOR << std::endl;
 	std::cout << print_vector(parser.getSpecConfigs()) << std::endl;
->>>>>>> Stashed changes
 
 	return 0;
 }
