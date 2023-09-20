@@ -90,10 +90,10 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 				break ;
 			}	
 			else if (line.find("listen") != std::string::npos) {
-				// set listen
+				server.setListIpPort(line);
 			}
 			else if (line.find("server_name") != std::string::npos) {
-				// set server name(s)
+				server.setServerName(line);
 			}
 			else if (line.find("error_page") != std::string::npos) {
 				// set error page(s)
