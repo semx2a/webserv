@@ -44,7 +44,7 @@ void	Server::connect() {
 
 	struct epoll_event	event;
 	int					nb_events;
-	int					clientFd;
+	int					event_fd;
 
 	try {
 
@@ -54,23 +54,23 @@ void	Server::connect() {
 			for (int i = 0; i < nb_events; ++i) {
 
 				event = this->_epollEvents.getReadyEvent(i);
-				clientFd = event.data.fd;
+				event_fd = event.data.fd;
 				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
-					log(clientFd, "Epoll error");
-					_endClientConnexion(clientFd);
+					log(event_fd, "Epoll error");
+					_closeSocket(event_fd);
 				}
 				else if (event.events & EPOLLRDHUP) {
-					log(clientFd, "Closed connexion");
-					_endClientConnexion(clientFd);
+					log(event_fd, "Closed connexion");
+					_closeSocket(event_fd);
 				}
-				else if (this->_epollEvents.isNewClient(clientFd)) {
-					this->_epollEvents.addNewClient(clientFd);
+				else if (this->_epollEvents.isNewClient(event_fd)) {
+					this->_epollEvents.addNewClient(event_fd);
 				}
 				else if (event.events & EPOLLIN) {
-					_readFromClient(clientFd);
+					_readFromClient(event_fd);
 				}
 				else if (event.events & EPOLLOUT) {
-					_writeToClient(clientFd);
+					_writeToClient(event_fd);
 				}
 			}
 		}
@@ -91,7 +91,7 @@ void	Server::_readFromClient(int clientFd) {
 	}
 	else if (bytesRead == 0) { 
 		log(clientFd, "End of connexion");
-		_endClientConnexion(clientFd);
+		_closeSocket(clientFd);
 	}
 	else {
 		buffer.resize(bytesRead);
@@ -110,7 +110,7 @@ void	Server::_writeToClient(int clientFd) {
 		throw std::runtime_error(SENDERR);
 	}
 	//TODO: dont close if header keep-alive
-	_endClientConnexion(clientFd);
+	_closeSocket(clientFd);
 }
 
 
@@ -127,8 +127,8 @@ void	Server::_handleClientData(int clientFd) {
 }
 
 
-void	Server::_endClientConnexion(int clientFd) {
+void	Server::_closeSocket(int fd) {
 
-	this->_clientDataMap.erase(clientFd);
-	close(clientFd);
+	this->_clientDataMap.erase(fd);
+	close(fd);
 }
