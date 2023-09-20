@@ -61,7 +61,7 @@ void	SpecConfig::setServerName(std::string const& line) {
 
 std::ostream &	operator<<(std::ostream & o, SpecConfig const & sc) {
 
-	o << RED << "listenIpPort = " << NO_COLOR << print_map(sc.getListenIpPort()) << std::endl;
-	o << RED << "serverNames = " << NO_COLOR << print_vector(sc.getServerNames()) << std::endl;
+	o << HIPURPLE << "listenIpPort = " << HIGREEN << print_map(sc.getListenIpPort()) << NO_COLOR << std::endl;
+	o << HIPURPLE << "serverNames = " << HIGREEN << print_vector(sc.getServerNames()) << NO_COLOR << std::endl;
 	return o;
 }

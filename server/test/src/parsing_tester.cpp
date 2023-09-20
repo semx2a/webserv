@@ -8,9 +8,9 @@
 void	DisplayParserContents(Parser const& parser) {
 
 	std::cout << std::endl;
-	std::cout << HIORANGE << "--- Parser ---" << NO_COLOR << std::endl;
-	std::cout << HIPURPLE << "linesRead: " << NO_COLOR << parser.getLinesRead() << std::endl;
-	std::cout << HIPURPLE << "confFilename: " << NO_COLOR << parser.getConfFileName() << std::endl;
+	std::cout << RED << "--- Parser ---" << NO_COLOR << std::endl;
+	std::cout << HIPURPLE << "linesRead: " << HIGREEN << parser.getLinesRead() << NO_COLOR << std::endl;
+	std::cout << HIPURPLE << "confFilename: " << HIGREEN << parser.getConfFileName() << NO_COLOR << std::endl;
 }
 
 int	main() {
@@ -21,10 +21,10 @@ int	main() {
 	DisplayParserContents(parser);
 
 	std::cout << std::endl;
-	std::cout << HIORANGE << "--- CommonConfig ---" << NO_COLOR << std::endl;
+	std::cout << RED << "--- CommonConfig ---" << NO_COLOR << std::endl;
 	std::cout << parser.getCommonConfig() << std::endl;
 
-	std::cout << HIORANGE << "--- SpecConfig ---" << NO_COLOR << std::endl;
+	std::cout << RED << "--- SpecConfig ---" << NO_COLOR << std::endl;
 	std::cout << print_vector(parser.getSpecConfigs()) << std::endl;
 
 	return 0;

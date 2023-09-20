@@ -109,6 +109,8 @@ void	CommonConfig::setLocation(std::stringstream& stream) {
 	(void)stream;
 //	go through lines until closing bracket
 //	this->_locations[location] = path;
+
+
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
@@ -118,13 +120,13 @@ void	CommonConfig::setLocation(std::stringstream& stream) {
 
 std::ostream &	operator<<(std::ostream & o, CommonConfig const & cc) {
 
-	o << HIPURPLE << "clientMaxBodySize: " << NO_COLOR << cc.getClientMaxBodySize() << std::endl;
-	o << HIPURPLE << "errorPages: " << NO_COLOR << print_map(cc.getErrorPages()) << std::endl;
-	o << HIPURPLE << "index: " << NO_COLOR << print_vector(cc.getIndex()) << std::endl;
-	o << HIPURPLE << "root: " << NO_COLOR << cc.getRoot() << std::endl;
-	o << HIPURPLE << "locations: " << NO_COLOR << print_map(cc.getLocations()) << std::endl;
-	o << HIPURPLE << "autoindex: " << NO_COLOR << cc.getAutoindex() << std::endl;
-	o << HIPURPLE << "authorizedMethods: " << NO_COLOR << print_vector(cc.getAuthorizedMethods()) << std::endl;
+	o << HIPURPLE << "clientMaxBodySize: " << HIGREEN << cc.getClientMaxBodySize() << NO_COLOR << std::endl;
+	o << HIPURPLE << "errorPages: " << HIGREEN << print_map(cc.getErrorPages()) << NO_COLOR << std::endl;
+	o << HIPURPLE << "index: " << HIGREEN << print_vector(cc.getIndex()) << NO_COLOR << std::endl;
+	o << HIPURPLE << "root: " << HIGREEN << cc.getRoot() << NO_COLOR << std::endl;
+	o << HIPURPLE << "locations: " << HIGREEN << print_map(cc.getLocations()) << NO_COLOR << std::endl;
+	o << HIPURPLE << "autoindex: " << HIGREEN << cc.getAutoindex() << NO_COLOR << std::endl;
+	o << HIPURPLE << "authorizedMethods: " << HIGREEN << print_vector(cc.getAuthorizedMethods()) << NO_COLOR << std::endl;
 	return o;
 
 }

@@ -21,7 +21,7 @@
 # include <string>
 # include <sstream>
 
-# define NO_COLOR	"\033[m"
+# define NO_COLOR	"\033[m "
 
 # define BLACK 		"\033[0;30m "
 # define RED 		"\033[0;31m "

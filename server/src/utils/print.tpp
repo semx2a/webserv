@@ -20,7 +20,7 @@ std::string	 print_vector(const std::vector<T>& vec) {
     
 	for (it = vec.begin(); it != vec.end(); ++it) {
         
-        sstream << *it << " ";
+        sstream << *it;
     }
 	return sstream.str();
 }
