@@ -1,6 +1,8 @@
 #ifndef PARSER_HPP
 # define PARSER_HPP
 
+# include <cstdlib>
+
 # include <fstream>
 # include <iostream>
 # include <sstream>
@@ -8,6 +10,8 @@
 
 # include "CommonConfig.hpp"
 # include "SpecConfig.hpp"
+
+class SpecConfig;
 
 class Parser {
 
@@ -18,11 +22,14 @@ class Parser {
 		~Parser();
 
 		CommonConfig const &				getCommonConfig(void) const;
-		std::vector<SpecConfig> const &	getSpecConfigs(void) const;
+		std::vector<SpecConfig> const &		getSpecConfigs(void) const;
 		std::string const &					getConfFileName(void) const;
 		size_t								getLinesRead(void) const;
 
-		void	parse();
+		void		parse();
+		static bool	isValidIPv4(const std::string& str);
+		static bool	isValidIPv6(const std::string& str);
+
 
 	private:
 		Parser();

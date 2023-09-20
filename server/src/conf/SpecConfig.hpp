@@ -2,6 +2,9 @@
 # define SPEC_CONFIG_HPP
 
 #include "CommonConfig.hpp"
+#include "Parser.hpp"
+
+class Parser;
 
 class SpecConfig : public CommonConfig {
 
@@ -16,6 +19,7 @@ class SpecConfig : public CommonConfig {
 
 		void	setListIpPort(std::string const& line);
 		void	setServerName(std::string const& line);
+
 
 	private:
 		std::map<std::string, int> 	_listenIpPort; // <IP, port>

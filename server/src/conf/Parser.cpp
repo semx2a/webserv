@@ -58,7 +58,7 @@ void	Parser::parse() {
 	stream << file.rdbuf();
 
 	std::string line;
-	while (std::getline(stream, line, 'n')) {
+	while (std::getline(stream, line, '\n')) {
 
 		if (line.find("server {") != std::string::npos) {
 			parseSpecConfig(stream);
@@ -80,30 +80,35 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 	while (std::getline(stream, line, '\n')) {
 
 		_linesRead++;
+		std::cout << _linesRead << " " << line << std::endl;
 		if (line.find("location") != std::string::npos) {
 			// find location, in another function that getline until the closing bracket
 		}
 		else if (line.find(';') != line.find('\n') - 1)
 		{
 			if (line.find('}') != std::string::npos && line.find_first_not_of("} \t") == std::string::npos) {
-				//end of server config
+				std::cout << "end of server scope" << std::endl;
 				break ;
 			}	
 			else if (line.find("listen") != std::string::npos) {
+				std::cout << "listen" << std::endl;
 				server.setListIpPort(line);
 			}
 			else if (line.find("server_name") != std::string::npos) {
+				std::cout << "serverName" << std::endl;
 				server.setServerName(line);
 			}
 			else if (line.find("error_page") != std::string::npos) {
-				// set error page(s)
+				std::cout << "errorPage" << std::endl;
+				server.setErrorPage(line);
 			}
 			else if (line.find("root") != std::string::npos) {
-				// set root
+				std::cout << "root" << std::endl;
+				server.setRoot(line);
 			}
 		}
 		else if (line.empty () || line.find_first_not_of("\t ") == line.find('#')) {
-			// empty line or comment
+			continue ;
 		}
 		else {
 			std::string param = line.substr(0, line.find_first_of(" \t"));
@@ -112,6 +117,85 @@ void	Parser::parseSpecConfig(std::stringstream& stream) {
 		}
 	}	
 	this->_specConfigs.push_back(server);
+}
+
+bool Parser::isValidIPv4(const std::string& str) {
+	
+	std::istringstream iss(str);
+	std::string octet;
+	int count = 0;
+
+	while (std::getline(iss, octet, '.')) {
+		++count;
+
+		if (count > 4) {
+			return false;
+		}
+
+		for (std::string::const_iterator it = octet.begin(); it != octet.end(); ++it) {
+			if (!std::isdigit(*it)) {
+				return false;
+			}
+		}
+
+		int num = std::atoi(octet.c_str());
+		if (num < 0 || num > 255) {
+			return false;
+		}
+	}
+
+	if (count != 4) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Parser::isValidIPv6(const std::string& str) {
+	
+	std::istringstream iss(str);
+	std::string block;
+	int count = 0;
+	int doubleColonCount = 0;
+
+	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+		if (*it == ':') {
+			if (it + 1 != str.end() && *(it + 1) == ':') {
+				++doubleColonCount;
+			}
+		}
+	}
+
+	if (doubleColonCount > 1) {
+		return false;
+	}
+	while (std::getline(iss, block, ':')) {
+		
+		++count;
+
+		if (count > 8) {
+			return false;
+		}
+		if (block.empty()) {
+			continue;
+		}
+		if (block.length() > 4) {
+			return false;
+		}
+
+		for (std::string::const_iterator it = block.begin(); it != block.end(); ++it) {
+			char c = std::tolower(*it);
+			if (!std::isdigit(c) && (c < 'a' || c > 'f')) {
+				return false;
+			}
+		}
+	}
+
+	if (count < 8 && doubleColonCount == 0) {
+		return false;
+	}
+
+	return true;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
