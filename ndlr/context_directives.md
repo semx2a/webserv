@@ -16,7 +16,7 @@ Some common details that are configured in the main context are :
 - the **default error file** for the entire application can be set at this level (this can be overridden in more specific contexts).
 
 ```nginx
-
+error_page fdsflkds?????
 ```
 
 ## server {}
@@ -58,23 +58,23 @@ Also, using the “=” modifier it is possible to define an exact match of URI 
 
 ```nginx
 location = / {
-	[ configuration A ]
+    [ configuration A ]
 }
 
 location / {
-	[ configuration B ]
+    [ configuration B ]
 }
 
 location /documents/ {
-	[ configuration C ]
+    [ configuration C ]
 }
 
 location ^~ /images/ {
-	[ configuration D ]
+    [ configuration D ]
 }
 
 location ~* \.(gif|jpg|jpeg)$ {
-	[ configuration E ]
+    [ configuration E ]
 }
 ```
 
@@ -109,7 +109,7 @@ Defines a replacement for the specified location. For example, with the followin
 
 ```nginx
 location /i/ {
-	alias /data/w3/images/;
+    alias /data/w3/images/;
 }
 ```
 on request of “/i/top.gif”, the file /data/w3/images/top.gif will be sent.
@@ -152,11 +152,11 @@ error_page code ... [=[response]] uri;`
 *Example*:
 
 ```nginx
-error_page 404			 /404.html;
+error_page 404             /404.html;
 error_page 500 502 503 504 /50x.html;
 ```
 
-This causes an internal redirect to the specified uri with the client request method changed to “GET” (for all methods other than “GET” and “HEAD”).
+This causes an internal redirect to the specified uri with the client request method changed to “GET” (for all methods other than “GET” and “HEAD”)
 
 Furthermore, it is possible to change the response code to another using the “=response” syntax, for example:
 
@@ -172,11 +172,11 @@ If there is no need to change URI and method during internal redirection it is p
 
 ```nginx
 location / {
-	error_page 404 = @fallback;
+    error_page 404 = @fallback;
 }
 
 location @fallback {
-	proxy_pass http://backend;
+    proxy_pass http://backend;
 }
 ```
 
@@ -184,7 +184,7 @@ If uri processing leads to an error, the status code of the last occurred error 
 It is also possible to use URL redirects for error processing:
 
 ```nginx
-error_page 403	  http://example.com/forbidden.html;
+error_page 403      http://example.com/forbidden.html;
 error_page 404 =301 http://example.com/notfound.html;
 ```
 In this case, by default, the response code 302 is returned to the client. It can only be changed to one of the redirect status codes (301, 302, 303, 307, and 308).
@@ -211,8 +211,8 @@ Allowing the GET method makes the HEAD method also allowed
 
 ```nginx
 limit_except GET {
-	allow 192.168.1.0/32;
-	deny  all;
+    allow 192.168.1.0/32;
+    deny  all;
 }
 ```
 
@@ -280,7 +280,7 @@ Sets names of a virtual server, for example:
 
 ```nginx
 server {
-	server_name example.com www.example.com;
+    server_name example.com www.example.com;
 }
 ```
 The first name becomes the primary server name.
@@ -289,7 +289,7 @@ Server names can include an asterisk (“*”) replacing the first or last part 
 
 ```nginx
 server {
-	server_name example.com *.example.com www.example.*;
+    server_name example.com *.example.com www.example.*;
 }
 ```
 
@@ -299,7 +299,7 @@ The first two of the names mentioned above can be combined in one:
 
 ```nginx
 server {
-	server_name .example.com;
+    server_name .example.com;
 }
 ```
 
@@ -307,7 +307,7 @@ It is also possible to specify an empty server name (0.7.11):
 
 ```nginx
 server {
-	server_name www.example.com "";
+    server_name www.example.com "";
 }
 ```
 
@@ -342,7 +342,7 @@ Sets the root directory for requests. For example, with the following configurat
 
 ```nginx
 location /i/ {
-	root /data/w3;
+    root /data/w3;
 }
 ```
 
