@@ -80,7 +80,7 @@ void	Parser::parse() {
 
 		this->_linesRead++;
 		this->trimAndReplaceWhitespaces(line);
-		std::cout << "line " << _linesRead << ": " << line << std::endl;
+		std::cout << "[main scope] line " << _linesRead << ": " << line << std::endl;
 		if (line.find("server {") != std::string::npos)
 			this->parseServerContext(stream);
 		else if (isCommentOrEmptyLine(line))
@@ -100,7 +100,7 @@ void	Parser::parseServerContext(std::stringstream& stream) {
 		this->_linesRead++;
 		this->trimAndReplaceWhitespaces(line);
 
-		std::cout << "line " << _linesRead << ": " << line << std::endl;
+		std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
 
 		if (isCommentOrEmptyLine(line)) {
 			continue ;
@@ -109,8 +109,7 @@ void	Parser::parseServerContext(std::stringstream& stream) {
 			break ;
 		}
 		else if (line.find("location") != std::string::npos) {
-			std::cout << "location found" << std::endl;
-			//this->parseServerContextLocation(stream, newServerCtxt);
+			this->parseServerLocationContext(stream, newServerCtxt);
 		}
 		else if (this->isValidDirective(line)) {
 
@@ -160,8 +159,8 @@ void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext
 	while (std::getline(stream, line)) {
 
 		this->_linesRead++;
-		//this->trimAndReplaceWhitespaces(line);
-		std::cout << "line " << _linesRead << ": " << line << std::endl;
+		this->trimAndReplaceWhitespaces(line);
+		std::cout << "[location scope] line " << _linesRead << ": " << line << std::endl;
 		if (isEndOfScope(line))
 			return;
 	}
