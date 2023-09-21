@@ -97,13 +97,17 @@ void Parser::parseServerContext(std::stringstream& stream) {
 
         std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
 
-        if (isCommentOrEmptyLine(line)) continue;
-        if (isEndOfScope(line)) break;
-
+        if (isCommentOrEmptyLine(line)) {
+			continue;
+		}
+        if (isEndOfScope(line)) {
+			break;
+		}
 	    if (line.find("location") != std::string::npos) {
             this->parseServerLocationContext(stream, newServerCtxt);
         } 
         else if (this->isValidDirective(line)) {
+
             line = line.substr(0, line.find_first_of(";"));
 
 			std::string directive = line.substr(0, line.find_first_of(" "));
@@ -125,7 +129,7 @@ void Parser::parseServerContext(std::stringstream& stream) {
 
 void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext& serverContext) {
 
-	//TODOOOO
+	//TODO
 	(void)serverContext;
 	std::string 	line;
 
@@ -141,10 +145,17 @@ void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext
 
 void	Parser::parseAutoindex(std::string const &line, ServerContext& serverContext) {
 
-	(void)line;
-	(void)serverContext;
+	std::stringstream	stream(line);
+	std::string			directive;
+	std::string			onOff;
+	bool				onOffBool;
 
-//	find on/off
+	stream >> directive >> onOff;
+	if (onOff != "on" && onOff != "off")
+		buildAndThrowParamError(line);
+
+	onOffBool = (onOff == "on") ? true : false;
+	serverContext.setAutoindex(onOffBool);
 }
 
 void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& serverContext) {
@@ -169,6 +180,7 @@ void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& serv
 
 void	Parser::parseRoot(std::string const &line, ServerContext& serverContext) { 
 
+	//TODO
 	(void)line;
 	(void)serverContext;
 //	std::stringstream	stream(line);
@@ -202,6 +214,7 @@ void	Parser::parseListen(std::string const& line, ServerContext& serverContext) 
 
 void	Parser::parseErrorPage(std::string const &line, ServerContext& serverContext) { 
 
+	//TODO
 	(void)line;
 	(void)serverContext;
 
@@ -213,6 +226,7 @@ void	Parser::parseErrorPage(std::string const &line, ServerContext& serverContex
 
 void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
 
+	//TODO
 	(void)line;
 	(void)serverContext;
 //	std::stringstream	stream(line);
@@ -226,6 +240,7 @@ void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
 
 void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& serverContext) { 
 
+	//TODO
 	(void)line;
 	(void)serverContext;
 //	std::stringstream	stream(line);
