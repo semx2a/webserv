@@ -19,6 +19,7 @@ int	main() {
 
 	DisplayParserContents(parser);
 
+	std::cout << std::endl;
 	std::cout << RED << "--- ServerContexts ---" << NO_COLOR << std::endl;
 	std::cout << print_classVector(parser.getServerContexts()) << std::endl;
 

@@ -43,27 +43,6 @@ size_t								Parser::getLinesRead(void) const { return this->_linesRead; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-bool	Parser::isCommentOrEmptyLine(std::string const& line) const {
-
-	return line.empty() || line.find_first_not_of(" ") == line.find('#') 
-		|| line.find_first_not_of(" ") == std::string::npos;
-}
-
-bool	Parser::isValidDirective(std::string const& line) const {
-
-	size_t	semicolonPos;
-
-	semicolonPos = line.find_first_of(';');
-	return 	semicolonPos != std::string::npos 
-			&& line.find_first_not_of(" ", semicolonPos) != line.find('\n');
-}
-
-bool	Parser::isEndOfScope(std::string const& line) const {
-
-	return line.find('}') != std::string::npos 
-		&& line.find_first_not_of("} ") == std::string::npos;
-}
-
 void	Parser::parse() {
 
 	std::ifstream		file(_confFilename.c_str());
@@ -90,65 +69,58 @@ void	Parser::parse() {
 	}
 }
 
-void	Parser::parseServerContext(std::stringstream& stream) {
+void Parser::parseServerContext(std::stringstream& stream) {
 
-	ServerContext 	newServerCtxt;
-	std::string 	line;
+    Parser::DirectivePair directiveArray[] = {
+        Parser::DirectivePair("autoindex", &Parser::parseAutoindex),
+        Parser::DirectivePair("client_max_body_size", &Parser::parseClientMaxBodySize),
+        Parser::DirectivePair("root", &Parser::parseRoot),
+        Parser::DirectivePair("listen", &Parser::parseListen),
+        Parser::DirectivePair("error_page", &Parser::parseErrorPage),
+        Parser::DirectivePair("index", &Parser::parseIndex),
+        Parser::DirectivePair("authorized_methods", &Parser::parseAuthorizedMethods),
+        Parser::DirectivePair("server_name", &Parser::parseServerName)
+    };
 
-	while (std::getline(stream, line)) {
+	// initialization of the map with the content of the array of pairs
+    std::map<std::string, ParserFunction> directiveMap(directiveArray, 
+														directiveArray + sizeof(directiveArray) / sizeof(DirectivePair));
 
-		this->_linesRead++;
-		this->trimAndReplaceWhitespaces(line);
+    ServerContext newServerCtxt;
+    std::string line;
 
-		std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
+    while (std::getline(stream, line)) {
 
-		if (isCommentOrEmptyLine(line)) {
-			continue ;
-		}
-		else if (isEndOfScope(line)) {
-			break ;
-		}
-		else if (line.find("location") != std::string::npos) {
-			this->parseServerLocationContext(stream, newServerCtxt);
-		}
-		else if (this->isValidDirective(line)) {
+        this->_linesRead++;
+        this->trimAndReplaceWhitespaces(line);
 
-			line = line.substr(0, line.find_first_of(";"));
-			if (line.find("client_max_body_size") != std::string::npos) {
-				this->parseClientMaxBodySize(line, newServerCtxt);
-			}
-			else if (line.find("listen") != std::string::npos) {
-				this->parseListen(line, newServerCtxt);
-				//this->isValidIPv6(newServerCtxt.getListen().begin()->first);
-			}
-			else if (line.find("server_name") != std::string::npos) {
-				this->parseServerName(line, newServerCtxt);
-			}
-			else if (line.find("error_page") != std::string::npos) {
-				this->parseErrorPage(line, newServerCtxt);
-			}
-			else if (line.find("root") != std::string::npos) {
-				this->parseRoot(line, newServerCtxt);
-			}	
-			else if (line.find("index") != std::string::npos) {
-				this->parseIndex(line, newServerCtxt);
-			}
-			else if (line.find("autoindex") != std::string::npos) {
-				this->parseAutoindex(line, newServerCtxt);
-			}
-			else if (line.find("authorized_methods") != std::string::npos) {
-				this->parseAuthorizedMethods(line, newServerCtxt);
-			}
-			else {
-				this->buildAndThrowParamError(line);
-			}
-		}
-		else {
-			buildAndThrowParamError(line);
-		}
-	}	
-	this->_serverContexts.push_back(newServerCtxt);
+        std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
+
+        if (isCommentOrEmptyLine(line)) continue;
+        if (isEndOfScope(line)) break;
+
+	    if (line.find("location") != std::string::npos) {
+            this->parseServerLocationContext(stream, newServerCtxt);
+        } 
+        else if (this->isValidDirective(line)) {
+            line = line.substr(0, line.find_first_of(";"));
+
+			std::string directive = line.substr(0, line.find_first_of(" "));
+            Parser::DirectiveMap::iterator it = directiveMap.find(directive);
+            if (it != directiveMap.end()) {
+                (this->*(it->second))(line, newServerCtxt);
+            } 
+            else {
+                this->buildAndThrowParamError(line);
+            }
+        }
+        else {
+            buildAndThrowParamError(line);
+        }
+    }
+    this->_serverContexts.push_back(newServerCtxt);
 }
+
 
 void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext& serverContext) {
 
@@ -165,7 +137,6 @@ void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext
 			return;
 	}
 }
-
 
 void	Parser::parseListen(std::string const& line, ServerContext& serverContext) {
 
@@ -374,6 +345,29 @@ void Parser::isValidIPv6(const std::string& ip) const {
 	}
 }
 
+bool	Parser::isCommentOrEmptyLine(std::string const& line) const {
+
+	return line.empty() || line.find_first_not_of(" ") == line.find('#') 
+		|| line.find_first_not_of(" ") == std::string::npos;
+}
+
+bool	Parser::isValidDirective(std::string const& line) const {
+
+	size_t	semicolonPos;
+
+	semicolonPos = line.find_first_of(';');
+	return 	semicolonPos != std::string::npos 
+			&& line.find_first_not_of(" ", semicolonPos) != line.find('\n');
+}
+
+bool	Parser::isEndOfScope(std::string const& line) const {
+
+	return line.find('}') != std::string::npos 
+		&& line.find_first_not_of("} ") == std::string::npos;
+}
+
+
+
 void	Parser::trimAndReplaceWhitespaces(std::string& input) {
 
 	std::stringstream	ss(input);
@@ -395,7 +389,6 @@ void	Parser::buildAndThrowParamError(std::string const& line) const {
 	std::string err = "Error: Invalid parameter '" + param + "'";
 	throw Parser::InvalidParam(err, *this);
 }
-
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
 

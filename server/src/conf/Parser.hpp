@@ -36,6 +36,10 @@ class Parser {
 		void	parseServerContext(std::stringstream& stream);
 		void	parseServerLocationContext(std::stringstream& stream, ServerContext& serverContext);
 
+		typedef void (Parser::*ParserFunction)(std::string const&, ServerContext&);
+    	typedef std::pair<std::string, Parser::ParserFunction> DirectivePair;
+		typedef std::map<std::string, Parser::ParserFunction> DirectiveMap;
+
 		void	parseClientMaxBodySize(std::string const& line, ServerContext& serverContext);
 		void	parseErrorPage(std::string const& line, ServerContext& serverContext);
 		void	parseIndex(std::string const& line, ServerContext& serverContext);

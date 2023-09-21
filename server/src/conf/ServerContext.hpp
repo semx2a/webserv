@@ -18,24 +18,28 @@ class ServerContext {
 		ServerContext& operator=(ServerContext const& rhs);
 		virtual ~ServerContext();
 
-		size_t										getClientMaxBodySize() const;
-		std::map<int, std::string> const &			getErrorPages() const;
-		std::vector<std::string> const&				getIndex() const;
-		std::string const&							getRoot() const;
-		std::map<std::string, std::string> const&	getLocations() const;
 		bool										getAutoindex() const;
-		std::vector<std::string> const&				getAuthorizedMethods() const;
-		std::map<std::string, int> const &			getListen(void) const;
-		std::vector<std::string> const &			getServerNames(void) const;
+		size_t										getClientMaxBodySize() const;
+		std::string const&							getRoot() const;
 
-		void	setClientMaxBodySize(size_t size);
-		void	setErrorPage(std::map<int, std::string> const& errorPages);
-		void	setIndex(std::vector<std::string> const& index);
-		void	setRoot(std::string const& root);
+		std::map<std::string, int> const&			getListen(void) const;
+		std::map<int, std::string> const&			getErrorPages() const;
+		std::map<std::string, std::string> const&	getLocations() const;
+
+		std::vector<std::string> const&				getIndex() const;
+		std::vector<std::string> const&				getAuthorizedMethods() const;
+		std::vector<std::string> const&				getServerNames(void) const;
+
 		void	setAutoindex(bool autoindex);
-		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
-		void	setLocation(std::string const& location, std::string const& root);
+		void	setClientMaxBodySize(size_t size);
+		void	setRoot(std::string const& root);
+
 		void	setListen(std::string const& ip, int port);
+		void	setErrorPage(std::map<int, std::string> const& errorPages);
+		void	setLocation(std::string const& location, std::string const& root);
+
+		void	setIndex(std::vector<std::string> const& index);
+		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 		void	setServerNames(std::vector<std::string> const& serverNames);
 
 	private:
@@ -43,9 +47,9 @@ class ServerContext {
 		size_t								_clientMaxBodySize;
 		std::string							_root;
 
-		std::map<int, std::string>			_errorPages;
 		std::map<std::string, int> 			_listen; // <IP, port>
-		std::map<std::string, std::string>	_locations;
+		std::map<int, std::string>			_errorPages;
+		std::map<std::string, std::string>	_locations; // special : location context. Class?
 		
 		std::vector<std::string>			_index;
 		std::vector<std::string>			_authorizedMethods;
