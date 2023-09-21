@@ -43,6 +43,27 @@ size_t								Parser::getLinesRead(void) const { return this->_linesRead; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
+bool	Parser::isCommentOrEmptyLine(std::string const& line) const {
+
+	return line.empty() || line.find_first_not_of(" ") == line.find('#') 
+		|| line.find_first_not_of(" ") == std::string::npos;
+}
+
+bool	Parser::isValidDirective(std::string const& line) const {
+
+	size_t	semicolonPos;
+
+	semicolonPos = line.find_first_of(';');
+	return 	semicolonPos != std::string::npos 
+			&& line.find_first_not_of(" ", semicolonPos) != line.find('\n');
+}
+
+bool	Parser::isEndOfScope(std::string const& line) const {
+
+	return line.find('}') != std::string::npos 
+		&& line.find_first_not_of("} ") == std::string::npos;
+}
+
 void	Parser::parse() {
 
 	std::ifstream		file(_confFilename.c_str());
@@ -55,66 +76,99 @@ void	Parser::parse() {
 	stream << file.rdbuf();
 
 	std::string line;
-	while (std::getline(stream, line, '\n')) {
+	while (std::getline(stream, line)) {
 
 		this->_linesRead++;
-		if (line.find("server {") != std::string::npos) {
-			parseServerContext(stream);
-		}
-		//else if line with config outside the scope
-		else if (line.find_first_not_of("\t\n ") <= line.find('#'))
+		this->trimAndReplaceWhitespaces(line);
+		std::cout << "line " << _linesRead << ": " << line << std::endl;
+		if (line.find("server {") != std::string::npos)
+			this->parseServerContext(stream);
+		else if (isCommentOrEmptyLine(line))
 			continue;
-		else {
-			throw Parser::Error("Error: Invalid config file");
-		}
+		else 
+			this->buildAndThrowParamError(line);
 	}
 }
 
 void	Parser::parseServerContext(std::stringstream& stream) {
 
-	ServerContext 	server;
-	std::string line;
+	ServerContext 	newServerCtxt;
+	std::string 	line;
 
-	while (std::getline(stream, line, '\n')) {
+	while (std::getline(stream, line)) {
 
 		this->_linesRead++;
-		if (line.find("location") != std::string::npos) {
-			// find location, in another function that getline until the closing bracket
-		}
-		else if (line.find(';') != line.find('\n') - 1)
-		{
-			if (line.find('}') != std::string::npos && line.find_first_not_of("} \t") == std::string::npos) {
-				break ;
-			}	
-			else if (line.find("client_max_body_size") != std::string::npos) {
-				
-			}
-			else if (line.find("listen") != std::string::npos) {
-				this->parseListen(line, server);
-				//this->isValidIPv6(server.getListen().begin()->first);
-			}
-			else if (line.find("server_name") != std::string::npos) {
-				this->parseServerName(line, server);
-			}
-			else if (line.find("error_page") != std::string::npos) {
-			}
-			else if (line.find("root") != std::string::npos) {
-			}
-		}
-		else if (line.empty () || line.find_first_not_of("\t ") == line.find('#')) {
+		this->trimAndReplaceWhitespaces(line);
+
+		std::cout << "line " << _linesRead << ": " << line << std::endl;
+
+		if (isCommentOrEmptyLine(line)) {
 			continue ;
 		}
+		else if (isEndOfScope(line)) {
+			break ;
+		}
+		else if (line.find("location") != std::string::npos) {
+			std::cout << "location found" << std::endl;
+			//this->parseServerContextLocation(stream, newServerCtxt);
+		}
+		else if (this->isValidDirective(line)) {
+
+			line = line.substr(0, line.find_first_of(";"));
+			if (line.find("client_max_body_size") != std::string::npos) {
+				this->parseClientMaxBodySize(line, newServerCtxt);
+			}
+			else if (line.find("listen") != std::string::npos) {
+				this->parseListen(line, newServerCtxt);
+				//this->isValidIPv6(newServerCtxt.getListen().begin()->first);
+			}
+			else if (line.find("server_name") != std::string::npos) {
+				this->parseServerName(line, newServerCtxt);
+			}
+			else if (line.find("error_page") != std::string::npos) {
+				this->parseErrorPage(line, newServerCtxt);
+			}
+			else if (line.find("root") != std::string::npos) {
+				this->parseRoot(line, newServerCtxt);
+			}	
+			else if (line.find("index") != std::string::npos) {
+				this->parseIndex(line, newServerCtxt);
+			}
+			else if (line.find("autoindex") != std::string::npos) {
+				this->parseAutoindex(line, newServerCtxt);
+			}
+			else if (line.find("authorized_methods") != std::string::npos) {
+				this->parseAuthorizedMethods(line, newServerCtxt);
+			}
+			else {
+				this->buildAndThrowParamError(line);
+			}
+		}
 		else {
-			std::string param = line.substr(0, line.find_first_of(" \t"));
-			param.substr(0, param.find_first_of(";"));
-			std::string err = "Error: Invalid parameter " + param;
-			throw Parser::InvalidParam(err, *this);
+			buildAndThrowParamError(line);
 		}
 	}	
-	this->_serverContexts.push_back(server);
+	this->_serverContexts.push_back(newServerCtxt);
 }
 
-void	Parser::parseListen(std::string const& line, ServerContext& server) {
+void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext& serverContext) {
+
+	//TODOOOO
+	(void)serverContext;
+	std::string 	line;
+
+	while (std::getline(stream, line)) {
+
+		this->_linesRead++;
+		//this->trimAndReplaceWhitespaces(line);
+		std::cout << "line " << _linesRead << ": " << line << std::endl;
+		if (isEndOfScope(line))
+			return;
+	}
+}
+
+
+void	Parser::parseListen(std::string const& line, ServerContext& serverContext) {
 
 	std::stringstream	stream(line);
 	std::string			listen;
@@ -129,45 +183,58 @@ void	Parser::parseListen(std::string const& line, ServerContext& server) {
 	if (stream.str().find(':') != std::string::npos)
 	{
 		std::getline(stream, ip, ':');
-		ip = ip.substr(ip.find_first_not_of(" \t"), ip.size());
+		ip = ip.substr(ip.find_first_not_of(" "), ip.size());
 		this->isValidIPv4(ip);
 	}
 	stream >> port;
 	if (!ip.empty() && port != 80)
-		server.setListen(ip, port);
+		serverContext.setListen(ip, port);
 }
 
-void Parser::parseServerName(std::string const& line, ServerContext& server) {
+void Parser::parseServerName(std::string const& line, ServerContext& serverContext) {
 
-	std::stringstream	stream(line);
-	std::string			tmp;
-	std::string			serverName;
+	std::stringstream			stream(line);
+	std::string					tmp;
+	std::string					serverName;
+	std::vector<std::string> 	serverNames;
 
-//	std::vector<std::string>::iterator it = server.getServerNames().begin();
+//	std::vector<std::string>::iterator it = serverContext.getServerNames().begin();
 //	if (*it == "localhost")
-//		server.getServerNames().erase(it);
+//		serverContext.getServerNames().erase(it);
 	
-	stream >> tmp >> serverName;
-	serverName = serverName.substr(0, serverName.find_first_of(";"));
-	server.setServerName(serverName);
+	stream >> tmp;
+	while (stream >> serverName) {
+		if (serverName.find(';') != std::string::npos)
+			serverName = serverName.substr(0, serverName.find_first_of(";"));
+		serverNames.push_back(serverName);
+	}
+	serverContext.setServerNames(serverNames);
 }
 
-void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& specConfig) {
+void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& serverContext) {
 	
-	(void)line;
-	(void)specConfig;
-//	std::stringstream	stream(line);
-//	std::string			directive;
-//
-////	stream >> tmp >> this->_clientMaxBodySize;
-//	stream >> directive;
-//	if (`
+	std::stringstream	stream(line);
+	std::string			directive;
+	std::string			sizeStr;
+	size_t				mPos;
+	size_t				size;
+
+	stream >> directive >> sizeStr;
+	mPos = sizeStr.find_first_of("mM");
+	if (sizeStr.find_first_not_of("0123456789") != mPos 
+		|| sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
+		throw Parser::InvalidParam("Error: Invalid parameter " + sizeStr, *this);
+	}
+	sizeStr = sizeStr.substr(0, sizeStr.find_first_of("mM"));
+	size = std::atoll(sizeStr.c_str());
+	size *= 1000000;
+	serverContext.setClientMaxBodySize(size);
 }
 
-void	Parser::parseErrorPage(std::string const &line, ServerContext& specConfig) { 
+void	Parser::parseErrorPage(std::string const &line, ServerContext& serverContext) { 
 
 	(void)line;
-	(void)specConfig;
+	(void)serverContext;
 
 //	std::stringstream	stream(line);
 //	std::string			tmp;
@@ -175,10 +242,10 @@ void	Parser::parseErrorPage(std::string const &line, ServerContext& specConfig) 
 //	//todo
 }
 
-void	Parser::parseIndex(std::string const &line, ServerContext& specConfig) {
+void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
 
 	(void)line;
-	(void)specConfig;
+	(void)serverContext;
 //	std::stringstream	stream(line);
 //	std::string			tmp;
 //
@@ -188,28 +255,28 @@ void	Parser::parseIndex(std::string const &line, ServerContext& specConfig) {
 //	}
 }
 
-void	Parser::parseRoot(std::string const &line, ServerContext& specConfig) { 
+void	Parser::parseRoot(std::string const &line, ServerContext& serverContext) { 
 
 	(void)line;
-	(void)specConfig;
+	(void)serverContext;
 //	std::stringstream	stream(line);
 //	std::string			tmp;
 //
 //	stream >> tmp >> this->_root;
 }
 
-void	Parser::parseAutoindex(std::string const &line, ServerContext& specConfig) {
+void	Parser::parseAutoindex(std::string const &line, ServerContext& serverContext) {
 
 	(void)line;
-	(void)specConfig;
+	(void)serverContext;
 
 //	find on/off
 }
 
-void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& specConfig) { 
+void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& serverContext) { 
 
 	(void)line;
-	(void)specConfig;
+	(void)serverContext;
 //	std::stringstream	stream(line);
 //	std::string			tmp;
 //
@@ -219,10 +286,10 @@ void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& spec
 //	}
 }
 
-void	Parser::parseLocation(std::stringstream& stream, ServerContext& specConfig) { 
+void	Parser::parseLocation(std::stringstream& stream, ServerContext& serverContext) { 
 	
 	(void)stream;
-	(void)specConfig;
+	(void)serverContext;
 //	go through lines until closing bracket
 //	this->_locations[location] = path;
 
@@ -231,7 +298,7 @@ void	Parser::parseLocation(std::stringstream& stream, ServerContext& specConfig)
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
 
-void Parser::isValidIPv4(const std::string& ip) {
+void Parser::isValidIPv4(const std::string& ip) const {
 	
 	std::istringstream iss(ip);
 	std::string octet;
@@ -262,7 +329,7 @@ void Parser::isValidIPv4(const std::string& ip) {
 	}
 }
 
-void Parser::isValidIPv6(const std::string& ip) {
+void Parser::isValidIPv6(const std::string& ip) const {
 	
 	std::istringstream iss(ip);
 	std::string block;
@@ -307,6 +374,29 @@ void Parser::isValidIPv6(const std::string& ip) {
 		throw Parser::InvalidParam(err, *this);
 	}
 }
+
+void	Parser::trimAndReplaceWhitespaces(std::string& input) {
+
+	std::stringstream	ss(input);
+	std::string			word;
+
+	input.clear();
+	while (ss >> word) {
+		if (!input.empty()) {
+			input += " ";
+		}
+		input += word;
+	}
+}
+
+void	Parser::buildAndThrowParamError(std::string const& line) const {
+
+	std::string param = line.substr(0, line.find_first_of(" "));
+	param.substr(0, param.find_first_of(";"));
+	std::string err = "Error: Invalid parameter '" + param + "'";
+	throw Parser::InvalidParam(err, *this);
+}
+
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
 

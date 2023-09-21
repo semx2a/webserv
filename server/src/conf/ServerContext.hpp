@@ -36,7 +36,7 @@ class ServerContext {
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 		void	setLocation(std::string const& location, std::string const& root);
 		void	setListen(std::string const& ip, int port);
-		void	setServerName(std::string const& serverName);
+		void	setServerNames(std::vector<std::string> const& serverNames);
 
 	private:
 		bool								_autoindex;

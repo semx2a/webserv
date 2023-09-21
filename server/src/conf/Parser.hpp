@@ -25,18 +25,6 @@ class Parser {
 		size_t								getLinesRead(void) const;
 
 		void	parse();
-		void	parseClientMaxBodySize(std::string const& line, ServerContext& specConfig);
-		void	parseErrorPage(std::string const& line, ServerContext& specConfig);
-		void	parseIndex(std::string const& line, ServerContext& specConfig);
-		void	parseRoot(std::string const& line, ServerContext& specConfig);
-		void	parseAutoindex(std::string const& line, ServerContext& specConfig);
-		void	parseAuthorizedMethods(std::string const& line, ServerContext& specConfig);
-		void	parseLocation(std::stringstream& stream, ServerContext& specConfig);
-		void	parseListen(std::string const& line, ServerContext& specConfig);
-		void	parseServerName(std::string const& line, ServerContext& serverContext);
-		void	isValidIPv4(const std::string& str);
-		void	isValidIPv6(const std::string& str);
-
 
 	private:
 		Parser();
@@ -46,6 +34,27 @@ class Parser {
 		std::vector<ServerContext>	_serverContexts;
 
 		void	parseServerContext(std::stringstream& stream);
+		void	parseServerLocationContext(std::stringstream& stream, ServerContext& serverContext);
+
+		void	parseClientMaxBodySize(std::string const& line, ServerContext& serverContext);
+		void	parseErrorPage(std::string const& line, ServerContext& serverContext);
+		void	parseIndex(std::string const& line, ServerContext& serverContext);
+		void	parseRoot(std::string const& line, ServerContext& serverContext);
+		void	parseAutoindex(std::string const& line, ServerContext& serverContext);
+		void	parseAuthorizedMethods(std::string const& line, ServerContext& serverContext);
+		void	parseLocation(std::stringstream& stream, ServerContext& serverContext);
+		void	parseListen(std::string const& line, ServerContext& serverContext);
+		void	parseServerName(std::string const& line, ServerContext& serverContext);
+
+		// UTILS
+		bool	isValidDirective(std::string const& line) const;
+		bool	isCommentOrEmptyLine(std::string const& line) const;
+		bool	isEndOfScope(std::string const& line) const;
+		void	isValidIPv4(std::string const& str) const;
+		void	isValidIPv6(std::string const& str) const;
+		void 	trimAndReplaceWhitespaces(std::string& input);
+		void	buildAndThrowParamError(std::string const& line) const;
+
 	
 	public:
 		class Error : public std::exception {

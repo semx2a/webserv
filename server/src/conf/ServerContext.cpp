@@ -75,7 +75,7 @@ void	ServerContext::setLocation(std::string const& location, std::string const& 
 
 void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[ip] = port; }
 
-void	ServerContext::setServerName(std::string const& serverName) { this->_serverNames.push_back(serverName); }
+void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) { this->_serverNames = serverNames; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
