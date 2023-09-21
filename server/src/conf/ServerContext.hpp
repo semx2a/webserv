@@ -28,13 +28,13 @@ class ServerContext {
 		std::map<std::string, int> const &			getListen(void) const;
 		std::vector<std::string> const &			getServerNames(void) const;
 
-		void	setClientMaxBodySize(std::string const& line);
-		void	setErrorPage(std::string const& line);
-		void	setIndex(std::string const& line);
-		void	setRoot(std::string const& line);
-		void	setAutoindex(std::string const& line);
-		void	setAuthorizedMethods(std::string const& line);
-		void	setLocation(std::stringstream& stream);
+		void	setClientMaxBodySize(size_t size);
+		void	setErrorPage(std::map<int, std::string> const& errorPages);
+		void	setIndex(std::vector<std::string> const& index);
+		void	setRoot(std::string const& root);
+		void	setAutoindex(bool autoindex);
+		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
+		void	setLocation(std::string const& location, std::string const& root);
 		void	setListen(std::string const& ip, int port);
 		void	setServerName(std::string const& serverName);
 

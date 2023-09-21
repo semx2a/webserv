@@ -25,6 +25,13 @@ class Parser {
 		size_t								getLinesRead(void) const;
 
 		void	parse();
+		void	parseClientMaxBodySize(std::string const& line, ServerContext& specConfig);
+		void	parseErrorPage(std::string const& line, ServerContext& specConfig);
+		void	parseIndex(std::string const& line, ServerContext& specConfig);
+		void	parseRoot(std::string const& line, ServerContext& specConfig);
+		void	parseAutoindex(std::string const& line, ServerContext& specConfig);
+		void	parseAuthorizedMethods(std::string const& line, ServerContext& specConfig);
+		void	parseLocation(std::stringstream& stream, ServerContext& specConfig);
 		void	parseListen(std::string const& line, ServerContext& specConfig);
 		void	parseServerName(std::string const& line, ServerContext& serverContext);
 		void	isValidIPv4(const std::string& str);

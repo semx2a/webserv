@@ -4,16 +4,16 @@
 
 ServerContext::ServerContext() : _autoindex("off"), _clientMaxBodySize(1048576) {
 
-	this->_locations["/"] = "../www/html";
-	this->_errorPages[404] = "../www/html/error/404.html";
-	//NOTE: mettre valeurs par defaut APRES le parsing, SI le vecteur est vide (pareil pour les autres vecteurs)
-	this->_index.push_back("index.html");
-	this->_authorizedMethods.push_back("GET");
-	this->_authorizedMethods.push_back("POST");
-	this->_authorizedMethods.push_back("DELETE");
-	//If the directive is not present then either *:80 is used if nginx runs with the superuser privileges, or *:8000 otherwise.
-	this->_listen["*"] = 80;
-	this->_serverNames.push_back("localhost");
+//	this->_locations["/"] = "../www/html";
+//	this->_errorPages[404] = "../www/html/error/404.html";
+//	//NOTE: mettre valeurs par defaut APRES le parsing, SI le vecteur est vide (pareil pour les autres vecteurs)
+//	this->_index.push_back("index.html");
+//	this->_authorizedMethods.push_back("GET");
+//	this->_authorizedMethods.push_back("POST");
+//	this->_authorizedMethods.push_back("DELETE");
+//	//If the directive is not present then either *:80 is used if nginx runs with the superuser privileges, or *:8000 otherwise.
+//	this->_listen["*"] = 80;
+//	this->_serverNames.push_back("localhost");
 }
 
 ServerContext::ServerContext(ServerContext const& rhs) { *this = rhs; }
@@ -59,66 +59,19 @@ std::vector<std::string> const &			ServerContext::getServerNames(void) const { r
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
-void	ServerContext::setClientMaxBodySize(std::string const& line) {
-	
-	std::stringstream	stream(line);
-	std::string			tmp;
+void	ServerContext::setClientMaxBodySize(size_t size) { this->_clientMaxBodySize = size; }
 
-	stream >> tmp >> this->_clientMaxBodySize;
-}
+void	ServerContext::setErrorPage(std::map<int, std::string> const& errorPages) { this->_errorPages = errorPages; }
 
-void	ServerContext::setErrorPage(std::string const &line) { 
+void	ServerContext::setIndex(std::vector<std::string> const& index) { this->_index = index; }
 
-	std::stringstream	stream(line);
-	std::string			tmp;
+void	ServerContext::setRoot(std::string const& root) { this->_root = root; }
 
-	//todo
-}
+void	ServerContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
 
-void	ServerContext::setIndex(std::string const &line) {
+void	ServerContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMethods) { this->_authorizedMethods = authorizedMethods; }
 
-	std::stringstream	stream(line);
-	std::string			tmp;
-
-	stream >> tmp;
-	while (stream >> tmp) {
-		this->_index.push_back(tmp);
-	}
-}
-
-void	ServerContext::setRoot(std::string const &line) { 
-
-	std::stringstream	stream(line);
-	std::string			tmp;
-
-	stream >> tmp >> this->_root;
-}
-
-void	ServerContext::setAutoindex(std::string const &line) {
-
-(void)line;
-// find on/off
-}
-
-void	ServerContext::setAuthorizedMethods(std::string const& line) { 
-
-	std::stringstream	stream(line);
-	std::string			tmp;
-
-	stream >> tmp;
-	while (stream >> tmp) {
-		this->_authorizedMethods.push_back(tmp);
-	}
-}
-
-void	ServerContext::setLocation(std::stringstream& stream) { 
-	
-	(void)stream;
-//	go through lines until closing bracket
-//	this->_locations[location] = path;
-
-
-}
+void	ServerContext::setLocation(std::string const& location, std::string const& root) { this->_locations[location] = root; }
 
 void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[ip] = port; }
 

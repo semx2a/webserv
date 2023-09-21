@@ -86,6 +86,9 @@ void	Parser::parseServerContext(std::stringstream& stream) {
 			if (line.find('}') != std::string::npos && line.find_first_not_of("} \t") == std::string::npos) {
 				break ;
 			}	
+			else if (line.find("client_max_body_size") != std::string::npos) {
+				
+			}
 			else if (line.find("listen") != std::string::npos) {
 				this->parseListen(line, server);
 				//this->isValidIPv6(server.getListen().begin()->first);
@@ -94,10 +97,8 @@ void	Parser::parseServerContext(std::stringstream& stream) {
 				this->parseServerName(line, server);
 			}
 			else if (line.find("error_page") != std::string::npos) {
-				server.setErrorPage(line);
 			}
 			else if (line.find("root") != std::string::npos) {
-				server.setRoot(line);
 			}
 		}
 		else if (line.empty () || line.find_first_not_of("\t ") == line.find('#')) {
@@ -150,6 +151,85 @@ void Parser::parseServerName(std::string const& line, ServerContext& server) {
 	serverName = serverName.substr(0, serverName.find_first_of(";"));
 	server.setServerName(serverName);
 }
+
+void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& specConfig) {
+	
+	(void)line;
+	(void)specConfig;
+//	std::stringstream	stream(line);
+//	std::string			directive;
+//
+////	stream >> tmp >> this->_clientMaxBodySize;
+//	stream >> directive;
+//	if (`
+}
+
+void	Parser::parseErrorPage(std::string const &line, ServerContext& specConfig) { 
+
+	(void)line;
+	(void)specConfig;
+
+//	std::stringstream	stream(line);
+//	std::string			tmp;
+//
+//	//todo
+}
+
+void	Parser::parseIndex(std::string const &line, ServerContext& specConfig) {
+
+	(void)line;
+	(void)specConfig;
+//	std::stringstream	stream(line);
+//	std::string			tmp;
+//
+//	stream >> tmp;
+//	while (stream >> tmp) {
+//		this->_index.push_back(tmp);
+//	}
+}
+
+void	Parser::parseRoot(std::string const &line, ServerContext& specConfig) { 
+
+	(void)line;
+	(void)specConfig;
+//	std::stringstream	stream(line);
+//	std::string			tmp;
+//
+//	stream >> tmp >> this->_root;
+}
+
+void	Parser::parseAutoindex(std::string const &line, ServerContext& specConfig) {
+
+	(void)line;
+	(void)specConfig;
+
+//	find on/off
+}
+
+void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& specConfig) { 
+
+	(void)line;
+	(void)specConfig;
+//	std::stringstream	stream(line);
+//	std::string			tmp;
+//
+//	stream >> tmp;
+//	while (stream >> tmp) {
+//		this->_authorizedMethods.push_back(tmp);
+//	}
+}
+
+void	Parser::parseLocation(std::stringstream& stream, ServerContext& specConfig) { 
+	
+	(void)stream;
+	(void)specConfig;
+//	go through lines until closing bracket
+//	this->_locations[location] = path;
+
+
+}
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
 
 void Parser::isValidIPv4(const std::string& ip) {
 	
