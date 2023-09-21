@@ -41,16 +41,16 @@ class Parser {
 		typedef std::map<std::string, Parser::ParserFunction> DirectiveMap;
 
 		void	parseAutoindex(std::string const& line, ServerContext& serverContext);
-		void	parseClientMaxBodySize(std::string const& line, ServerContext& serverContext);
+		void	parseMaxBodySize(std::string const& line, ServerContext& serverContext);
 		void	parseRoot(std::string const& line, ServerContext& serverContext);
 		void	parseListen(std::string const& line, ServerContext& serverContext);
 		void	parseErrorPage(std::string const& line, ServerContext& serverContext);
 		void	parseIndex(std::string const& line, ServerContext& serverContext);
-		void	parseAuthorizedMethods(std::string const& line, ServerContext& serverContext);
+		void	parseLimitExcept(std::string const& line, ServerContext& serverContext);
 		void	parseServerName(std::string const& line, ServerContext& serverContext);
 
 		// UTILS
-		bool	isValidDirective(std::string const& line) const;
+		bool	isDirective(std::string const& line) const;
 		bool	isCommentOrEmptyLine(std::string const& line) const;
 		bool	isEndOfScope(std::string const& line) const;
 		void	isValidIPv4(std::string const& str) const;
