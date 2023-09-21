@@ -40,14 +40,13 @@ class Parser {
     	typedef std::pair<std::string, Parser::ParserFunction> DirectivePair;
 		typedef std::map<std::string, Parser::ParserFunction> DirectiveMap;
 
+		void	parseAutoindex(std::string const& line, ServerContext& serverContext);
 		void	parseClientMaxBodySize(std::string const& line, ServerContext& serverContext);
+		void	parseRoot(std::string const& line, ServerContext& serverContext);
+		void	parseListen(std::string const& line, ServerContext& serverContext);
 		void	parseErrorPage(std::string const& line, ServerContext& serverContext);
 		void	parseIndex(std::string const& line, ServerContext& serverContext);
-		void	parseRoot(std::string const& line, ServerContext& serverContext);
-		void	parseAutoindex(std::string const& line, ServerContext& serverContext);
 		void	parseAuthorizedMethods(std::string const& line, ServerContext& serverContext);
-		void	parseLocation(std::stringstream& stream, ServerContext& serverContext);
-		void	parseListen(std::string const& line, ServerContext& serverContext);
 		void	parseServerName(std::string const& line, ServerContext& serverContext);
 
 		// UTILS

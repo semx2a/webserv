@@ -39,42 +39,30 @@ ServerContext::~ServerContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
+bool										ServerContext::getAutoindex(void) const { return this->_autoindex; }
 size_t										ServerContext::getClientMaxBodySize(void) const { return this->_clientMaxBodySize; }
- 
-std::map<int, std::string> const &			ServerContext::getErrorPages(void) const { return this->_errorPages; }
-
-std::vector<std::string> const & 			ServerContext::getIndex(void) const { return this->_index; }
-
 std::string const &							ServerContext::getRoot(void) const { return this->_root; }
 
+std::map<std::string, int> const &			ServerContext::getListen(void) const { return this->_listen; }
+std::map<int, std::string> const &			ServerContext::getErrorPages(void) const { return this->_errorPages; }
 std::map<std::string, std::string> const &	ServerContext::getLocations(void) const { return this->_locations; }
 
-bool										ServerContext::getAutoindex(void) const { return this->_autoindex; }
-
-std::vector<std::string> const &			ServerContext::getAuthorizedMethods(void) const { return this->_authorizedMethods; }
-
-std::map<std::string, int> const &			ServerContext::getListen(void) const { return this->_listen; }
-
+std::vector<std::string> const & 			ServerContext::getIndex(void) const { return this->_index; }
 std::vector<std::string> const &			ServerContext::getServerNames(void) const { return this->_serverNames; }
+std::vector<std::string> const &			ServerContext::getAuthorizedMethods(void) const { return this->_authorizedMethods; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
+void	ServerContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
 void	ServerContext::setClientMaxBodySize(size_t size) { this->_clientMaxBodySize = size; }
-
-void	ServerContext::setErrorPage(std::map<int, std::string> const& errorPages) { this->_errorPages = errorPages; }
-
-void	ServerContext::setIndex(std::vector<std::string> const& index) { this->_index = index; }
-
 void	ServerContext::setRoot(std::string const& root) { this->_root = root; }
 
-void	ServerContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
-
-void	ServerContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMethods) { this->_authorizedMethods = authorizedMethods; }
-
+void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[ip] = port; }
+void	ServerContext::setErrorPage(std::map<int, std::string> const& errorPages) { this->_errorPages = errorPages; }
 void	ServerContext::setLocation(std::string const& location, std::string const& root) { this->_locations[location] = root; }
 
-void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[ip] = port; }
-
+void	ServerContext::setIndex(std::vector<std::string> const& index) { this->_index = index; }
+void	ServerContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMethods) { this->_authorizedMethods = authorizedMethods; }
 void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) { this->_serverNames = serverNames; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS

@@ -72,6 +72,7 @@ void	Parser::parse() {
 void Parser::parseServerContext(std::stringstream& stream) {
 
     Parser::DirectivePair directiveArray[] = {
+
         Parser::DirectivePair("autoindex", &Parser::parseAutoindex),
         Parser::DirectivePair("client_max_body_size", &Parser::parseClientMaxBodySize),
         Parser::DirectivePair("root", &Parser::parseRoot),
@@ -138,6 +139,44 @@ void	Parser::parseServerLocationContext(std::stringstream& stream, ServerContext
 	}
 }
 
+void	Parser::parseAutoindex(std::string const &line, ServerContext& serverContext) {
+
+	(void)line;
+	(void)serverContext;
+
+//	find on/off
+}
+
+void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& serverContext) {
+	
+	std::stringstream	stream(line);
+	std::string			directive;
+	std::string			sizeStr;
+	size_t				mPos;
+	size_t				size;
+
+	stream >> directive >> sizeStr;
+	mPos = sizeStr.find_first_of("mM");
+	if (sizeStr.find_first_not_of("0123456789") != mPos 
+		|| sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
+		throw Parser::InvalidParam("Error: Invalid parameter " + sizeStr, *this);
+	}
+	sizeStr = sizeStr.substr(0, sizeStr.find_first_of("mM"));
+	size = std::atoll(sizeStr.c_str());
+	size *= 1000000;
+	serverContext.setClientMaxBodySize(size);
+}
+
+void	Parser::parseRoot(std::string const &line, ServerContext& serverContext) { 
+
+	(void)line;
+	(void)serverContext;
+//	std::stringstream	stream(line);
+//	std::string			tmp;
+//
+//	stream >> tmp >> this->_root;
+}
+
 void	Parser::parseListen(std::string const& line, ServerContext& serverContext) {
 
 	std::stringstream	stream(line);
@@ -159,46 +198,6 @@ void	Parser::parseListen(std::string const& line, ServerContext& serverContext) 
 	stream >> port;
 	if (!ip.empty() && port != 80)
 		serverContext.setListen(ip, port);
-}
-
-void Parser::parseServerName(std::string const& line, ServerContext& serverContext) {
-
-	std::stringstream			stream(line);
-	std::string					tmp;
-	std::string					serverName;
-	std::vector<std::string> 	serverNames;
-
-//	std::vector<std::string>::iterator it = serverContext.getServerNames().begin();
-//	if (*it == "localhost")
-//		serverContext.getServerNames().erase(it);
-	
-	stream >> tmp;
-	while (stream >> serverName) {
-		if (serverName.find(';') != std::string::npos)
-			serverName = serverName.substr(0, serverName.find_first_of(";"));
-		serverNames.push_back(serverName);
-	}
-	serverContext.setServerNames(serverNames);
-}
-
-void	Parser::parseClientMaxBodySize(std::string const& line, ServerContext& serverContext) {
-	
-	std::stringstream	stream(line);
-	std::string			directive;
-	std::string			sizeStr;
-	size_t				mPos;
-	size_t				size;
-
-	stream >> directive >> sizeStr;
-	mPos = sizeStr.find_first_of("mM");
-	if (sizeStr.find_first_not_of("0123456789") != mPos 
-		|| sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
-		throw Parser::InvalidParam("Error: Invalid parameter " + sizeStr, *this);
-	}
-	sizeStr = sizeStr.substr(0, sizeStr.find_first_of("mM"));
-	size = std::atoll(sizeStr.c_str());
-	size *= 1000000;
-	serverContext.setClientMaxBodySize(size);
 }
 
 void	Parser::parseErrorPage(std::string const &line, ServerContext& serverContext) { 
@@ -225,24 +224,6 @@ void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
 //	}
 }
 
-void	Parser::parseRoot(std::string const &line, ServerContext& serverContext) { 
-
-	(void)line;
-	(void)serverContext;
-//	std::stringstream	stream(line);
-//	std::string			tmp;
-//
-//	stream >> tmp >> this->_root;
-}
-
-void	Parser::parseAutoindex(std::string const &line, ServerContext& serverContext) {
-
-	(void)line;
-	(void)serverContext;
-
-//	find on/off
-}
-
 void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& serverContext) { 
 
 	(void)line;
@@ -256,14 +237,24 @@ void	Parser::parseAuthorizedMethods(std::string const& line, ServerContext& serv
 //	}
 }
 
-void	Parser::parseLocation(std::stringstream& stream, ServerContext& serverContext) { 
+void Parser::parseServerName(std::string const& line, ServerContext& serverContext) {
+
+	std::stringstream			stream(line);
+	std::string					tmp;
+	std::string					serverName;
+	std::vector<std::string> 	serverNames;
+
+//	std::vector<std::string>::iterator it = serverContext.getServerNames().begin();
+//	if (*it == "localhost")
+//		serverContext.getServerNames().erase(it);
 	
-	(void)stream;
-	(void)serverContext;
-//	go through lines until closing bracket
-//	this->_locations[location] = path;
-
-
+	stream >> tmp;
+	while (stream >> serverName) {
+		if (serverName.find(';') != std::string::npos)
+			serverName = serverName.substr(0, serverName.find_first_of(";"));
+		serverNames.push_back(serverName);
+	}
+	serverContext.setServerNames(serverNames);
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
