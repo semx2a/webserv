@@ -14,8 +14,8 @@ class ServerContext {
 		ServerContext& operator=(ServerContext const& rhs);
 		~ServerContext();
 
-		std::string const&							getAutoindex() const;
-		std::string const&							getCgi() const;
+		bool										getAutoindex() const;
+		bool										getCgi() const;
 		size_t										getMaxBodySize() const;
 		std::string const&							getRoot() const;
 
@@ -27,8 +27,8 @@ class ServerContext {
 		std::vector<std::string> const&				getAuthorizedMethods() const;
 		std::vector<std::string> const&				getServerNames(void) const;
 
-		void	setAutoindex(std::string const& autoindex);
-		void	setCgi(std::string const& cgi);
+		void	setAutoindex(bool autoindex);
+		void	setCgi(bool cgi);
 		void	setMaxBodySize(size_t size);
 		void	setRoot(std::string const& root);
 
@@ -42,8 +42,8 @@ class ServerContext {
 		void	setServerNames(std::vector<std::string> const& serverNames);
 
 	private:
-		std::string								_autoindex;
-		std::string								_cgi;
+		bool								_autoindex;
+		bool								_cgi;
 		size_t								_maxBodySize;
 		std::string							_root;
 

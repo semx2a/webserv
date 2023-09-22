@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-ServerContext::ServerContext() : _autoindex("off"), _cgi("off"), _maxBodySize(1048576) {
+ServerContext::ServerContext() : _autoindex(false), _cgi(false), _maxBodySize(1048576) {
 
 //	this->_locations["/"] = "../www/html";
 //	this->_errorPages[404] = "../www/html/error/404.html";
@@ -39,8 +39,8 @@ ServerContext::~ServerContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-std::string	const&								ServerContext::getAutoindex(void) const { return this->_autoindex; }
-std::string	const&								ServerContext::getCgi(void) const { return this->_cgi; }
+bool										ServerContext::getAutoindex(void) const { return this->_autoindex; }
+bool										ServerContext::getCgi(void) const { return this->_cgi; }
 size_t										ServerContext::getMaxBodySize(void) const { return this->_maxBodySize; }
 std::string const &							ServerContext::getRoot(void) const { return this->_root; }
 
@@ -54,8 +54,8 @@ std::vector<std::string> const &			ServerContext::getAuthorizedMethods(void) con
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
-void	ServerContext::setAutoindex(std::string const& autoindex) { this->_autoindex = autoindex; }
-void	ServerContext::setCgi(std::string const& cgi) { this->_cgi = cgi; }
+void	ServerContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
+void	ServerContext::setCgi(bool cgi) { this->_cgi = cgi; }
 void	ServerContext::setMaxBodySize(size_t size) { this->_maxBodySize = size; }
 void	ServerContext::setRoot(std::string const& root) { this->_root = root; }
 

@@ -49,7 +49,7 @@ void	Parser::parse() {
 	std::stringstream	stream;
 
 	file.open(_confFilename.c_str());
-	if (not file.is_open())
+	if (!file.is_open())
 		throw Parser::Error("Error: Cannot open file " + _confFilename);
 	
 	stream << file.rdbuf();
@@ -166,12 +166,14 @@ void	Parser::parseAutoindex(std::string const &line, ServerContext& serverContex
 	std::stringstream	stream(line);
 	std::string			directive;
 	std::string			onOff;
+	bool				onOffBool;
 
 	stream >> directive >> onOff;
-	if (onOff != "on" and onOff != "off")
+	if (onOff != "on" && onOff != "off")
 		buildAndThrowParamError(line);
 
-	serverContext.setAutoindex(onOff);
+	onOffBool = (onOff == "on") ? true : false;
+	serverContext.setAutoindex(onOffBool);
 }
 
 template<typename Context>
@@ -180,17 +182,16 @@ void	Parser::parseCgi(std::string const& line, Context& context) {
 	std::stringstream	stream(line);
 	std::string			directive;
 	std::string			onOff;
+	bool				onOffBool;
 
-	std::cout << "context.getCgi() = " << context.getCgi() << std::endl;
-	if (not(stream >> directive >> onOff) or not stream.eof()) {
-		buildAndThrowParamError(line);
-	}
+	stream >> directive >> onOff;
+	std::cout << "onOff : " << onOff << std::endl;
 	if (onOff != "on" and onOff != "off")
 		buildAndThrowParamError(line);
 
-	std::cout << "onOff : " << onOff << std::endl;
-	context.setCgi(onOff);
-	std::cout << "context.getCgi() = " << context.getCgi() << std::endl;
+	onOffBool = (onOff == "on") ? true : false;
+	std::cout << "onOffBool = " << onOffBool << std::endl;
+	context.setCgi(onOffBool);
 }
 
 template<typename Context>
@@ -200,12 +201,12 @@ void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
 	std::string 		directive;
 	std::string			sizeStr;
 
-	if (not(stream >> directive >> sizeStr) or not stream.eof()) {
+	if (!(stream >> directive >> sizeStr) || !stream.eof()) {
 		buildAndThrowParamError(line);
 	}
 
 	size_t mPos = sizeStr.find_first_of("mM");
-	if (sizeStr.find_first_not_of("0123456789") != mPos or sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
+	if (sizeStr.find_first_not_of("0123456789") != mPos || sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
 		buildAndThrowParamError(line);
 	}
 
@@ -221,7 +222,7 @@ void	Parser::parseRoot(std::string const& line, Context& context) {
 	std::string directive;
 	std::string root;
 
-	if (not (stream >> directive >> root) or not stream.eof()) {
+	if (!(stream >> directive >> root) || !stream.eof()) {
 		buildAndThrowParamError(line);
 	}
 
@@ -236,7 +237,7 @@ void	Parser::parseListen(std::string const& line, ServerContext& serverContext) 
 	int					port(80); //If only address is given, the port 80 is used.
 
 //	std::map<std::string, int>::iterator it = this->_listen.begin();
-//	if (it->first == "127.0.0.1" and it->second == 80)
+//	if (it->first == "127.0.0.1" && it->second == 80)
 //		this->_listen.erase(it);
 
 //	TODO : check with defaut & possible values
@@ -273,7 +274,7 @@ void	Parser::parseErrorPage(std::string const& line, Context& context) {
 void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
 
     std::stringstream            stream(line);
-    std::string                  index;
+    std::string                    index;
     std::vector<std::string>     indexVec;
 
     stream >> index;
@@ -340,13 +341,13 @@ void Parser::isValidIPv4(const std::string& ip) const {
 		}
 
 		for (std::string::const_iterator it = octet.begin(); it != octet.end(); ++it) {
-			if (not std::isdigit(*it)) {
+			if (!std::isdigit(*it)) {
 				throw Parser::InvalidParam(err, *this);
 			}
 		}
 
 		int num = std::atoi(octet.c_str());
-		if (num < 0 or num > 255) {
+		if (num < 0 || num > 255) {
 			throw Parser::InvalidParam(err, *this);
 		}
 	}
@@ -366,7 +367,7 @@ void Parser::isValidIPv6(const std::string& ip) const {
 
 	for (std::string::const_iterator it = ip.begin(); it != ip.end(); ++it) {
 		if (*it == ':') {
-			if (it + 1 != ip.end() and *(it + 1) == ':') {
+			if (it + 1 != ip.end() && *(it + 1) == ':') {
 				++doubleColonCount;
 			}
 		}
@@ -391,13 +392,13 @@ void Parser::isValidIPv6(const std::string& ip) const {
 
 		for (std::string::const_iterator it = block.begin(); it != block.end(); ++it) {
 			char c = std::tolower(*it);
-			if (not std::isdigit(c) and (c < 'a' or c > 'f')) {
+			if (!std::isdigit(c) && (c < 'a' || c > 'f')) {
 				throw Parser::InvalidParam(err, *this);
 			}
 		}
 	}
 
-	if (count < 8 and doubleColonCount == 0) {
+	if (count < 8 && doubleColonCount == 0) {
 		throw Parser::InvalidParam(err, *this);
 	}
 }
@@ -414,7 +415,7 @@ bool	Parser::isDirective(std::string const& line) const {
 
 	semicolonPos = line.find_first_of(';');
 	return 	semicolonPos != std::string::npos 
-			and line.find_first_not_of(" ", semicolonPos) != line.find('\n');
+			&& line.find_first_not_of(" ", semicolonPos) != line.find('\n');
 }
 
 bool	Parser::isEndOfScope(std::string const& line) const {
