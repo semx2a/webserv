@@ -47,7 +47,7 @@ first server = default
 
 ### routes `location {}`
 
-- **accepted HTTP requests** : `limitExcept GET POST;`
+- **accepted HTTP requests** : `authorizedMethods GET POST;`
 
 - **HTTP redirection** : 
   - *Redirection permanente de l'ancienne URL vers la nouvelle*

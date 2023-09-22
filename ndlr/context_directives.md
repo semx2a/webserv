@@ -194,11 +194,11 @@ The code 308 was not treated as a redirect until version 1.13.0.
 These directives are inherited from the previous configuration level if and only if there are no error_page directives defined on the current level.
 
 
-## limit_except
+## authorized_methods
 
 **Syntax**: 
 ```nginx
-limit_except method ... { ... }
+authorized_methods method ... { ... }
 ```
 
 **Default**:	—
@@ -210,7 +210,7 @@ Limits allowed HTTP methods inside a location.
 Allowing the GET method makes the HEAD method also allowed 
 
 ```nginx
-limit_except GET {
+authorized_methods GET {
     allow 192.168.1.0/32;
     deny  all;
 }

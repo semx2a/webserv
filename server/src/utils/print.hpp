@@ -71,10 +71,10 @@ std::string	   	print_end_connexion ();
 std::string	   	print_wait ();
 
 template <typename T>
-std::string print_vector(const std::vector<T>& vec);
+std::string print_vector(std::vector<T> const& vec);
 
 template <typename T>
-std::string	 print_classVector(const std::vector<T>& vec);
+std::string	 print_classVector(std::vector<T> const& vec);
 
 template <typename KeyType, typename ValueType>
 std::string print_map(const std::map<KeyType, ValueType>& myMap);
