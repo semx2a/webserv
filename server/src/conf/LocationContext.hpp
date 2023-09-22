@@ -17,6 +17,12 @@ class LocationContext {
 		std::map<int, std::string> const&	getErrorPages() const;
 		std::vector<std::string> const&		getLimitExcept() const;
 
+		void	setMaxBodySize(size_t size);
+		void	setAlias(std::string const& alias);
+		void	setRoot(std::string const& root);
+		void	setErrorPage(std::map<int, std::string> const& errorPages);
+		void	setLimitExcept(std::vector<std::string> const& limitExcept);
+
 	private:
 		size_t						_maxBodySize;
 		std::string					_alias;
@@ -24,6 +30,8 @@ class LocationContext {
 		std::map<int, std::string>	_errorPages;
 		std::vector<std::string>	_limitExcept;
 };
+
+std::ostream &	operator<<(std::ostream & o, LocationContext const & cc);
 
 #endif
 
