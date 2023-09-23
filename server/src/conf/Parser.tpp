@@ -23,6 +23,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 
 			LocationContext	newLocationCtxt;
 			std::string path = line.substr(line.find_first_of(" ") + 1, line.find_first_of("{") - line.find_first_of(" ") - 1);
+			this->trimAndReplaceWhitespaces(path);
 			parseLocationContext(stream, newLocationCtxt);
 			context.addLocation(path, newLocationCtxt);
 		} 
@@ -136,6 +137,19 @@ void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
 	int size = std::atoll(sizeStr.substr(0, mPos).c_str());
 	size *= 1e6;
 	context.setMaxBodySize(size);
+}
+
+template <typename Context>
+void	Parser::parseAlias(std::string const& line, Context& context) {
+	
+	std::stringstream	stream(line);
+	std::string			directive;
+	std::string			alias;
+
+	stream >> directive >> alias;
+	if (alias.find(';') != std::string::npos)
+		alias = alias.substr(0, alias.find_first_of(";"));
+	context.setAlias(alias);
 }
 
 template <typename Context>

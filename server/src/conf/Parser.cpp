@@ -104,6 +104,7 @@ typename Parser::DirectiveMap<LocationContext>::type Parser::initializeLocationD
 
 	directiveMap["cgi"] = &Parser::parseCgi<LocationContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<LocationContext>;
+	directiveMap["alias"] = &Parser::parseAlias<LocationContext>;
 	directiveMap["root"] = &Parser::parseRoot<LocationContext>;
 	directiveMap["error_page"] = &Parser::parseErrorPage<LocationContext>;
 	directiveMap["index"] = &Parser::parseIndex<LocationContext>;

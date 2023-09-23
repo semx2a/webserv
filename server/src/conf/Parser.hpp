@@ -66,6 +66,8 @@ class Parser {
 		template <typename Context>
 		void 	parseMaxBodySize(const std::string& line, Context&);
 		template <typename Context>
+		void	parseAlias(std::string const& line, Context& context);
+		template <typename Context>
 		void	parseRoot(std::string const& line, Context&);
 		template <typename Context>
 		void	parseListen(std::string const& line, Context&);
