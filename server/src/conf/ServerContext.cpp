@@ -39,18 +39,18 @@ ServerContext::~ServerContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-bool										ServerContext::getAutoindex(void) const { return this->_autoindex; }
-bool										ServerContext::getCgi(void) const { return this->_cgi; }
-size_t										ServerContext::getMaxBodySize(void) const { return this->_maxBodySize; }
-std::string const &							ServerContext::getRoot(void) const { return this->_root; }
+bool											ServerContext::getAutoindex(void) const { return this->_autoindex; }
+bool											ServerContext::getCgi(void) const { return this->_cgi; }
+size_t											ServerContext::getMaxBodySize(void) const { return this->_maxBodySize; }
+std::string const &								ServerContext::getRoot(void) const { return this->_root; }
 
 std::map<std::string, int> const &				ServerContext::getListen(void) const { return this->_listen; }
 std::map<int, std::string> const &				ServerContext::getErrorPages(void) const { return this->_errorPages; }
 std::map<std::string, LocationContext> const &	ServerContext::getLocations(void) const { return this->_locations; }
 
-std::vector<std::string> const & 			ServerContext::getIndex(void) const { return this->_index; }
-std::vector<std::string> const &			ServerContext::getServerNames(void) const { return this->_serverNames; }
-std::vector<std::string> const &			ServerContext::getAuthorizedMethods(void) const { return this->_authorizedMethods; }
+std::vector<std::string> const & 				ServerContext::getIndex(void) const { return this->_index; }
+std::vector<std::string> const &				ServerContext::getServerNames(void) const { return this->_serverNames; }
+std::vector<std::string> const &				ServerContext::getAuthorizedMethods(void) const { return this->_authorizedMethods; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
