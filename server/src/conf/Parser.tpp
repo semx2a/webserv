@@ -91,8 +91,8 @@ void	Parser::parseAutoindex(std::string const &line, Context& context) {
 	std::string			onOff;
 	bool				onOffBool;
 
-	if (typeid(Context) != typeid(LocationContext))
-		return ;
+//	if (typeid(Context) != typeid(LocationContext)) // can be found both in server and location context	
+//		return ;
 	stream >> directive >> onOff;
 	if (onOff != "on" && onOff != "off")
 		buildAndThrowParamError(line);
@@ -112,7 +112,7 @@ void	Parser::parseCgi(std::string const& line, Context& context) {
 	stream >> directive >> onOff;
 	if (onOff != "on" and onOff != "off")
 		buildAndThrowParamError(line);
-
+	
 	onOffBool = (onOff == "on") ? true : false;
 	context.setCgi(onOffBool);
 }

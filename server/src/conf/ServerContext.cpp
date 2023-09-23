@@ -76,7 +76,7 @@ void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) 
 
 std::ostream &	operator<<(std::ostream & o, ServerContext const & sc) {
 
-	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << sc.getAutoindex()							<< NO_COLOR << std::endl;
+	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.getAutoindex()							<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "cgi: " 				<< HIGREEN << sc.getCgi()								<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.getMaxBodySize()						<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.getRoot()								<< NO_COLOR << std::endl;
