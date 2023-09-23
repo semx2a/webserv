@@ -7,9 +7,12 @@
 # include <iostream>
 # include <sstream>
 # include <string>
+# include <typeinfo>
 
 # include "ServerContext.hpp"
 # include "LocationContext.hpp"
+
+# define DEBUG
 
 class ServerContext;
 class LocationContext;
@@ -35,28 +38,45 @@ class Parser {
 		std::string		 			_confFilename;
 		std::vector<ServerContext>	_serverContexts;
 
-		void	parseServerContext(std::stringstream& stream);
-		void	parseServerLocationContext(std::stringstream& stream, ServerContext& serverContext);
+		template <typename Context>
+		void	parseServerContext(std::stringstream& stream, Context& context);
+		template <typename Context>
+		void	parseLocationContext(std::stringstream& stream, Context& context);
 
-		typedef void (Parser::*ParserFunction)(std::string const&, ServerContext&);
-    	typedef std::pair<std::string, Parser::ParserFunction> DirectivePair;
-		typedef std::map<std::string, Parser::ParserFunction> DirectiveMap;
+	  	template <typename Context>
+		struct ParserFunctionWrapper {
+			typedef void (Parser::*ParserFunction)(std::string const&, Context&);
+		};
+	  	template <typename Context>
+		struct DirectivePair {
+			typedef std::pair<std::string, void(Parser::*)(std::string const&, Context&)> type;
+		};
+		template <typename Context>
+		struct DirectiveMap {
+			typedef std::map<std::string, void(Parser::*)(std::string const&, Context&)> type;
+		};
+		typename DirectiveMap<ServerContext>::type initializeServerDirectives();
+		typename DirectiveMap<LocationContext>::type initializeLocationDirectives();
 
-		void	parseAutoindex(std::string const& line, ServerContext& serverContext);
-		void	parseCgi(std::string const& line, ServerContext& serverContext);
-		void	parseCgi(std::string const& line, LocationContext& locationContext);
-		void 	parseMaxBodySize(const std::string& line, ServerContext& serverContext);
-		void 	parseMaxBodySize(const std::string& line, LocationContext& locationContext);
-		void	parseRoot(std::string const& line, ServerContext& serverContext);
-		void	parseRoot(std::string const& line, LocationContext& locationContext);
-		void	parseListen(std::string const& line, ServerContext& serverContext);
-		void	parseErrorPage(std::string const& line, ServerContext& serverContext);
-		void	parseErrorPage(std::string const& line, LocationContext& locationContext);
-		void	parseIndex(std::string const& line, ServerContext& serverContext);
-		void	parseIndex(std::string const& line, LocationContext& locationContext);
-		void	parseAuthorizedMethods(const std::string& line, ServerContext& serverContext);
-		void	parseAuthorizedMethods(const std::string& line, LocationContext& locationContext);
-		void	parseServerName(std::string const& line, ServerContext& serverContext);
+
+		template <typename Context>
+		void	parseAutoindex(std::string const& line, Context&);
+		template <typename Context>
+		void	parseCgi(std::string const& line, Context&);
+		template <typename Context>
+		void 	parseMaxBodySize(const std::string& line, Context&);
+		template <typename Context>
+		void	parseRoot(std::string const& line, Context&);
+		template <typename Context>
+		void	parseListen(std::string const& line, Context&);
+		template <typename Context>
+		void	parseErrorPage(std::string const& line, Context&);
+		template <typename Context>
+		void	parseIndex(std::string const& line, Context&);
+		template <typename Context>
+		void	parseAuthorizedMethods(const std::string& line, Context&);
+		template <typename Context>
+		void	parseServerName(std::string const& line, Context&);
 
 		// UTILS
 		bool	isDirective(std::string const& line) const;
@@ -85,5 +105,7 @@ class Parser {
 		};
 
 };
+
+#include "Parser.tpp"
 
 #endif

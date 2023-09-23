@@ -5,6 +5,9 @@
 #include <vector>
 
 #include "print.hpp"
+#include "LocationContext.hpp"
+
+class LocationContext;
 
 class ServerContext {
 
@@ -19,9 +22,9 @@ class ServerContext {
 		size_t										getMaxBodySize() const;
 		std::string const&							getRoot() const;
 
-		std::map<std::string, int> const&			getListen(void) const;
-		std::map<int, std::string> const&			getErrorPages() const;
-		std::map<std::string, std::string> const&	getLocations() const;
+		std::map<std::string, int> const&				getListen(void) const;
+		std::map<int, std::string> const&				getErrorPages() const;
+		std::map<std::string, LocationContext> const&	getLocations() const;
 
 		std::vector<std::string> const&				getIndex() const;
 		std::vector<std::string> const&				getAuthorizedMethods() const;
@@ -29,13 +32,14 @@ class ServerContext {
 
 		void	setAutoindex(bool autoindex);
 		void	setCgi(bool cgi);
-		void	setMaxBodySize(size_t size);
+		void 	setMaxBodySize(size_t size);
 		void	setRoot(std::string const& root);
 
 		void	setListen(std::string const& ip, int port);
-		void	setErrorPage(std::map<int, std::string> const& errorPages);
 		void	addErrorPage(int code, std::string const& path);
-		void	setLocation(std::string const& location, std::string const& root);
+		void	setErrorPages(std::map<int, std::string> const& errorPages);
+		void	addLocation(std::string const& location, LocationContext const& locationContext);
+		void	setLocations(std::map<std::string, LocationContext> locationsMap);
 
 		void	setIndex(std::vector<std::string> const& index);
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
@@ -47,9 +51,9 @@ class ServerContext {
 		size_t								_maxBodySize;
 		std::string							_root;
 
-		std::map<std::string, int> 			_listen; // <IP, port>
-		std::map<int, std::string>			_errorPages;
-		std::map<std::string, std::string>	_locations; // TODO: change to map<string, LocationContext>
+		std::map<std::string, int> 				_listen; // <IP, port>
+		std::map<int, std::string>				_errorPages;
+		std::map<std::string, LocationContext>	_locations; // TODO: change to map<string, LocationContext>
 		
 		std::vector<std::string>			_index;
 		std::vector<std::string>			_authorizedMethods;

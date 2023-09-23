@@ -100,7 +100,7 @@ void	Response::setStatusCodes(void) {
 
 }
 
-void	Response::setErrorPages(std::vector<std::string> const& errorPages) { this->_errorPages = errorPages; }
+void	Response::setErrorPagess(std::vector<std::string> const& errorPages) { this->_errorPages = errorPages; }
 
 void	Response::setResponse(std::string const& response) { this->_response = response; }
 

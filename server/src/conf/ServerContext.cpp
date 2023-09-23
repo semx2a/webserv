@@ -44,9 +44,9 @@ bool										ServerContext::getCgi(void) const { return this->_cgi; }
 size_t										ServerContext::getMaxBodySize(void) const { return this->_maxBodySize; }
 std::string const &							ServerContext::getRoot(void) const { return this->_root; }
 
-std::map<std::string, int> const &			ServerContext::getListen(void) const { return this->_listen; }
-std::map<int, std::string> const &			ServerContext::getErrorPages(void) const { return this->_errorPages; }
-std::map<std::string, std::string> const &	ServerContext::getLocations(void) const { return this->_locations; }
+std::map<std::string, int> const &				ServerContext::getListen(void) const { return this->_listen; }
+std::map<int, std::string> const &				ServerContext::getErrorPages(void) const { return this->_errorPages; }
+std::map<std::string, LocationContext> const &	ServerContext::getLocations(void) const { return this->_locations; }
 
 std::vector<std::string> const & 			ServerContext::getIndex(void) const { return this->_index; }
 std::vector<std::string> const &			ServerContext::getServerNames(void) const { return this->_serverNames; }
@@ -60,9 +60,10 @@ void	ServerContext::setMaxBodySize(size_t size) { this->_maxBodySize = size; }
 void	ServerContext::setRoot(std::string const& root) { this->_root = root; }
 
 void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[ip] = port; }
-void	ServerContext::setErrorPage(std::map<int, std::string> const& errorPages) { this->_errorPages = errorPages; }
 void	ServerContext::addErrorPage(int code, std::string const& path) { this->_errorPages[code] = path; }
-void	ServerContext::setLocation(std::string const& location, std::string const& root) { this->_locations[location] = root; }
+void	ServerContext::setErrorPages(std::map<int, std::string> const& errorPages) { this->_errorPages = errorPages; }
+void	ServerContext::addLocation(std::string const& location, LocationContext const& locationContext) { this->_locations[location] = locationContext; }
+void	ServerContext::setLocations(std::map<std::string, LocationContext> locationsMap) { this->_locations = locationsMap; }
 
 void	ServerContext::setIndex(std::vector<std::string> const& index) { this->_index = index; }
 void	ServerContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMethods) { this->_authorizedMethods = authorizedMethods; }

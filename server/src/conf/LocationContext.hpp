@@ -11,16 +11,22 @@ class LocationContext {
 		LocationContext& operator=(LocationContext const& rhs);
 		~LocationContext();
 
+		bool								getCgi() const;
 		size_t								getMaxBodySize() const;
 		std::string const&					getAlias() const;
 		std::string const&					getRoot() const;
 		std::map<int, std::string> const&	getErrorPages() const;
+		std::vector<std::string> const&		getIndex() const;
 		std::vector<std::string> const&		getAuthorizedMethods() const;
 
+		void	setCgi(bool cgi);
 		void	setMaxBodySize(size_t size);
 		void	setAlias(std::string const& alias);
 		void	setRoot(std::string const& root);
-		void	setErrorPage(std::map<int, std::string> const& errorPages);
+		void	addErrorPage(int code, std::string const& path);
+		void	setErrorPages(std::map<int, std::string> const& errorPages);
+		void	addIndex(std::string const& index);
+		void	setIndex(std::vector<std::string> const& index);
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 
 	private:
@@ -36,6 +42,8 @@ class LocationContext {
 std::ostream &	operator<<(std::ostream & o, LocationContext const & cc);
 
 #endif
+
+//RAJOUTER ALIAS
 
 /*IDEA : make templates func parser for common variables :
 									- cgi

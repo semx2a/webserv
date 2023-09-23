@@ -36,7 +36,7 @@ class Response {
 
 		void	setStatusLine(std::string const& statusLine);
 		void	setStatusCodes(void);
-		void	setErrorPages(std::vector<std::string> const& errorPages);
+		void	setErrorPagess(std::vector<std::string> const& errorPages);
 		void	setResponse(std::string const& response);
 		
 
