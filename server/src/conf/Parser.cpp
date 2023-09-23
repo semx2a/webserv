@@ -35,9 +35,9 @@ Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::vector<ServerContext> const &		Parser::getServerContexts(void) const { return this->_serverContexts; }
+std::vector<ServerContext> const&	Parser::getServerContexts(void) const { return this->_serverContexts; }
 
-std::string const &					Parser::getConfFileName(void) const { return this->_confFilename; }
+std::string const&					Parser::getConfFileName(void) const { return this->_confFilename; }
 
 size_t								Parser::getLinesRead(void) const { return this->_linesRead; }
 
@@ -84,13 +84,13 @@ void Parser::parseServerContext(std::stringstream& stream) {
 	Parser::DirectivePair directiveArray[] = {
 
 		Parser::DirectivePair("autoindex", &Parser::parseAutoindex),
-		Parser::DirectivePair("cgi", &Parser::parseCgi<ServerContext>),
-		Parser::DirectivePair("client_max_body_size", &Parser::parseMaxBodySize<ServerContext>),
-		Parser::DirectivePair("root", &Parser::parseRoot<ServerContext>),
+		Parser::DirectivePair("cgi", &Parser::parseCgi),
+		Parser::DirectivePair("client_max_body_size", &Parser::parseMaxBodySize),
+		Parser::DirectivePair("root", &Parser::parseRoot),
 		Parser::DirectivePair("listen", &Parser::parseListen),
-		Parser::DirectivePair("error_page", &Parser::parseErrorPage<ServerContext>),
+		Parser::DirectivePair("error_page", &Parser::parseErrorPage),
 		Parser::DirectivePair("index", &Parser::parseIndex),
-		Parser::DirectivePair("authorized_methods", &Parser::parseAuthorizedMethods<ServerContext>),
+		Parser::DirectivePair("authorized_methods", &Parser::parseAuthorizedMethods),
 		Parser::DirectivePair("server_name", &Parser::parseServerName)
 	};
 
@@ -176,8 +176,7 @@ void	Parser::parseAutoindex(std::string const &line, ServerContext& serverContex
 	serverContext.setAutoindex(onOffBool);
 }
 
-template<typename Context>
-void	Parser::parseCgi(std::string const& line, Context& context) {
+void	Parser::parseCgi(std::string const& line, ServerContext& serverContext) {
 
 	std::stringstream	stream(line);
 	std::string			directive;
@@ -191,11 +190,10 @@ void	Parser::parseCgi(std::string const& line, Context& context) {
 
 	onOffBool = (onOff == "on") ? true : false;
 	std::cout << "onOffBool = " << onOffBool << std::endl;
-	context.setCgi(onOffBool);
+	serverContext.setCgi(onOffBool);
 }
 
-template<typename Context>
-void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
+void	Parser::parseMaxBodySize(std::string const& line, ServerContext& serverContext) {
 
 	std::stringstream	stream(line);
 	std::string 		directive;
@@ -212,11 +210,10 @@ void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
 
 	int size = std::atoll(sizeStr.substr(0, mPos).c_str());
 	size *= 1e6;
-	context.setMaxBodySize(size);
+	serverContext.setMaxBodySize(size);
 }
 
-template<typename Context>
-void	Parser::parseRoot(std::string const& line, Context& context) {
+void	Parser::parseRoot(std::string const& line, ServerContext& serverContext) {
 
 	std::stringstream stream(line);
 	std::string directive;
@@ -226,7 +223,7 @@ void	Parser::parseRoot(std::string const& line, Context& context) {
 		buildAndThrowParamError(line);
 	}
 
-	context.setRoot(root);
+	serverContext.setRoot(root);
 }
 
 void	Parser::parseListen(std::string const& line, ServerContext& serverContext) {
@@ -255,8 +252,7 @@ void	Parser::parseListen(std::string const& line, ServerContext& serverContext) 
 	serverContext.setListen(ip, port);
 }
 
-template<typename Context>
-void	Parser::parseErrorPage(std::string const& line, Context& context) {
+void	Parser::parseErrorPage(std::string const& line, ServerContext& serverContext) {
 
 	std::stringstream	stream(line);
 	std::string			directive;
@@ -268,7 +264,7 @@ void	Parser::parseErrorPage(std::string const& line, Context& context) {
 	if (errorCode.find_first_not_of("0123456789") != std::string::npos) {
 		this->buildAndThrowParamError(line);
 	}
-	context.addErrorPage(std::atoi(errorCode.c_str()), errorPage);
+	serverContext.addErrorPage(std::atoi(errorCode.c_str()), errorPage);
 }
 
 void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
@@ -289,8 +285,7 @@ void	Parser::parseIndex(std::string const &line, ServerContext& serverContext) {
     serverContext.setIndex(indexVec);
 }
 
-template<typename Context>
-void	Parser::parseAuthorizedMethods(const std::string& line, Context& context) {
+void	Parser::parseAuthorizedMethods(const std::string& line, ServerContext& serverContext) {
 
 	std::stringstream			stream(line);
 	std::vector<std::string>	authorizedMethods;
@@ -301,7 +296,7 @@ void	Parser::parseAuthorizedMethods(const std::string& line, Context& context) {
 	while (stream >> method) {
 		authorizedMethods.push_back(method);
 	}
-	context.setAuthorizedMethods(authorizedMethods);
+	serverContext.setAuthorizedMethods(authorizedMethods);
 }
 
 void Parser::parseServerName(std::string const& line, ServerContext& serverContext) {

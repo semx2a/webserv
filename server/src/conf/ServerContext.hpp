@@ -49,7 +49,7 @@ class ServerContext {
 
 		std::map<std::string, int> 			_listen; // <IP, port>
 		std::map<int, std::string>			_errorPages;
-		std::map<std::string, std::string>	_locations; // special : location context. Class?
+		std::map<std::string, std::string>	_locations; // TODO: change to map<string, LocationContext>
 		
 		std::vector<std::string>			_index;
 		std::vector<std::string>			_authorizedMethods;

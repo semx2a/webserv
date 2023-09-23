@@ -24,10 +24,12 @@ class LocationContext {
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 
 	private:
+		bool						_cgi;
 		size_t						_maxBodySize;
 		std::string					_alias;
 		std::string					_root;
 		std::map<int, std::string>	_errorPages;
+		std::vector<std::string>	_index;
 		std::vector<std::string>	_authorizedMethods;
 };
 
@@ -35,5 +37,12 @@ std::ostream &	operator<<(std::ostream & o, LocationContext const & cc);
 
 #endif
 
-//IDEA : make templates func parser for common variables (root, maxBodySize, errorPages, authorizedMethods)
-//that would take an unknown class (ServerContext or LocationContext, parse, and call the setter)
+/*IDEA : make templates func parser for common variables :
+									- cgi
+									- maxBodySize
+									- root
+									- errorPages
+									- authorizedMethods
+									- index
+that would take an unknown class (ServerContext or LocationContext, parse, and call the setter)
+*/
