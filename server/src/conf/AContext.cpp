@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-AContext::AContext() : _cgi(false), _maxBodySize(1048576) {
+AContext::AContext() : _autoindex(false), _cgi(false), _maxBodySize(1048576) {
 
 //	this->_locations["/"] = "../www/html";
 //	this->_errorPages[404] = "../www/html/error/404.html";
@@ -21,7 +21,9 @@ AContext::AContext(AContext const& rhs) { *this = rhs; }
 AContext& AContext::operator=(AContext const& rhs) { 
 
 	if (this != &rhs) {
-		
+
+		this->_autoindex = rhs.getAutoindex();
+		this->_cgi = rhs.getCgi();
 		this->_maxBodySize = rhs.getMaxBodySize();
 		this->_errorPages = rhs.getErrorPages();
 		this->_index = rhs.getIndex();
@@ -35,6 +37,7 @@ AContext::~AContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
+bool											AContext::getAutoindex(void) const { return this->_autoindex; }
 bool											AContext::getCgi(void) const { return this->_cgi; }
 size_t											AContext::getMaxBodySize(void) const { return this->_maxBodySize; }
 std::string const &								AContext::getRoot(void) const { return this->_root; }
@@ -44,6 +47,7 @@ std::vector<std::string> const &				AContext::getAuthorizedMethods(void) const {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
+void	AContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
 void	AContext::setCgi(bool cgi) { this->_cgi = cgi; }
 void	AContext::setMaxBodySize(size_t size) { this->_maxBodySize = size; }
 void	AContext::setRoot(std::string const& root) { this->_root = root; }

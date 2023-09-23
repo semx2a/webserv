@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-ServerContext::ServerContext() : AContext(), _autoindex(false) {
+ServerContext::ServerContext() : AContext() {
 
 //	this->_locations["/"] = "../www/html";
 //	this->_errorPages[404] = "../www/html/error/404.html";
@@ -21,7 +21,9 @@ ServerContext::ServerContext(ServerContext const& rhs) : AContext() { *this = rh
 ServerContext& ServerContext::operator=(ServerContext const& rhs) { 
 
 	if (this != &rhs) {
-		
+
+		this->_autoindex = rhs.getAutoindex();
+		this->_cgi = rhs.getCgi();
 		this->_maxBodySize = rhs.getMaxBodySize();
 		this->_errorPages = rhs.getErrorPages();
 		this->_index = rhs.getIndex();
@@ -39,14 +41,12 @@ ServerContext::~ServerContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-bool											ServerContext::getAutoindex(void) const { return this->_autoindex; }
 std::map<std::string, int> const &				ServerContext::getListen(void) const { return this->_listen; }
 std::map<std::string, LocationContext> const &	ServerContext::getLocations(void) const { return this->_locations; }
 std::vector<std::string> const &				ServerContext::getServerNames(void) const { return this->_serverNames; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
-void	ServerContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
 void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[ip] = port; }
 void	ServerContext::addLocation(std::string const& location, LocationContext const& locationContext) { this->_locations[location] = locationContext; }
 void	ServerContext::setLocations(std::map<std::string, LocationContext> locationsMap) { this->_locations = locationsMap; }
@@ -59,7 +59,7 @@ void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) 
 
 std::ostream &	operator<<(std::ostream & o, ServerContext const & sc) {
 
-	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.getAutoindex()							<< NO_COLOR << std::endl;
+	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.getAutoindex()		<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "cgi: " 				<< HIGREEN << sc.getCgi()								<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.getMaxBodySize()						<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.getRoot()								<< NO_COLOR << std::endl;

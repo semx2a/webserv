@@ -14,6 +14,7 @@ class AContext {
 		AContext& operator=(AContext const& rhs);
 		virtual ~AContext();
 
+		bool										getAutoindex() const;
 		bool										getCgi() const;
 		size_t										getMaxBodySize() const;
 		std::string const&							getRoot() const;
@@ -21,6 +22,7 @@ class AContext {
 		std::vector<std::string> const&				getIndex() const;
 		std::vector<std::string> const&				getAuthorizedMethods() const;
 
+		void	setAutoindex(bool autoindex);
 		void	setCgi(bool cgi);
 		void 	setMaxBodySize(size_t size);
 		void	setRoot(std::string const& root);
@@ -31,6 +33,7 @@ class AContext {
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 
 	protected:
+		bool								_autoindex;
 		bool								_cgi;
 		size_t								_maxBodySize;
 		std::string							_root;
