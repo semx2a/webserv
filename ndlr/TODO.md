@@ -27,9 +27,9 @@
 - [ ] display of Location within Server
 - [x] path of location space en trop
 - [x] add alias to location
-- [-] pb of booleans
+- [x] pb of booleans
 	- [x] autoindex
-	- [ ] cgi
+	- [x] cgi
 - [ ] default values in Location constructor
 
 

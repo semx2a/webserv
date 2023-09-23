@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/20 18:34:52 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/24 00:14:50 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,7 +77,8 @@ SRC		:=	$(addprefix $(CONF),		\
 				Config.cpp				\
 				ServerContext.cpp		\
 				LocationContext.cpp		\
-				Parser.cpp)				\
+				Parser.cpp				\
+				AContext.cpp)			\
 			$(addprefix $(CORE),		\
 				ClientData.cpp			\
 				Epoll.cpp 				\
