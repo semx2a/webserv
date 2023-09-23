@@ -23,11 +23,13 @@
 
 ## parser
 - [ ] error if absence of certain directive / context ? (server {}, listen, ..?)
-- [ ] upload_folder directive
+- [?] upload_folder directive
 - [ ] display of Location within Server
-- [ ] path of location space en trop
-- [ ] add alias to location
-- [ ] pb of booleans
+- [x] path of location space en trop
+- [x] add alias to location
+- [-] pb of booleans
+	- [x] autoindex
+	- [ ] cgi
 - [ ] default values in Location constructor
 
 
