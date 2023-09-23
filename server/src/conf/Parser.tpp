@@ -98,8 +98,7 @@ void	Parser::parseAutoindex(std::string const &line, Context& context) {
 		buildAndThrowParamError(line);
 
 	onOffBool = (onOff == "on") ? true : false;
-	if (typeid(Context) == typeid(ServerContext))
-		context.setAutoindex(onOffBool);
+	context.setAutoindex(onOffBool);
 }
 
 template <typename Context>
@@ -173,8 +172,7 @@ void	Parser::parseListen(std::string const& line, Context& context) {
 		this->isValidIPv4(ip);
 	}
 	stream >> port;
-	if (typeid(Context) == typeid(ServerContext))
-		context.setListen(ip, port);
+	context.setListen(ip, port);
 }
 
 template <typename Context>
@@ -240,6 +238,5 @@ void Parser::parseServerName(std::string const& line, Context& context) {
 			serverName = serverName.substr(0, serverName.find_first_of(";"));
 		serverNames.push_back(serverName);
 	}
-	if (typeid(Context) == typeid(ServerContext))
-		context.setServerNames(serverNames);
+	context.setServerNames(serverNames);
 }

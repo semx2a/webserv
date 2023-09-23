@@ -24,4 +24,12 @@
 ## parser
 - [ ] error if absence of certain directive / context ? (server {}, listen, ..?)
 - [ ] upload_folder directive
-- [ ] LocationContext implementation
+- [ ] display of Location within Server
+- [ ] path of location space en trop
+- [ ] add alias to location
+- [ ] pb of booleans
+- [ ] default values in Location constructor
+
+
+une fois que tout est ok
+- [ ] fill with default if empty

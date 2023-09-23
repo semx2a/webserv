@@ -49,7 +49,6 @@ void	LocationContext::setAuthorizedMethods(std::vector<std::string> const& autho
 std::ostream &	operator<<(std::ostream & o, LocationContext const & sc) {
 
 	o << HIPURPLE << std::setw(21) << "LocationContext : "	<< NO_COLOR << std::endl;
-	
 	o << HIPURPLE << std::setw(21) << "maxBodySize : " 		<< HIGREEN << sc.getMaxBodySize() 						<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "alias : " 			<< HIGREEN << sc.getAlias() 							<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "root : " 			<< HIGREEN << sc.getRoot() 								<< NO_COLOR << std::endl;
