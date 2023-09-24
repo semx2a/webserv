@@ -73,7 +73,6 @@ void	Parser::parse() {
 		else if (line.find("server {") != std::string::npos) {
 			ServerContext	newServerCtxt;
 			this->parseServerContext(stream, newServerCtxt);
-			std::cout << "newServerCtxt.getCgi() = " << newServerCtxt.getCgi() << std::endl;
 			this->_serverContexts.push_back(newServerCtxt);
 		}
 		else {

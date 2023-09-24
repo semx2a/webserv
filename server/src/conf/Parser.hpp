@@ -12,7 +12,7 @@
 # include "ServerContext.hpp"
 # include "LocationContext.hpp"
 
-# define DEBUG
+//# define DEBUG
 
 class ServerContext;
 class LocationContext;
