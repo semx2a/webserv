@@ -2,19 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-ServerContext::ServerContext() : AContext() {
-
-//	this->_locations["/"] = "../www/html";
-//	this->_errorPages[404] = "../www/html/error/404.html";
-//	//NOTE: mettre valeurs par defaut APRES le parsing, SI le vecteur est vide (pareil pour les autres vecteurs)
-//	this->_index.push_back("index.html");
-//	this->_authorizedMethods.push_back("GET");
-//	this->_authorizedMethods.push_back("POST");
-//	this->_authorizedMethods.push_back("DELETE");
-//	//If the directive is not present then either *:80 is used if nginx runs with the superuser privileges, or *:8000 otherwise.
-//	this->_listen["*"] = 80;
-//	this->_serverNames.push_back("localhost");
-}
+ServerContext::ServerContext() : AContext() {}
 
 ServerContext::ServerContext(ServerContext const& rhs) : AContext() { *this = rhs; }
 
@@ -54,6 +42,24 @@ void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) 
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
+void	ServerContext::setDefaults() {
+	
+	if (this->_listen.empty())
+		this->_listen["0.0.0.0"] = 80;
+	if (this->_serverNames.empty())
+		this->_serverNames.push_back("localhost");
+	if (this->_root.empty())
+		this->_root = "../www/html/";
+	if (this->_index.empty())
+		this->_index.push_back("index.html");
+	if (this->_authorizedMethods.empty()) {
+		this->_authorizedMethods.push_back("GET");
+		this->_authorizedMethods.push_back("POST");
+		this->_authorizedMethods.push_back("DELETE");
+	}
+	if (this->_errorPages.empty())
+		this->_errorPages[404] = "../www/html/error/404.html";
+}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::
 
