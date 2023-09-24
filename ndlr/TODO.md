@@ -22,16 +22,19 @@
 # CONF
 
 ## parser
-- [ ] error if absence of certain directive / context ? (server {}, listen, ..?)
 - [?] upload_folder directive
-- [ ] display of Location within Server
+- [x] display of Location within Server
 - [x] path of location space en trop
 - [x] add alias to location
 - [x] pb of booleans
 	- [x] autoindex
 	- [x] cgi
-- [ ] default values in Location constructor
 
+
+- [ ] default values in Location constructor
+- [ ] setup routes in a server to differents directories
+(cf routes_and_locations.md)
 
 une fois que tout est ok
+- [ ] error if absence of certain directive / context ? (server {}, listen, ..?)
 - [ ] fill with default if empty
