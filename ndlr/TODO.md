@@ -35,6 +35,15 @@
 - [ ] setup routes in a server to differents directories
 (cf routes_and_locations.md)
 
-une fois que tout est ok
-- [ ] error if absence of certain directive / context ? (server {}, listen, ..?)
+une fois que tout est parse
+- [ ] parcourir les server context et chercher ceux dont 
+	- aucune directive listen n'est specifiee -> 0.0.0.0:80
+	- aucun server name n'est specifie -> le premier = default. s'arrete la
+    - aucune root -> notre path
+    - aucun index -> index.html
+	- aucune error_page -> nos error pages
+	- cgi : ?
+	- authorized_methods : GET, POST, DELETE
+
 - [ ] fill with default if empty
+
