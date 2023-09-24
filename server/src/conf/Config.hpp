@@ -2,10 +2,13 @@
 # define CONFIG_HPP
 
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "Parser.hpp"
 
 class Config {
 
@@ -17,11 +20,11 @@ class Config {
 		~Config();
 
 		std::vector<int>&			getPorts();
+		Parser const&				getParser() const;
 
 	private:
 		std::vector<int>			_ports;
-		
-		
+		Parser						_parser;
 };
 
 #endif

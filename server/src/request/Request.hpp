@@ -20,7 +20,6 @@
 # include <sstream>
 # include <algorithm>
 
-# include "display.hpp"
 # include "Epoll.hpp"
 # include "print.hpp"
 # include "macros.hpp"

@@ -15,6 +15,26 @@
 ```
 
 - `listen` : ports -> vector 
+
+a) Both address and port, or only address or only port can be specified. An address may also be a hostname, for example:
+```nginx
+	listen 127.0.0.1:8000;
+	listen 127.0.0.1;
+	listen 8000;
+	listen *:8000;
+	listen localhost:8000;
+```
+
+b) IPv6 addresses (0.7.36) are specified in square brackets:
+```nginx
+	listen [::]:8000;
+	listen [::1];
+```
+
+c) UNIX-domain sockets (0.8.21) are specified with the “unix:” prefix:
+```nginx
+	listen unix:/var/run/nginx.sock;
+```
 - `server_name` : plusieurs strings
 
 - `client_max_body_size` : string "10m" MB -> int * 10^7
@@ -27,7 +47,7 @@ first server = default
 
 ### routes `location {}`
 
-- **accepted HTTP requests** : `limit_except GET POST;`
+- **accepted HTTP requests** : `authorizedMethods GET POST;`
 
 - **HTTP redirection** : 
   - *Redirection permanente de l'ancienne URL vers la nouvelle*

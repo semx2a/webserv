@@ -38,7 +38,7 @@ class Server {
 		void				_readFromClient(int clientFd);
 		void				_writeToClient(int clientFd);
 		void				_handleClientData(int clientFd);
-		void				_endClientConnexion(int clientFd);
+		void				_closeSocket(int fd);
 
 };
 

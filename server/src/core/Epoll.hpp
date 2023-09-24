@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-#include "display.hpp"
+#include "print.hpp"
 #include "Socket.hpp"
 
 # define BUFFER_SIZE 1024
