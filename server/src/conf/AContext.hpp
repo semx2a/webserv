@@ -32,7 +32,7 @@ class AContext {
 		void	setIndex(std::vector<std::string> const& index);
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 
-		virtual void	setDefaults(void) = 0;
+		virtual void	setDefaults(void);
 
 	protected:
 		bool								_autoindex;

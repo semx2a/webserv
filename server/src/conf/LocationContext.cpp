@@ -30,16 +30,8 @@ void	LocationContext::setAlias(std::string const& alias) { this->_alias = alias;
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
 void	LocationContext::setDefaults() {
-	
-	if (this->_root.empty())
-		this->_root = "../www/html/";
-	if (this->_authorizedMethods.empty()) {
-		this->_authorizedMethods.push_back("GET");
-		this->_authorizedMethods.push_back("POST");
-		this->_authorizedMethods.push_back("DELETE");
-	}
-	if (this->_errorPages.empty())
-		this->_errorPages[404] = "../www/html/404.html";
+
+	AContext::setDefaults();
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::
