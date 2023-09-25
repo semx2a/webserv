@@ -23,6 +23,8 @@ class ServerContext : public AContext {
 		void	setLocations(std::map<std::string, LocationContext> locationsMap);
 		void	setServerNames(std::vector<std::string> const& serverNames);
 
+		void	setDefaults(void);
+
 	private:
 		std::map<std::string, int> 				_listen; // <IP, port>
 		std::map<std::string, LocationContext>	_locations; // TODO: change to map<string, LocationContext>

@@ -44,6 +44,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 			buildAndThrowParamError(line);
 		}
 	}
+	context.setDefaults();
 }
 
 template <typename Context>
@@ -82,6 +83,7 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 			buildAndThrowParamError(line);
 		}
 	}
+	context.setDefaults();
 }
 
 template <typename Context>
@@ -180,11 +182,11 @@ void	Parser::parseListen(std::string const& line, Context& context) {
 	if (stream.str().find(':') != std::string::npos)
 	{
 		std::getline(stream, ip, ':');
-		if (ip.empty())
-			ip = "127.0.0.1";
 		ip = ip.substr(ip.find_first_not_of(" "), ip.size());
 		this->isValidIPv4(ip);
 	}
+	else
+		ip = "0.0.0.0";
 	stream >> port;
 	context.setListen(ip, port);
 }

@@ -27,8 +27,8 @@
 - [x] path of location space en trop
 - [x] add alias to location
 - [x] pb of booleans
-	- [x] autoindex
-	- [x] cgi
+    - [x] autoindex
+    - [x] cgi
 
 
 - [ ] default values in Location constructor
