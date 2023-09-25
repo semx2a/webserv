@@ -1,6 +1,7 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
+#include <arpa/inet.h>
 #include <cerrno>
 #include <cstring>
 #include <exception>
@@ -16,28 +17,31 @@ class Socket {
 
 	public:
 
-		Socket ();
-		Socket (int port);
-		Socket (std::string conf_file);
-		Socket (Socket const& rhs);
-		~Socket ();
-		Socket& operator= (Socket const& rhs);
+		Socket(int port);
+		Socket(std::string const& ip, int port);
+		Socket(std::string conf_file);
+		Socket(Socket const& rhs);
+		~Socket();
+		Socket& operator=(Socket const& rhs);
 
-		int					getPort () const;
-		int					getFd () const;
+		int					getPort() const;
+		int					getFd() const;
 
-		void				setReusable ();
+		void				setReusable();
 
 	private:
 
+		Socket();
+
 		int					_fd;
-		int	const			_port;
+		std::string			_ip;
+		int					_port;
 		struct sockaddr_in	_serverAddr;
 
-		void				_createSocket ();
-		void				_setServerAddr ();
-		void				_bindSock ();
-		void				_startListening ();
+		void				_createSocket();
+		void				_setServerAddr();
+		void				_bindSock();
+		void				_startListening();
 };
 
 #endif

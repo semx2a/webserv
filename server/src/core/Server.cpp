@@ -2,16 +2,14 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Server::Server() :	_config(), 
-					_epollEvents(this->_config.getPorts()) {
+//Server::Server () {}
+
+Server::Server(std::vector<ServerContext> const& serverContexts) :	_serverContexts(serverContexts), 
+																	_epollEvents(serverContexts) {
 }
 
-Server::Server(std::string const& conf_file) :	_config(conf_file), 
-												_epollEvents(this->_config.getPorts()) {
-}
-
-Server::Server(Server const& rhs) {
-
+Server::Server(Server const& rhs) : _serverContexts(rhs._serverContexts), 
+									_epollEvents(rhs._epollEvents) {
 	*this = rhs;
 }
 
@@ -32,9 +30,9 @@ Server& Server::operator=(Server const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-Config const&	Server::getConfig() const { return this->_config; }
+std::vector<ServerContext> const&	Server::getServerContexts() const { return this->_serverContexts; }
 
-Epoll const&	Server::getEpollEvents() const { return this->_epollEvents; }
+Epoll const&						Server::getEpollEvents() const { return this->_epollEvents; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS

@@ -1,29 +1,22 @@
-//#include "../inc/Webserv.hpp"
-
-//const int PORT = 8080;
-//
-//int main() {
-//	
-//    Webserv server(PORT);
-//    server.run();
-//
-//    return 0;
-//}
-
+#include "Parser.hpp"
 #include "Server.hpp"
 
-//int	main(int ac, char **av)
-int main() {
+int	main(int ac, char **av) {
 
-	// TODO : check argc
 	try {
-		//TODO : handle av[1] or default conf
-		Server	webserv;
+
+		if (ac > 2)
+			throw std::invalid_argument("Usage: ./webserv <config_file>");
+
+		std::string conf_file;
+		conf_file = (ac == 1) ? "../neoserv/conf/default.conf" : av[1];
 		
+		Parser	parser(conf_file);
+		Server	webserv (parser.getServerContexts());
 		webserv.connect();
 	}
 	catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 	return 0;
 }

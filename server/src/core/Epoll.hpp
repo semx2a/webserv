@@ -8,6 +8,7 @@
 
 #include "print.hpp"
 #include "Socket.hpp"
+#include "ServerContext.hpp"
 
 # define BUFFER_SIZE 1024
 
@@ -23,7 +24,7 @@ class Epoll {
 	public:
 
 		Epoll();
-		Epoll(std::vector<int>& ports);
+		Epoll(std::vector<ServerContext> const& serverContexts);
 		Epoll(Epoll const& rhs);
 		~Epoll();
 		Epoll& operator=(Epoll const& rhs);
@@ -38,12 +39,12 @@ class Epoll {
 
 	private:
 
-		int					_epollFd;
+		int					_listener;
 		std::vector<int>	_listenFds;
 		struct epoll_event	_toPoll;
 		struct epoll_event	_events[MAX_EVENTS];
 
-		int					_pollPort(int port);
+		int					_pollPort(std::string const& ip, int port);
 		void				_addSocketToEpoll(int fd);
 		void				_createEpollEvent();
 };

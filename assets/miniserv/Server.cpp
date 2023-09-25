@@ -89,8 +89,8 @@ int main ()
 **	modification des evenements a surveiller pour un fd donne, attente des evenements d'I/O.)			
 */
 
-    	int epollFd = epoll_create1 (0);
-    	if (epollFd == -1)
+    	int listener = epoll_create1 (0);
+    	if (listener == -1)
     	{
     		close (serverSocket);
     		throw std::runtime_error ("epoll_create1 (): " + (std::string) strerror (errno));
@@ -119,10 +119,10 @@ int main ()
 **	Seuls les entrees seront surveillees (cf definition de events : EPOLLIN)								
 */
 
-    	if (epoll_ctl (epollFd, EPOLL_CTL_ADD, serverSocket, &to_poll) == -1)
+    	if (epoll_ctl (listener, EPOLL_CTL_ADD, serverSocket, &to_poll) == -1)
     	{
     		close (serverSocket);
-    		close (epollFd);
+    		close (listener);
     		throw std::runtime_error ("epoll_ctl (): " + (std::string) strerror (errno));
     	}
 
@@ -146,11 +146,11 @@ int main ()
 
 		while (true)
 		{
-			int numEvents = epoll_wait (epollFd, events, MAX_EVENTS, -1);
+			int numEvents = epoll_wait (listener, events, MAX_EVENTS, -1);
 			if (numEvents == -1)
 			{
 				close (serverSocket);
-				close (epollFd);
+				close (listener);
 				throw std::runtime_error ("epoll_wait (): " + (std::string) strerror (errno));
 			}
 
@@ -164,7 +164,7 @@ int main ()
 					if (clientSocket == -1)
 					{
 						close (serverSocket);
-						close (epollFd);
+						close (listener);
 						throw std::runtime_error ("accept (): " + (std::string) strerror (errno));
 					}
 
@@ -173,7 +173,7 @@ int main ()
 					// Ajout du nouveau socket client a la liste des fd a surveiller
 					to_poll.events = EPOLLIN;
 					to_poll.data.fd = clientSocket;
-					if (epoll_ctl (epollFd, EPOLL_CTL_ADD, clientSocket, &to_poll) == -1)
+					if (epoll_ctl (listener, EPOLL_CTL_ADD, clientSocket, &to_poll) == -1)
 					{
 						close (clientSocket);
 						throw std::runtime_error ("epoll_ctl (): " + (std::string) strerror (errno));
@@ -204,7 +204,7 @@ int main ()
 			}
 		}
 		close (serverSocket);
-		close (epollFd);
+		close (listener);
 	}
 	catch (std::exception& e)
 	{

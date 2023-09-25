@@ -2,7 +2,9 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Socket::Socket(int port) : _port(port) {
+Socket::Socket() {}
+
+Socket::Socket(std::string const& ip, int port) : _ip(ip), _port(port) {
 
 	this->_createSocket();
 	this->setReusable();
@@ -10,7 +12,6 @@ Socket::Socket(int port) : _port(port) {
 	this->_bindSock();
 	this->_startListening();
 }
-
 
 Socket::Socket(Socket const& rhs) : _port(rhs.getPort()) {
 
@@ -58,7 +59,7 @@ void	Socket::_setServerAddr() {
 
 	this->_serverAddr.sin_family = AF_INET;
 	this->_serverAddr.sin_port = htons(_port);
-	this->_serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	this->_serverAddr.sin_addr.s_addr = inet_addr(this->_ip.c_str());
 }
 
 
