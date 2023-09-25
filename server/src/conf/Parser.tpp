@@ -82,6 +82,7 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 			buildAndThrowParamError(line);
 		}
 	}
+	context.setDefaults();
 }
 
 template <typename Context>
