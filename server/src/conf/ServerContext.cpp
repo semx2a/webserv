@@ -47,7 +47,7 @@ void	ServerContext::setDefaults() {
 	if (this->_listen.empty())
 		this->_listen["0.0.0.0"] = 80;
 	if (this->_serverNames.empty())
-		this->_serverNames.push_back("localhost");
+		this->_serverNames.push_back("default");
 	if (this->_root.empty())
 		this->_root = "../www/html/";
 	if (this->_index.empty())
