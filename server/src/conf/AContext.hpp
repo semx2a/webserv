@@ -26,7 +26,6 @@ class AContext {
 		void	setCgi(bool cgi);
 		void 	setMaxBodySize(size_t size);
 		void	setRoot(std::string const& root);
-		void	setListen(std::string const& ip, int port);
 		void	addErrorPage(int code, std::string const& path);
 		void	setErrorPages(std::map<int, std::string> const& errorPages);
 		void	setIndex(std::vector<std::string> const& index);
