@@ -5,6 +5,7 @@
 #include <cerrno>
 #include <cstring>
 #include <exception>
+#include <iostream>
 #include <netinet/in.h>
 #include <stdexcept>
 #include <sys/epoll.h>

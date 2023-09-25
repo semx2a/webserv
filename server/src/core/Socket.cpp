@@ -62,14 +62,14 @@ void	Socket::_setServerAddr() {
 	this->_serverAddr.sin_addr.s_addr = inet_addr(this->_ip.c_str());
 }
 
-
 void	Socket::_bindSock() {
 
+	std::cout << "Binding socket on port " << this->_port << " with fd " << _fd << " ..." << std::endl;
 	if (bind(this->_fd,(struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) == -1) {
 		
 		close(this->_fd);
 		// TODO : close general des sockets
-		throw std::runtime_error("bind(): " +(std::string) strerror(errno));
+		throw std::runtime_error("bind(): " + (std::string)strerror(errno));
 	}
 }
 
