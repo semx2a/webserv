@@ -47,3 +47,10 @@ une fois que tout est parse
 
 - [ ] fill with default if empty
 
+- [ ] ip : find_last_of ':' !!! not first of (vu qu'adresse ipv6 en contient plein)
+
+
+
+# WHEN EVERYTHING FINISHED
+
+- [ ] check TODOs
