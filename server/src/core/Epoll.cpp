@@ -10,7 +10,9 @@ Epoll::Epoll(std::vector<ServerContext> const& serverContexts) {
 		_createEpollEvent();
 		for (std::vector<ServerContext>::const_iterator serversIt = serverContexts.begin(); serversIt != serverContexts.end(); serversIt++) {
 			for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->getListen().begin(); ipPortIt != serversIt->getListen().end(); ipPortIt++) {
+				#ifdef DEBUG
 				std::cout << "Listening on " << ipPortIt->first << ": " << ipPortIt->second << std::endl;
+				#endif
 				this->_listenFds.push_back(_pollPort(ipPortIt->first, ipPortIt->second));
 			}
 		}

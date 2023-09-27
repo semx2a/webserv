@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/17 17:49:22 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 11:29:54 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class Request {
 
 		Request(void);
 		Request(Request const &src);
-		Request(std::vector<char> const);
+		Request(std::vector<char> const &);
 		~Request(void);
 
 		Request &	operator=(Request const &rhs);
@@ -66,7 +66,7 @@ class Request {
 		//ERRORS
 		class RequestLineException : public std::exception { 
 			virtual const char* what() const throw() 
-			{ return "Bad Request LIne"; }};
+			{ return "Bad Request Line"; }};
 		class HeadersException : public std::exception { 
 			virtual const char* what() const throw() 
 			{ return "Bad headers"; }};

@@ -34,7 +34,6 @@ std::vector<ServerContext> const&	Server::getServerContexts() const { return thi
 
 Epoll const&						Server::getEpollEvents() const { return this->_epollEvents; }
 
-
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 

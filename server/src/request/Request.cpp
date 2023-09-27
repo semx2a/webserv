@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/08/17 17:51:32 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 11:32:53 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,15 @@
 
 Request::Request(void) : _method(), _target(), _query(), _version(), _headers(), _body(), _isFirstLine(0), _isHeader(0), _isBody(0), _isQuery(0) {}
 
-Request::Request(Request const &src)
-{
+Request::Request(Request const &src) {
 	if (this != &src)
 		*this = src;
 }
 
-Request::Request(std::vector<char> const str)
-{
-	this->parser(str);
+Request::Request(std::vector<char> const & str) {
+	
+	if (!str.empty())
+		this->parser(str);
 }
 
 Request::~Request() {}
@@ -185,7 +185,7 @@ void Request::_parseHeaders(std::istringstream &stream) {
 void Request::_parseRequestLine(std::istringstream &stream) {
 	
 	stream >> this->_method >> this->_target >> this->_version;
-	
+
 	if (this->_method.empty() || this->_target.empty() || this->_version.empty())
 		throw RequestLineException();
 	else
@@ -197,6 +197,8 @@ void Request::parser(std::vector<char> str_vec) {
 	std::string			str(str_vec.begin(), str_vec.end());
 	std::istringstream	stream(str);
 
+	if (str.empty())
+		return ;
 	this->_parseRequestLine(stream);
 	this->_parseHeaders(stream);
 	if (!stream.eof())
