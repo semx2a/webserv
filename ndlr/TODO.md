@@ -8,7 +8,7 @@
 - [ ] retour recv 0 : ?
 - [ ] timeout
 
-## erros
+## errors
 - [ ] lesquelles et comment les traiter (classe d'erreur?)
 
 # server
@@ -36,7 +36,7 @@
 (cf routes_and_locations.md)
 
 une fois que tout est parse
-- [ ] parcourir les server context et chercher ceux dont 
+- [x] parcourir les server context et chercher ceux dont 
 	- aucune directive listen n'est specifiee -> 0.0.0.0:80
 	- aucun server name n'est specifie -> le premier = default. s'arrete la
     - aucune root -> notre path
@@ -45,7 +45,7 @@ une fois que tout est parse
 	- cgi : ?
 	- authorized_methods : GET, POST, DELETE
 
-- [ ] fill with default if empty
+- [x] fill with default if empty
 
 - [ ] ip : find_last_of ':' !!! not first of (vu qu'adresse ipv6 en contient plein)
 
