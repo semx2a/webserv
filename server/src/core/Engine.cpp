@@ -1,25 +1,25 @@
-#include "Server.hpp"
+#include "Engine.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-//Server::Server () {}
+//Engine::Engine () {}
 
-Server::Server(std::vector<ServerContext> const& serverContexts) :	_serverContexts(serverContexts), 
-																	_epollEvents(serverContexts) {
+Engine::Engine(std::vector<ServerContext> const& serversContexts) :	_serversContexts(serversContexts), 
+																	_epollEvents(serversContexts) {
 }
 
-Server::Server(Server const& rhs) : _serverContexts(rhs._serverContexts), 
+Engine::Engine(Engine const& rhs) : _serversContexts(rhs._serversContexts), 
 									_epollEvents(rhs._epollEvents) {
 	*this = rhs;
 }
 
-Server::~Server() {
+Engine::~Engine() {
 
 	// TODO
 }
 
 
-Server& Server::operator=(Server const& rhs) {
+Engine& Engine::operator=(Engine const& rhs) {
 
 	if (this != &rhs) {
         // TODO
@@ -30,14 +30,14 @@ Server& Server::operator=(Server const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-std::vector<ServerContext> const&	Server::getServerContexts() const { return this->_serverContexts; }
+std::vector<ServerContext> const&	Engine::getServerContexts() const { return this->_serversContexts; }
 
-Epoll const&						Server::getEpollEvents() const { return this->_epollEvents; }
+Epoll const&						Engine::getEpollEvents() const { return this->_epollEvents; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 
-void	Server::connect() {
+void	Engine::connect() {
 
 	struct epoll_event	event;
 	int					nb_events;
@@ -61,7 +61,7 @@ void	Server::connect() {
 					_closeSocket(event_fd);
 				}
 				else if (this->_epollEvents.isNewClient(event_fd)) {
-					this->_epollEvents.addNewClient(event_fd);
+					_addNewClient(event_fd);
 				}
 				else if (event.events & EPOLLIN) {
 					_readFromClient(event_fd);
@@ -78,7 +78,27 @@ void	Server::connect() {
 	}
 }
 
-void	Server::_readFromClient(int clientFd) {
+void	Engine::_addNewClient(int serverFd) {
+
+	int	clientSocket;
+
+	try {
+		clientSocket = accept(serverFd, NULL, NULL);
+		if (clientSocket < 0) {
+			throw std::runtime_error(ACCEPTERR);
+		}
+	}
+	catch(const std::exception& e) {
+		std::cerr << "ERROR: " << e.what() << std::endl;
+	}
+	_epollEvents.addSocketToEpoll(clientSocket);
+	_clientDataMap[clientSocket].setServerContext(_epollEvents.getServers().find(serverFd)->second);
+	log(clientSocket, "New request");
+	// TODO : set reusable ?	
+}
+
+
+void	Engine::_readFromClient(int clientFd) {
 
 	std::vector<char>	buffer(BUFFER_SIZE, '\0');
 
@@ -98,7 +118,7 @@ void	Server::_readFromClient(int clientFd) {
 	_handleClientData(clientFd);
 }
 
-void	Server::_writeToClient(int clientFd) {
+void	Engine::_writeToClient(int clientFd) {
 
 	//TODO: Response	response(this->_clientRequest, this->_config, clientFd);
 	
@@ -111,7 +131,7 @@ void	Server::_writeToClient(int clientFd) {
 }
 
 
-void	Server::_handleClientData(int clientFd) {
+void	Engine::_handleClientData(int clientFd) {
 
 	if (!this->_clientDataMap[clientFd].isRequestEnded())
 		return ;
@@ -124,7 +144,7 @@ void	Server::_handleClientData(int clientFd) {
 }
 
 
-void	Server::_closeSocket(int fd) {
+void	Engine::_closeSocket(int fd) {
 
 	this->_clientDataMap.erase(fd);
 	close(fd);

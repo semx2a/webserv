@@ -24,28 +24,28 @@ class Epoll {
 	public:
 
 		Epoll();
-		Epoll(std::vector<ServerContext> const& serverContexts);
+		Epoll(std::vector<ServerContext> const& serversContexts);
 		Epoll(Epoll const& rhs);
 		~Epoll();
 		Epoll& operator=(Epoll const& rhs);
 		
-		struct epoll_event const&	getReadyEvent(int index) const;
-		std::vector<int> const&		getServersFds() const;
-		bool						isNewClient(int fd); 
+		struct epoll_event const&				getReadyEvent(int index) const;
+		std::map<int, ServerContext> const&		getServers() const;
+		bool									isNewClient(int fd); 
 
 		int					waitForConnexions();
-		void				addNewClient(int fd);
+		void				addSocketToEpoll(int fd);
 		void				editSocketInEpoll(int fd, int eventToWatch); //TODO
 
 	private:
 
-		int					_listener;
-		std::vector<int>	_listenFds;
-		struct epoll_event	_toPoll;
-		struct epoll_event	_events[MAX_EVENTS];
+		//std::vector<int>				_listenFds;
+		std::map<int, ServerContext>	_servers;
+		int								_listener;
+		struct epoll_event				_toPoll;
+		struct epoll_event				_events[MAX_EVENTS];
 
 		int					_pollPort(std::string const& ip, int port);
-		void				_addSocketToEpoll(int fd);
 		void				_createEpollEvent();
 };
 
