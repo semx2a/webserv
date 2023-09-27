@@ -1,7 +1,11 @@
 
+*.cache
 .vscode/
 server/webserv
 *.out
+server/testexe
+server/.obj
+server/test/obj
 
 ### C ###
 # Prerequisites

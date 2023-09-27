@@ -6,54 +6,9 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/15 16:53:28 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/27 11:37:10 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
-
-PROJ	:=	
-
-ODIR	:=	$(addprefix $(PROJ), objs)
-
-SDIR	:=	$(addprefix $(PROJ), srcs)
-
-# TDIR	:=	$(addprefix $(PROJ), templates))
-
-IDIR	:=	$(addprefix $(PROJ), inc)
-
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
-
-NAME	:=	webserv
-
-# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
-
-SRCS	:=	Config.cpp \
-			ClientData.cpp \
-			display.cpp \
-			Epoll.cpp \
-			main.cpp \
-			Request.cpp \
-			Server.cpp \
-			Socket.cpp \
-			Response.cpp
-
-#TTPS	:=	print.tpp
-			
-			
-OBJS	=	$(addprefix $(ODIR)/, $(SRCS:.cpp=.o))
-
-# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
-
-CPP		:=	c++
-
-WFLAGS	:=	-MMD -Wall -Wextra -Werror -std=c++98
-
-WCONV	:=	-Wconversion
-
-GFLAG	:=	-g3
-
-SANFLAG	:=	-fsanitize=address
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COLORS::
 
@@ -94,33 +49,123 @@ BHIWHITE		=	\033[1;37m
 # Italic
 ICYAN			=	\033[3;36m
 
-# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PARAMS::
+# Identation
+INDENT			=	awk -F ':' '{ printf "%-61s %s\n", $$1 ":", $$2 }'
 
-INCLUDE_FLAGS		= $(addprefix -I , $(IDIR))
-DEPS				= $(OBJS:.o=.d)
 
-vpath %.cpp $(SDIR) \
-			$(TDIR)
-vpath %.o $(ODIR)
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TARGET::
+
+NAME	:=	webserv
+TNAME	:=	testexe
+
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
+
+SDIR	:=	src/
+TDIR	:=	test/src/
+ODIR	:=	obj/
+TODIR	:=	test/obj/
+
+CONF	:=	$(addprefix $(SDIR), conf/)
+CORE	:=	$(addprefix $(SDIR), core/)
+REQ		:=	$(addprefix $(SDIR), request/)
+REP		:=	$(addprefix $(SDIR), response/)
+UTILS	:=	$(addprefix $(SDIR), utils/)
+
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
+
+SRC		:=	$(addprefix $(CONF),		\
+				Config.cpp				\
+				ServerContext.cpp		\
+				LocationContext.cpp		\
+				Parser.cpp				\
+				AContext.cpp)			\
+			$(addprefix $(CORE),		\
+				ClientData.cpp			\
+				Epoll.cpp 				\
+				Server.cpp 				\
+				Socket.cpp) 			\
+			$(addprefix $(REQ), 		\
+				Request.cpp)			\
+			$(addprefix $(REP),			\
+				Response.cpp)			\
+			$(addprefix $(UTILS),		\
+				print.cpp)
+
+OBJ 	:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(SRC))
+DEP		:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.d,$(SRC))
+
+MAIN	:= $(addprefix $(SDIR), main.cpp)
+MOBJ	:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(MAIN))
+MDEP	:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.d,$(MAIN))
+
+TSRC	:=	$(addprefix $(TDIR), parsing_tester.cpp)
+TOBJ	:=	$(patsubst $(TDIR)%.cpp,$(TODIR)%.o,$(TSRC))
+TDEP	:=	$(patsubst $(TDIR)%.cpp,$(TODIR)%.d,$(TSRC))
+
+INC		:= $(addprefix -I,	\
+				  $(CORE)			\
+				  $(CONF)			\
+				  $(REQ)			\
+				  $(REP)			\
+				  $(UTILS))
+
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
+
+CPP		:=	c++
+
+WFLAGS	:=	-Wall -Wextra -Werror -std=c++98
+
+WCONV	:=	-Wconversion
+
+DFLAGS	:=	-MMD
+
+GFLAG	:=	-g3
+
+SANFLAG	:=	-fsanitize=address
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
-all:			header h2 message $(NAME)
-
-$(ODIR)/%.o:	%.cpp
-	@$(CPP) $(WFLAGS) $(INCLUDE_FLAGS) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:\t\t\t\t\t\t[OK]$(NO_COLOR)"
-
-$(NAME):		$(OBJS)	
-	@$(CPP) $(WFLAGS) $(OBJS) -o $(NAME)
-	@echo -e "$(HIGREEN)mandatory exe:\t\t\t\t\t\t[OK]$(NO_COLOR)"
-
-$(OBJS):		| $(ODIR)
+all: header h2 message $(NAME)
 
 $(ODIR):
-	@mkdir -p $(ODIR)
-	@echo -e "$(HIGREEN)objs folder:\t\t\t\t\t\t[OK]$(NO_COLOR)"
-	
+	@mkdir -p $(dir $@)
+	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+
+$(OBJ): | $(ODIR)
+
+$(ODIR)%.o: $(SDIR)%.cpp
+	@mkdir -p $(dir $@)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
+	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+
+-include ${DEP}
+-include ${MDEP}
+
+$(NAME): $(OBJ)	$(MOBJ)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(OBJ) $(MOBJ) -o $(NAME)
+	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
+
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
+
+test: header h2 message $(TNAME)
+
+$(TODIR):
+	@mkdir -p $(dir $@)
+	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+
+$(TOBJ): | $(TODIR)
+
+$(TODIR)%.o: $(TDIR)%.cpp
+	@mkdir -p $(dir $@)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
+	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+
+-include ${DEP}
+-include ${TDEP}
+
+$(TNAME): $(OBJ) $(TOBJ)
+	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
+	@echo -e "$(HIGREEN)test exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
 
@@ -132,15 +177,27 @@ push:		header fclean
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo -e "$(HIGREEN)git push:\t\t\t\t\t\t[OK]$(NO_COLOR)"
+	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
 
 clean:		header
 	@rm -rf $(ODIR)
-	@echo -e "$(HIORANGE)objs folder:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
 
-fclean:		header clean
+fclean: header clean
 	@rm -f $(NAME)
-	@echo -e "$(HIORANGE)$(NAME) bin:\t\t\t\t\t\t[RM]$(NO_COLOR)"
+	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+
+re: header fclean all
+
+cleantest:	header
+	@rm -rf $(TODIR) $(ODIR)
+	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+
+fcleantest: cleantest
+	@rm -f $(TNAME)
+	@echo -e "$(HIORANGE)$(TNAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+
+retest:	fcleantest test
 
 header:
 	@echo -e " ______________________________________________________"
@@ -151,12 +208,16 @@ header:
 	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
 	@echo -e "|     \_____________________________________________________\ "
 	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
-	@echo -e "|    /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
-	@echo -e "|   /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
-	@echo -e "|  /$(BLACK)                   A T H I E R R Y                 /$(NO_COLOR) / "
+	@echo -e "|    /$(BLACK)                                                   /$(NO_COLOR) / "
+	@echo -e "|   /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
+	@echo -e "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
 	@echo -e "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
 	@echo -e "|/____________________________________________________\/ "
-	@echo -e ""
+	@echo -e "  \                \ \                 \ \            \ "
+	@echo -e "   \                \ \                 \ \            \ "
+	@echo -e "    \                \ \                 \ \            \ "
+	@echo -e "     \________________\_\__             __\_\____________\ "
+	@echo -e "                           🮡  _________/                    "
 
 h2:
 	@echo -e "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
@@ -164,9 +225,50 @@ h2:
 message:
 	@make -q $(NAME) && echo -e "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
 
-re:		header fclean 
-	@make all 
-
--include $(DEPS)
+# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::DEBUG::
+#
+#TDIR	:=	$(addprefix $(PROJ), test/)
+#
+#TSDIR	:= $(addprefix $(TDIR), src/)
+#TSRC	:= $(addprefix $(TDIR), parsing_tester.cpp)
+#TSRC	+= $(SRC)
+#
+#TODIR	:= $(addprefix $(TDIR), obj/)
+#TOBJ	:= ${subst ${TSDIR}, ${TODIR}, ${TSRC:%.cpp=%.o}}
+#TOBJ	+= $(OBJ)
+#
+##TOBJ	:= $(patsubst $(TDIR)%.cpp,$(TODIR)%.o,$(TSRC))
+##TOBJ 	+= $(OBJ)
+#
+##TDEP	:= $(tsubst $(TSDIR)%.cpp,$(TODIR)%.d,$(TSRC))
+#
+#$(TOBJ): | $(TODIR)
+#
+#$(TODIR):
+#	mkdir -p $(dir $@)
+#	echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+#
+#$(TODIR)%.o: $(TSDIR)%.cpp
+#	mkdir -p $(dir $@)
+#	$(CPP) $(WFLAGS) $(INC) $(DFLAGS) $(TOBJ) -c $< -o $@ 
+#	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+#
+#-include ${TDEP}
+#-include ${DEP}
+#
+#debug_parsing: $(OBJ) $(TOBJ)
+#	$(info TOBJ is $(TOBJ))
+#	$(CPP) $(WFLAGS) $(OBJ) $(TOBJ) -o $(NAME)
+#	@echo -e "$(HIGREEN)debug parsing:[OK]$(NO_COLOR)" | $(INDENT)
+#
+#clean_debug_parsing:
+#	@rm -rf $(TODIR) $(ODIR) 
+#	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+#
+#fclean_debug_parsing: clean_debug_parsing
+#	@rm -f $(NAME)
+#	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+#
+#re_debug_parsing: fclean_debug_parsing debug_parsing
 
 .PHONY:	all bonus clean fclean re push update o_dir h1 h2 header 
