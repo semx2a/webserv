@@ -113,7 +113,6 @@ void	Engine::_readFromClient(int clientFd) {
 	else {
 		buffer.resize(bytesRead);
 	}
-	//this->_clientDataMap[clientFd].insert(this->_clientDataMap[clientFd].end(), buffer.begin(), buffer.end());
 	this->_clientDataMap[clientFd].addToBuffer(buffer);
 	_handleClientData(clientFd);
 }
