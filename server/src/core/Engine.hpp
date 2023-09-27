@@ -7,13 +7,11 @@
 #include <iostream>
 #include <map>
 
-#include "ClientData.hpp"
+#include "Buffer.hpp"
 #include "ServerContext.hpp"
 #include "Epoll.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
-
-typedef std::map<int, ClientData>				clientDataMap_t;
 
 class Engine {
 
@@ -36,12 +34,12 @@ class Engine {
 		std::vector<ServerContext>			_serversContexts;
 		Epoll								_epollEvents;
 		Request								_clientRequest;
-		clientDataMap_t						_clientDataMap;
+		std::map<int, Buffer>				_buffersMap;
 
 		void				_addNewClient(int serverFd);
 		void				_readFromClient(int clientFd);
 		void				_writeToClient(int clientFd);
-		void				_handleClientData(int clientFd);
+		void				_handleBuffer(int clientFd);
 		void				_closeSocket(int fd);
 
 };

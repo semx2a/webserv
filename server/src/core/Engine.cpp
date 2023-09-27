@@ -92,7 +92,7 @@ void	Engine::_addNewClient(int serverFd) {
 		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 	_epollEvents.addSocketToEpoll(clientSocket);
-	_clientDataMap[clientSocket].setServerContext(_epollEvents.getServers().find(serverFd)->second);
+	_buffersMap[clientSocket].setServerContext(_epollEvents.getServers().find(serverFd)->second);
 	log(clientSocket, "New request");
 	// TODO : set reusable ?	
 }
@@ -113,27 +113,16 @@ void	Engine::_readFromClient(int clientFd) {
 	else {
 		buffer.resize(bytesRead);
 	}
-	this->_clientDataMap[clientFd].addToBuffer(buffer);
-	_handleClientData(clientFd);
-}
-
-void	Engine::_handleClientData(int clientFd) {
-
-	if (!this->_clientDataMap[clientFd].isRequestEnded())
-		return ;
-
-	#ifdef DEBUG
-	std::cout << &this->_clientDataMap[clientFd].getRequest()[0] << std::endl;
-	#endif
-	this->_clientRequest.parser(_clientDataMap[clientFd].getRequest());
-	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
+	this->_buffersMap[clientFd].add(buffer);
+	this->_buffersMap[clientFd].checkEnd();
+	_handleBuffer(clientFd);
 }
 
 void	Engine::_writeToClient(int clientFd) {
 
 	Response	res;
 	
-	res.buildResponse(this->_clientDataMap[clientFd].getRequest(), this->_clientDataMap[clientFd].getServerContext());
+	res.buildResponse(this->_buffersMap[clientFd].getRequest(), this->_buffersMap[clientFd].getServerContext());
 	
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
@@ -143,8 +132,22 @@ void	Engine::_writeToClient(int clientFd) {
 		_closeSocket(clientFd);
 }
 
+
+void	Engine::_handleBuffer(int clientFd) {
+
+	if (!this->_buffersMap[clientFd].isRequestEnded())
+		return ;
+
+	#ifdef DEBUG
+	std::cout << &this->_buffersMap[clientFd].getRequest()[0] << std::endl;
+	#endif
+	this->_clientRequest.parser(_buffersMap[clientFd].getRequest());
+	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
+}
+
+
 void	Engine::_closeSocket(int fd) {
 
-	this->_clientDataMap.erase(fd);
+	this->_buffersMap.erase(fd);
 	close(fd);
 }
