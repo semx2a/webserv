@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 11:59:04 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 13:03:57 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ std::string const&					Response::getResponse(void) const {	return (this->_respon
 void	Response::setStatusLine(std::string const& statusLine) { this->_statusLine = statusLine; }
 
 void	Response::setStatusCodes(void) {
-
 
 	this->_statusCodes[1]	= "Informational - Request received, continuing process";
 	this->_statusCodes[100] = "Continue";
@@ -104,11 +103,41 @@ void	Response::setResponse(std::string const& response) { this->_response = resp
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void	Response::buildResponse(Request const& request, ServerContext const& conf, int const& fd) {
-
+void Response::buildResponse(Request const& request, ServerContext const& conf, int const& fd) {
+	
 	(void)request;
 	(void)conf;
 	(void)fd;
+	
+	std::stringstream res;
+
+	int statusCode = 200;
+	std::string statusMessage = "OK";
+	std::string headerName = "Content-Type";
+	std::string headerValue = "text/html";
+	std::stringstream bodyContent;
+	
+	bodyContent	<< "<!DOCTYPE html>\n"
+				<< "<html>\n"
+				<< "<head>\n"
+				<< "<title>Page Title</title>\n"
+				<< "</head>\n"
+				<< "<body>\n"
+				<< "\n"
+				<< "<h1>This is a Heading</h1>\n"
+				<< "<p>This is a paragraph.</p>\n"
+				<< "\n"
+				<< "</body>\n"
+				<< "</html>\n";
+
+	// Build the response message here
+	res << "HTTP/1.1 " << statusCode << " " << statusMessage << "\r\n";
+	res << headerName << ": " << headerValue << "\r\n";
+	res << "Content-Length: " << bodyContent.str().size() << "\r\n";
+	res << "\r\n";
+	res << bodyContent.str();		
+		
+	this->_response = res.str();
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::

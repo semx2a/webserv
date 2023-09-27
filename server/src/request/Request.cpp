@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 11:32:53 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 12:36:08 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,29 +49,20 @@ Request &Request::operator=(Request const &rhs)
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
 void Request::setMethod(const std::string method) { this->_method = method; }
-
 void Request::setTarget(const std::string target) { this->_target = target; }
-
 void Request::setVersion(const std::string version) { this->_version = version; }
-
 void Request::setQuery(const std::string query) { this->_query = query; }
-
 void Request::setBody(const std::vector<char> body) { this->_body = body; }
-
-void Request::setHeaders(const std::map<std::string, std::vector<std::string> > headers) { this->_headers = headers; }
+void Request::setHeaders(const std::map<std::string, std::string> headers) { this->_headers = headers; }
 
 
 const std::string & Request::getMethod(void) const { return this->_method; }
-
 const std::string & Request::getTarget(void) const { return this->_target; }
-
 const std::string & Request::getVersion(void) const { return this->_version; }
-
 const std::string & Request::getQuery(void) const { return this->_query; }
-
 const std::vector<char> & Request::getBody(void) const { return this->_body; }
-
-const std::map<std::string, std::vector<std::string> > & Request::getHeaders(void) const { return this->_headers; }
+const std::string & Request::getHeader(std::string const & key) const { return this->_headers.find(key)->second; }
+const std::map<std::string, std::string> & Request::getHeaders(void) const { return this->_headers; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: DEBUG::
 
@@ -87,7 +78,7 @@ bool Request::getIsQuery(void) const { return this->_isQuery; }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
-int Request::_find_last_occurrence(const std::vector<char>& haystack, const std::string& needle) {
+int Request::_find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
     // Convert the vector of characters to a string
     std::string haystack_str(haystack.begin(), haystack.end());
 
@@ -172,7 +163,7 @@ void Request::_parseHeaders(std::istringstream &stream) {
 			throw HeadersException();
 		
 		hd_values = this->_trim(hd_values);
- 		this->_headers[hd_key].push_back(hd_values);
+ 		this->_headers[hd_key] = hd_values;
 		//this->_headers[hd_key] = this->_tokenize(hd_values, ',');
 	}
 	
@@ -223,7 +214,7 @@ std::ostream &operator<<(std::ostream &o, Request const &r) {
 		
 	if (r.getIsHeader()) {
 		o << "headers: "	<< std::endl;
-		print_map_of_vectors(r.getHeaders());
+		print_map(r.getHeaders());
 	}
 	
 	if (r.getIsBody()) {

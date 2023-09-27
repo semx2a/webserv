@@ -108,7 +108,8 @@ void	Server::_writeToClient(int clientFd) {
 		throw std::runtime_error(SENDERR);
 	}
 	//TODO: dont close if header keep-alive
-	_closeSocket(clientFd);
+	if (this->_clientRequest.getHeader("Connection") == "close")
+		_closeSocket(clientFd);
 }
 
 
