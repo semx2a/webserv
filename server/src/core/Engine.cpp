@@ -117,6 +117,18 @@ void	Engine::_readFromClient(int clientFd) {
 	_handleClientData(clientFd);
 }
 
+void	Engine::_handleClientData(int clientFd) {
+
+	if (!this->_clientDataMap[clientFd].isRequestEnded())
+		return ;
+
+	#ifdef DEBUG
+	std::cout << &this->_clientDataMap[clientFd].getRequest()[0] << std::endl;
+	#endif
+	this->_clientRequest.parser(_clientDataMap[clientFd].getRequest());
+	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
+}
+
 void	Engine::_writeToClient(int clientFd) {
 
 	Response	res;
@@ -130,20 +142,6 @@ void	Engine::_writeToClient(int clientFd) {
 	if (this->_clientRequest.getHeader("Connection") == "close")
 		_closeSocket(clientFd);
 }
-
-
-void	Engine::_handleClientData(int clientFd) {
-
-	if (!this->_clientDataMap[clientFd].isRequestEnded())
-		return ;
-
-	#ifdef DEBUG
-	std::cout << &this->_clientDataMap[clientFd].getRequest()[0] << std::endl;
-	#endif
-	this->_clientRequest.parser(_clientDataMap[clientFd].getRequest());
-	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
-}
-
 
 void	Engine::_closeSocket(int fd) {
 
