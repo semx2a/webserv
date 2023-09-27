@@ -3,10 +3,12 @@
 
 #include <arpa/inet.h>
 #include <cerrno>
+#include <cstdlib>
 #include <cstring>
 #include <exception>
 #include <iostream>
 #include <netinet/in.h>
+#include <sstream>
 #include <stdexcept>
 #include <sys/epoll.h>
 #include <sys/socket.h>
@@ -50,6 +52,7 @@ class Socket {
 		void		_setServerAddr();
 		void		_bindSock();
 		void		_startListening();
+		uint32_t	_getIntIp(std::string const&);
 };
 
 #endif

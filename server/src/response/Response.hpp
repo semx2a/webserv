@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 11:35:17 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 13:09:45 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 18:31:25 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,13 @@
 # include <string>
 # include <vector>
 # include <map>
+# include <fstream>
 
 # include "macros.hpp"
 # include "Request.hpp"
 # include "ServerContext.hpp"
+
+typedef std::map<std::string, std::string>		t_lexicon;
 
 class Response {
 
@@ -28,29 +31,39 @@ class Response {
 
 		Response();
 		Response(Response const& rhs);
+		Response(Request const&, ServerContext const&);
 		~Response();
 		Response& operator=(Response const& rhs);
 
-		std::string const&					getStatusLine(void) const;
-		std::map<int, std::string> const&	getStatusCodes(void) const;
-		std::string const&					getStatusCode(int code) const;
-		std::string const&					getResponse(void) const;
+		t_lexicon				getStatusCodes() const;
+		t_lexicon				getMimeTypes() const;
+		std::string const&		getStatusCode(std::string const &) const;
+		std::string const&		getMimeType(std::string const&) const;
+		std::string const&		getStatusLine() const;
+		std::string const&		getVersion() const;
+		std::string const&		getResponse() const;
+		ServerContext const&	getServerContext() const;
+		Request const&			getRequest() const;
 
-		void	setStatusLine(std::string const& statusLine);
-		void	setStatusCodes(void);
-		void	setResponse(std::string const& response);
+		void	setStatusCodes(std::string const&);
+		void	setMimeTypes(std::string const&);
+		void	setStatusLine(std::string const&);
+		void	setVersion(std::string const&);
+		void	setResponse(std::string const&);
 		
-		void	buildResponse(Request const&, ServerContext const&);
+		void	buildResponse();
 
 	private:
 
-		std::string					_statusLine;
-		std::string					_version;
-		std::map<int, std::string>	_statusCodes;
-		std::string					_response;
+		t_lexicon		_statusCodes;
+		t_lexicon 		_mimeTypes;
+		std::string		_statusLine;
+		std::string		_version;
+		std::string		_response;
+		Request			_request;
+		ServerContext	_serverContext;
 
-		
-
+		t_lexicon	_initFile(std::string const&);
 };
 
 std::ostream& operator<<(std::ostream& o, Response const& rhs);

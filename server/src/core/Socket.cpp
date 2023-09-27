@@ -27,7 +27,7 @@ Socket& Socket::operator=(Socket const& rhs) {
 		this->_fd = rhs.getFd();
 		this->_ip = rhs.getIp();
 		this->_port = rhs.getPort();
-		this->_serverAddr = rhs.getServerAddr();    
+		this->_serverAddr = rhs.getServerAddr();
 	}
 	return *this;
 }
@@ -67,7 +67,7 @@ void	Socket::_setServerAddr() {
 
 	this->_serverAddr.sin_family = AF_INET;
 	this->_serverAddr.sin_port = htons(_port);
-	this->_serverAddr.sin_addr.s_addr = inet_addr(this->_ip.c_str());
+	this->_serverAddr.sin_addr.s_addr = htonl(_getIntIp(_ip));
 }
 
 void	Socket::_bindSock() {
@@ -91,3 +91,17 @@ void	Socket::_startListening() {
 	}
 }
 
+
+uint32_t	Socket::_getIntIp(std::string const& ip) {
+
+	uint32_t result = 0;
+	std::istringstream ss(ip);
+	std::string token;
+
+	for(int i = 0; i < 4; i++) {
+		std::getline(ss, token, '.');
+		result = (result << 8) | (static_cast<uint32_t>(std::atoi(token.c_str())) & 0xFF);
+	}
+
+	return result;
+}

@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 13:09:55 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 18:43:51 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,27 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Response::Response(void) {
+Response::Response() {
+
+	this->setStatusCodes("../neoserv/status.codes");
+	this->setMimeTypes("../neoserv/mime.types");	
+}
+
+Response::Response(Request const& request, ServerContext const& conf) : _request(request), _serverContext(conf) {
+
+	this->setStatusCodes("../neoserv/status.codes");
+	this->setMimeTypes("../neoserv/mime.types");
+	this->buildResponse();
 }
 
 Response::Response(Response const& rhs) {
+
 	if (this != &rhs)
 		*this = rhs;
 }
 
-Response::~Response(void) {}
+Response::~Response() {}
+
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMPARISON OPERATORS::
 
@@ -30,91 +42,48 @@ Response& Response::operator=(Response const& rhs)
 {
 	if (this != &rhs)
 	{
-		this->_response = rhs._response;
+		this->_response = rhs.getResponse();
+		this->_statusLine = rhs.getStatusLine();
+		this->_statusCodes = rhs.getStatusCodes();
+		this->_mimeTypes = rhs.getMimeTypes();
+		this->_version = rhs.getVersion();
 	}
 	return (*this);
 }
 
+
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::map<int, std::string> const&	Response::getStatusCodes(void) const { return (this->_statusCodes); }
+t_lexicon				Response::getStatusCodes() const { return (this->_statusCodes); }
+t_lexicon				Response::getMimeTypes() const { return (this->_mimeTypes); }
+std::string const & 	Response::getStatusCode(std::string const& code) const { return (this->_statusCodes.find(code)->second); }
+std::string const &		Response::getMimeType(std::string const& extension) const { return (this->_mimeTypes.find(extension)->second); }
+std::string const &		Response::getVersion() const { return (this->_version); }
+std::string const &		Response::getResponse() const {	return (this->_response); }
+std::string const &		Response::getStatusLine() const { return (this->_statusLine); }
+ServerContext const &	Response::getServerContext() const { return (this->_serverContext); }
+Request const &			Response::getRequest() const { return (this->_request); }
 
-std::string const & 				Response::getStatusCode(int code) const { return (this->_statusCodes.find(code)->second); }
-
-std::string const&					Response::getResponse(void) const {	return (this->_response); }
 
 void	Response::setStatusLine(std::string const& statusLine) { this->_statusLine = statusLine; }
-
-void	Response::setStatusCodes(void) {
-
-	this->_statusCodes[1]	= "Informational - Request received, continuing process";
-	this->_statusCodes[100] = "Continue";
-	this->_statusCodes[101] = "Switching Protocols";
-
-	this->_statusCodes[2]	= "Success - The action was successfully received, understood, and accepted";
-	this->_statusCodes[200] = "OK";
-	this->_statusCodes[201] = "Created";
-	this->_statusCodes[202] = "Accepted";
-	this->_statusCodes[203] = "Non-Authoritative Information";
-	this->_statusCodes[204] = "No Content";
-	this->_statusCodes[205] = "Reset Content";
-	this->_statusCodes[206] = "Partial Content";
-
-	this->_statusCodes[3]	= "Redirection - Further action must be taken in order to complete the request";
-	this->_statusCodes[300] = "Multiple Choices";
-	this->_statusCodes[301] = "Moved Permanently";
-	this->_statusCodes[302] = "Found";
-	this->_statusCodes[303] = "See Other";
-	this->_statusCodes[304] = "Not Modified";
-	this->_statusCodes[305] = "Use Proxy";
-	this->_statusCodes[307] = "Temporary Redirect";
-
-	this->_statusCodes[4]	= "Client Error - The request contains bad syntax or cannot be fulfilled";
-	this->_statusCodes[400] = "Bad Request";
-	this->_statusCodes[401] = "Unauthorized";
-	this->_statusCodes[402] = "Payment Required";
-	this->_statusCodes[403] = "Forbidden";
-	this->_statusCodes[404] = "Not Found";
-	this->_statusCodes[405] = "Method Not Allowed";
-	this->_statusCodes[406] = "Not Acceptable";
-	this->_statusCodes[407] = "Proxy Authentication Required";
-	this->_statusCodes[408] = "Request Timeout";
-	this->_statusCodes[409] = "Conflict";
-	this->_statusCodes[410] = "Gone";
-	this->_statusCodes[411] = "Length Required";
-	this->_statusCodes[412] = "Precondition Failed";
-	this->_statusCodes[413] = "Request Entity Too Large";
-	this->_statusCodes[414] = "Request-URI Too Large";
-	this->_statusCodes[415] = "Unsupported Media Type";
-	this->_statusCodes[416] = "Request range not satisfiable";
-	this->_statusCodes[417] = "Expectation Failed";
-
-	this->_statusCodes[5]	= "Server Error - The server failed to fulfill an apparently valid request";
-	this->_statusCodes[500] = "Internal Server Error";
-	this->_statusCodes[501] = "Not Implemented";
-	this->_statusCodes[502] = "Bad Gateway";
-	this->_statusCodes[503] = "Service Unavailable";
-	this->_statusCodes[504] = "Gateway Time-out";
-	this->_statusCodes[505] = "HTTP Version Not Supported";
-
-}
-
+void	Response::setStatusCodes(std::string const& filename) { this->_statusCodes = this->_initFile(filename); }
+void	Response::setMimeTypes(std::string const& filename) { this->_mimeTypes = this->_initFile(filename); }
 void	Response::setResponse(std::string const& response) { this->_response = response; }
+void	Response::setVersion(std::string const& version) { this->_version = version; }
+
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void Response::buildResponse(Request const& request, ServerContext const& conf) {
+void Response::buildResponse() {
 	
-	(void)request;
-	(void)conf;
 
 	std::stringstream res;
 
-	int statusCode = 200;
-	std::string statusMessage = "OK";
-	std::string headerName = "Content-Type";
-	std::string headerValue = "text/html";
-	std::stringstream bodyContent;
+	int 				statusCode		= 200;
+	std::string 		statusMessage	= "OK";
+	std::string 		headerName		= "Content-Type";
+	std::string 		headerValue		= "text/html";
+	std::stringstream 	bodyContent;
 	
 	bodyContent	<< "<!DOCTYPE html>\n"
 				<< "<html>\n"
@@ -130,19 +99,56 @@ void Response::buildResponse(Request const& request, ServerContext const& conf) 
 				<< "</html>\n";
 
 	// Build the response message here
-	res << "HTTP/1.1 " << statusCode << " " << statusMessage << "\r\n";
-	res << headerName << ": " << headerValue << "\r\n";
-	res << "Content-Length: " << bodyContent.str().size() << "\r\n";
+	res << "HTTP/1.1 " 			<< statusCode				<< " " << statusMessage	<< "\r\n";
+	res << headerName 			<< ": "						<< headerValue			<< "\r\n";
+	res << "Content-Length: "	<< bodyContent.str().size()							<< "\r\n";
 	res << "\r\n";
 	res << bodyContent.str();		
 		
 	this->_response = res.str();
 }
 
+t_lexicon Response::_initFile(std::string const& filename) {
+
+	std::ifstream	file(filename.c_str());
+
+	if (!file.is_open())
+		throw std::runtime_error("Could not open " +  filename + " file");
+
+	t_lexicon		fileLexicon;
+	std::string		line;
+	
+	while (std::getline(file, line) && !file.eof())
+	{
+
+		if (line.empty())
+			continue;
+
+		if (line.find_first_of('{' || '}') != std::string::npos)
+			continue;
+		
+		std::string			key;
+		std::string			value;
+		std::stringstream 	sstream(line);
+		
+		key.clear();
+		value.clear();
+	
+		sstream >> key;
+		sstream >> value;
+		//value = value.substr(0, value.find_last_of(';'));
+		fileLexicon[key] = value;
+	}
+	
+	file.close();
+	std::cout << "file:\n" << print_map(fileLexicon) << std::endl;
+
+	return (fileLexicon);
+}
+
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
 
-std::ostream& operator<<(std::ostream& o, Response const& rhs)
-{
+std::ostream& operator<<(std::ostream& o, Response const& rhs) {
 	o << rhs.getResponse();
 	return (o);
 }

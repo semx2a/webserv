@@ -145,9 +145,7 @@ void	Engine::_handleBuffer(int clientFd) {
 
 void	Engine::_writeToClient(int clientFd) {
 
-	Response	res;
-	
-	res.buildResponse(this->_requestsMap[clientFd], this->_serverContextsMap[clientFd]);
+	Response	res(this->_requestsMap[clientFd], this->_serverContextsMap[clientFd]);
 	
 	std::cout << RED << "Response: " << res.getResponse() << NO_COLOR << std::endl;
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
