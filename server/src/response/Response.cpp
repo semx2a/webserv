@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 13:03:57 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 13:09:55 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,12 +103,11 @@ void	Response::setResponse(std::string const& response) { this->_response = resp
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void Response::buildResponse(Request const& request, ServerContext const& conf, int const& fd) {
+void Response::buildResponse(Request const& request, ServerContext const& conf) {
 	
 	(void)request;
 	(void)conf;
-	(void)fd;
-	
+
 	std::stringstream res;
 
 	int statusCode = 200;

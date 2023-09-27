@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 11:35:17 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 12:28:05 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 13:09:45 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class Response {
 		void	setStatusCodes(void);
 		void	setResponse(std::string const& response);
 		
-		void	buildResponse(Request const&, ServerContext const&, int const&);
+		void	buildResponse(Request const&, ServerContext const&);
 
 	private:
 
