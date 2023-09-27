@@ -11,6 +11,7 @@
 #include "ServerContext.hpp"
 #include "Epoll.hpp"
 #include "Request.hpp"
+#include "Response.hpp"
 
 typedef std::map<int, ClientData>				clientDataMap_t;
 

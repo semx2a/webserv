@@ -102,7 +102,7 @@ void	Server::_writeToClient(int clientFd) {
 
 	Response	res;
 	
-	res.buildResponse(this->_clientRequest, this->_config, clientFd);
+	res.buildResponse(this->_clientRequest, this->_serverContexts[0], clientFd);
 	
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);

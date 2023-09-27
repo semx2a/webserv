@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/15 17:13:32 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 11:59:04 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,7 @@ Response& Response::operator=(Response const& rhs)
 
 std::map<int, std::string> const&	Response::getStatusCodes(void) const { return (this->_statusCodes); }
 
-std::string const&					Response::getStatusCode(int code) const { return (this->*(_statusCodes[code])); }
-
-std::vector<std::string> const&		Response::getErrorPages(void) const { return (this->_errorPages); }
+std::string const & 				Response::getStatusCode(int code) const { return (this->_statusCodes.find(code)->second); }
 
 std::string const&					Response::getResponse(void) const {	return (this->_response); }
 
@@ -102,14 +100,15 @@ void	Response::setStatusCodes(void) {
 
 }
 
-void	Response::setErrorPagess(std::vector<std::string> const& errorPages) { this->_errorPages = errorPages; }
-
 void	Response::setResponse(std::string const& response) { this->_response = response; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void	buildResponse(Request const&, Config const&, int const&) {
-	
+void	Response::buildResponse(Request const& request, ServerContext const& conf, int const& fd) {
+
+	(void)request;
+	(void)conf;
+	(void)fd;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
