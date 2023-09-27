@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 15:59:05 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 17:04:15 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include "print.hpp"
 # include "macros.hpp"
 
+typedef std::map<std::string, std::string>	t_headers;
+
 class Request {
 	
 	public:
@@ -35,30 +37,20 @@ class Request {
 		Request &	operator=(Request const &rhs);
 
 		//GET/SET
-		void						setMethod(const std::string);
-		void						setTarget(const std::string);
-		void						setQuery(const std::string);
-		void						setVersion(const std::string);
-		void						setHeaders(const std::map<std::string, std::string>);
-		void						setBody(const std::vector<char>);
+		void	setMethod(const std::string);
+		void	setTarget(const std::string);
+		void	setQuery(const std::string);
+		void	setVersion(const std::string);
+		void	setHeaders(const t_headers);
+		void	setBody(const std::vector<char>);
 		
-		const std::string &			getMethod(void) const;
-		const std::string &			getTarget(void) const;
-		const std::string &			getQuery(void) const;
-		const std::string &			getVersion(void) const;
-		const std::vector<char> &	getBody(void) const;
-		const std::string &	getHeader(std::string const &) const;
-		const std::map<std::string, std::string > &	getHeaders(void) const;
-
-		//DB
-		void	setIsFirstLine(const bool);
-		void	setIsHeader(const bool);
-		void	setIsBody(const bool);
-		void	setIsQuery(const bool);
-		bool	getIsFirstLine(void) const;
-		bool	getIsHeader(void) const;
-		bool	getIsBody(void) const;
-		bool	getIsQuery(void) const;
+		std::string const &			getMethod(void) const;
+		std::string const &			getTarget(void) const;
+		std::string const &			getQuery(void) const;
+		std::string const &			getVersion(void) const;
+		std::vector<char> const &	getBody(void) const;
+		std::string const &			getHeader(std::string const &) const;
+		t_headers const &			getHeaders(void) const;
 
 		//METHODS
 		void	parser(std::vector<char> const& raw);
@@ -78,18 +70,12 @@ class Request {
 	private:
 
 		//VARIABLES	
-		std::string							_method;
-		std::string							_target;
-		std::string							_query;
-		std::string							_version;
-		std::map<std::string, std::string >	_headers;
-		std::vector<char>					_body;
-
-		//DB
-		bool								_isFirstLine;
-		bool								_isHeader;
-		bool								_isBody;
-		bool								_isQuery;
+		std::string			_method;
+		std::string			_target;
+		std::string			_query;
+		std::string			_version;
+		t_headers			_headers;
+		std::vector<char>	_body;
 
 		//PRIVATE METHODS
 		void						_parseRequestLine(std::istringstream&);

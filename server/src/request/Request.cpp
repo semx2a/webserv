@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 15:58:48 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 16:38:01y seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Request::Request(void) : _method(), _target(), _query(), _version(), _headers(), _body(), _isFirstLine(0), _isHeader(0), _isBody(0), _isQuery(0) {}
+Request::Request(void) : _method(), _target(), _query(), _version(), _headers(), _body() {}
 
 Request::Request(Request const &src) {
 	if (this != &src)
@@ -50,25 +50,13 @@ void Request::setBody(const std::vector<char> body) { this->_body = body; }
 void Request::setHeaders(const std::map<std::string, std::string> headers) { this->_headers = headers; }
 
 
-const std::string & Request::getMethod(void) const { return this->_method; }
-const std::string & Request::getTarget(void) const { return this->_target; }
-const std::string & Request::getVersion(void) const { return this->_version; }
-const std::string & Request::getQuery(void) const { return this->_query; }
-const std::vector<char> & Request::getBody(void) const { return this->_body; }
-const std::string & Request::getHeader(std::string const & key) const { return this->_headers.find(key)->second; }
-const std::map<std::string, std::string> & Request::getHeaders(void) const { return this->_headers; }
-
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: DEBUG::
-
-void Request::setIsFirstLine(const bool tf) { this->_isFirstLine = tf; }
-void Request::setIsHeader(const bool tf) { this->_isHeader = tf; }
-void Request::setIsBody(const bool tf) { this->_isBody = tf; }
-void Request::setIsQuery(const bool tf) { this->_isQuery = tf; }
-
-bool Request::getIsFirstLine(void) const { return this->_isFirstLine; }
-bool Request::getIsHeader(void) const { return this->_isHeader; }
-bool Request::getIsBody(void) const { return this->_isBody; }
-bool Request::getIsQuery(void) const { return this->_isQuery; }
+std::string const & 		Request::getMethod(void) const { return this->_method; }
+std::string const & 		Request::getTarget(void) const { return this->_target; }
+std::string const & 		Request::getVersion(void) const { return this->_version; }
+std::string const & 		Request::getQuery(void) const { return this->_query; }
+std::vector<char> const & 	Request::getBody(void) const { return this->_body; }
+std::string const & 		Request::getHeader(std::string const & key) const { return this->_headers.find(key)->second; }
+t_headers const &		 	Request::getHeaders(void) const { return this->_headers; }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
@@ -163,8 +151,6 @@ void Request::_parseHeaders(std::istringstream &stream) {
 	
 	if (this->getHeaders().empty())
 		throw HeadersException();
-	else
-		this->setIsHeader(true);
 }
 
 void Request::_parseRequestLine(std::istringstream &stream) {
@@ -173,8 +159,6 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 
 	if (this->_method.empty() || this->_target.empty() || this->_version.empty())
 		throw RequestLineException();
-	else
-		this->setIsFirstLine(true);
 }
 
 void Request::parser(std::vector<char> const& str_vec) {
@@ -182,7 +166,6 @@ void Request::parser(std::vector<char> const& str_vec) {
 	std::string			str(str_vec.begin(), str_vec.end());
 	std::istringstream	stream(str);
 
-	std::cout << "Request::parser" << std::endl;
 	if (str.empty())
 		return ;
 	this->_parseRequestLine(stream);
@@ -198,24 +181,13 @@ void Request::parser(std::vector<char> const& str_vec) {
 
 std::ostream &operator<<(std::ostream &o, Request const &r) {
 
-	if (r.getIsFirstLine()) {
-		o << "  " << str_of(60, ":") << std::endl << std::endl;
-		o << "method: " 	<< r.getMethod() << std::endl;
-		o << "target: "		<< r.getTarget() << std::endl;
-		o << "version: "	<< r.getVersion() << std::endl;
-	}
-	if (r.getIsQuery())
-		o << "query: "		<< r.getQuery() << std::endl;
-		
-	if (r.getIsHeader()) {
-		o << "headers: "	<< std::endl;
-		print_map(r.getHeaders());
-	}
-	
-	if (r.getIsBody()) {
-		o << "body: " 		<< std::endl;
-		print_vector(r.getBody());
-	}
+	o << "  " << str_of(60, ":") << std::endl << std::endl;
+	o << "method: " 	<< r.getMethod() << std::endl;
+	o << "target: "		<< r.getTarget() << std::endl;
+	o << "version: "	<< r.getVersion() << std::endl;
+	o << "query: "		<< r.getQuery() << std::endl;
+	o << "headers: "	<< print_map(r.getHeaders()) << std::endl;
+	o << "body: " 		<< print_vector(r.getBody()) << std::endl;
 
 	return o;
 }
