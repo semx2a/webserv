@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "ServerContext.hpp"
+
 typedef unsigned long long t_ull;
 
 class ClientData {
@@ -24,19 +26,29 @@ class ClientData {
 		bool						isTransferEncoding() const;
 		std::vector<char> const&	getRequest() const;
 		bool						isRequestEnded() const;
+		ServerContext const&		getServerContext() const;
+
+		void						setRequest(std::vector<char> request);
+		void						setRequestStr(std::string requestStr);
+		void						setHasBody(bool hasBody);
+		void						setHasContentLength(bool hasContentLength);
+		void						setIsTransferEncoding(bool isTransferEncoding);
+		void						setIsEnded(bool isEnded);
+		void						setServerContext(ServerContext const& serverContext);
 
 		void						addToBuffer(std::vector<char> raw);
 		void						setContentLength(size_t contentLength);
 
 
 	private:
-		std::vector<char>	_request;
-		std::string			_requestStr;
-		bool				_hasBody;
-		bool				_hasContentLength;
-		t_ull				_contentLength;
-		bool				_isTransferEncoding;
-		bool				_isEnded;
+	 	ServerContext 			_serverContext;
+		std::vector<char>		_request;
+		std::string				_requestStr;
+		bool					_hasBody;
+		bool					_hasContentLength;
+		t_ull					_contentLength;
+		bool					_isTransferEncoding;
+		bool					_isEnded;
 		
 		void				_searchContentLength();
 		void				_searchTransferEncoding();

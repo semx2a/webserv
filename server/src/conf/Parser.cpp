@@ -2,9 +2,9 @@
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Parser::Parser() : _linesRead(0), _confFilename(), _serverContexts() {}
+Parser::Parser() : _linesRead(0), _confFilename(), _serversContexts() {}
 
-Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _serverContexts() {
+Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _serversContexts() {
 
 	parse();
 }
@@ -19,7 +19,7 @@ Parser &	Parser::operator=(Parser const & rhs) {
 
 		this->_linesRead = rhs.getLinesRead();
 		this->_confFilename = rhs.getConfFileName();
-		this->_serverContexts = rhs.getServerContexts();
+		this->_serversContexts = rhs.getServerContexts();
 	}
 	return *this;
 }
@@ -28,7 +28,7 @@ Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::vector<ServerContext> const&	Parser::getServerContexts(void) const { return this->_serverContexts; }
+std::vector<ServerContext> const&	Parser::getServerContexts(void) const { return this->_serversContexts; }
 
 std::string const&					Parser::getConfFileName(void) const { return this->_confFilename; }
 
@@ -66,7 +66,7 @@ void	Parser::parse() {
 		else if (line.find("server {") != std::string::npos) {
 			ServerContext	newServerCtxt;
 			this->parseServerContext(stream, newServerCtxt);
-			this->_serverContexts.push_back(newServerCtxt);
+			this->_serversContexts.push_back(newServerCtxt);
 		}
 		else {
 			this->buildAndThrowParamError(line);

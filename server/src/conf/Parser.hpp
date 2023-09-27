@@ -36,7 +36,7 @@ class Parser {
 
 		size_t						_linesRead;
 		std::string		 			_confFilename;
-		std::vector<ServerContext>	_serverContexts;
+		std::vector<ServerContext>	_serversContexts;
 
 		template <typename Context>
 		void	parseServerContext(std::stringstream& stream, Context& context);

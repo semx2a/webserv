@@ -1,24 +1,24 @@
-#include "Server.hpp"
+#include "Engine.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Server::Server () :	config (), 
+Engine::Engine () :	config (), 
 					epollEvents (config.getPorts ()) {
 }
 
-Server::Server (std::string const& conf_file) :	config (conf_file), 
+Engine::Engine (std::string const& conf_file) :	config (conf_file), 
 												epollEvents (config.getPorts ()) {
 }
 
-Server::Server (Server const& rhs) {
+Engine::Engine (Engine const& rhs) {
 
 	*this = rhs;
 }
 
-Server::~Server () {}
+Engine::~Engine () {}
 
 
-Server& Server::operator= (Server const& rhs) {
+Engine& Engine::operator= (Engine const& rhs) {
 
 	if (this != &rhs) {
         // TODO
@@ -29,15 +29,15 @@ Server& Server::operator= (Server const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-Config const&	Server::getConfig () const { return config; }
+Config const&	Engine::getConfig () const { return config; }
 
-Epoll const&	Server::getEpollEvents () const { return epollEvents; }
+Epoll const&	Engine::getEpollEvents () const { return epollEvents; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 
-void	Server::connect () {
+void	Engine::connect () {
 
 	struct epoll_event	event;
 	int					nb_events;

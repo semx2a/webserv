@@ -1,5 +1,5 @@
 #include "Parser.hpp"
-#include "Server.hpp"
+#include "Engine.hpp"
 
 int	main(int ac, char **av) {
 
@@ -12,7 +12,7 @@ int	main(int ac, char **av) {
 		conf_file = (ac == 1) ? "../neoserv/conf/default.conf" : av[1];
 		
 		Parser	parser(conf_file);
-		Server	webserv (parser.getServerContexts());
+		Engine	webserv (parser.getServerContexts());
 		webserv.connect();
 	}
 	catch (const std::exception& e) {

@@ -82,7 +82,7 @@ SRC		:=	$(addprefix $(CONF),		\
 			$(addprefix $(CORE),		\
 				ClientData.cpp			\
 				Epoll.cpp 				\
-				Server.cpp 				\
+				Engine.cpp 				\
 				Socket.cpp) 			\
 			$(addprefix $(REQ), 		\
 				Request.cpp)			\

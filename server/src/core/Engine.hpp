@@ -15,14 +15,14 @@
 
 typedef std::map<int, ClientData>				clientDataMap_t;
 
-class Server {
+class Engine {
 
 	public:
-		Server(std::vector<ServerContext> const& serverContexts);
-		Server(std::string const& conf_file);
-		Server(Server const& rhs);
-		~Server();
-		Server& operator=(Server const& rhs);
+		Engine(std::vector<ServerContext> const& serversContexts);
+		Engine(std::string const& conf_file);
+		Engine(Engine const& rhs);
+		~Engine();
+		Engine& operator=(Engine const& rhs);
 
 		std::vector<ServerContext> const&	getServerContexts() const;
 		Epoll const&						getEpollEvents() const;
@@ -31,13 +31,14 @@ class Server {
 
 	private:
 
-		//Server();
+		//Engine();
 
-		std::vector<ServerContext> const&	_serverContexts;
+		std::vector<ServerContext>			_serversContexts;
 		Epoll								_epollEvents;
 		Request								_clientRequest;
 		clientDataMap_t						_clientDataMap;
 
+		void				_addNewClient(int serverFd);
 		void				_readFromClient(int clientFd);
 		void				_writeToClient(int clientFd);
 		void				_handleClientData(int clientFd);

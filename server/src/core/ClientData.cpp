@@ -10,7 +10,7 @@ ClientData::ClientData() {
 	_contentLength = 0;
 }
 
-ClientData::ClientData(ClientData const& rhs) {
+ClientData::ClientData(ClientData const& rhs) : _serverContext(rhs.getServerContext()) {
 
 	*this = rhs;
 }
@@ -32,21 +32,24 @@ ClientData::~ClientData() {
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
 bool						ClientData::hasBody() const { return _hasBody; }
-
 bool						ClientData::hasContentLength() const { return _hasContentLength; }
-
 size_t						ClientData::contentLength() const { return _contentLength; }
-
 bool						ClientData::isTransferEncoding() const { return _isTransferEncoding; }
-
 std::vector<char> const&	ClientData::getRequest() const { return _request; }
-
 bool						ClientData::isRequestEnded() const { return _isEnded; }
+ServerContext const&		ClientData::getServerContext() const { return _serverContext; }
 
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void		ClientData::setContentLength(size_t contentLength) { _contentLength = contentLength; }
+void		ClientData::setRequest(std::vector<char> request) { _request = request; }
+void		ClientData::setRequestStr(std::string requestStr) { _requestStr = requestStr; }
+void		ClientData::setHasBody(bool hasBody) { _hasBody = hasBody; }
+void		ClientData::setHasContentLength(bool hasContentLength) { _hasContentLength = hasContentLength; }
+void		ClientData::setIsTransferEncoding(bool isTransferEncoding) { _isTransferEncoding = isTransferEncoding; }
+void		ClientData::setIsEnded(bool isEnded) { _isEnded = isEnded; }
+void		ClientData::setServerContext(ServerContext const& serverContext) { _serverContext = serverContext; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::OTHERS
