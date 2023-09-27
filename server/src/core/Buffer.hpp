@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "Request.hpp"
 #include "ServerContext.hpp"
 
 typedef unsigned long long t_ull;
@@ -21,13 +22,13 @@ class Buffer {
 		Buffer &operator=(Buffer const& rhs);
 		~Buffer();
 
+		std::vector<char> const&	getRaw() const;
+		std::string const&			getStr() const;
 		bool						hasBody() const;
 		bool						hasContentLength() const;
 		size_t						contentLength() const;
 		bool						isTransferEncoding() const;
-		std::vector<char> const&	getRequest() const;
 		bool						isRequestEnded() const;
-		ServerContext const&		getServerContext() const;
 
 		void						setRaw(std::vector<char> request);
 		void						setStr(std::string requestStr);
@@ -35,7 +36,6 @@ class Buffer {
 		void						setHasContentLength(bool hasContentLength);
 		void						setIsTransferEncoding(bool isTransferEncoding);
 		void						setIsEnded(bool isEnded);
-		void						setServerContext(ServerContext const& serverContext);
 
 		void						add(std::vector<char> raw);
 		void						checkEnd();
@@ -43,7 +43,6 @@ class Buffer {
 
 
 	private:
-	 	ServerContext 			_serverContext;
 		std::vector<char>		_raw;
 		std::string				_str;
 		bool					_hasBody;

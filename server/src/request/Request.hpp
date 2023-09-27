@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 17:07:53 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 12:45:11 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:59:05 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Request {
 
 		Request(void);
 		Request(Request const &src);
-		Request(std::vector<char> const &);
 		~Request(void);
 
 		Request &	operator=(Request const &rhs);
@@ -62,7 +61,7 @@ class Request {
 		bool	getIsQuery(void) const;
 
 		//METHODS
-		void	parser(std::vector<char>);
+		void	parser(std::vector<char> const& raw);
 		
 		//ERRORS
 		class RequestLineException : public std::exception { 
@@ -95,7 +94,7 @@ class Request {
 		//PRIVATE METHODS
 		void						_parseRequestLine(std::istringstream&);
 		void						_parseHeaders(std::istringstream&);
-		void						_parseBody(std::vector<char>&);
+		void						_parseBody(std::vector<char> const&);
 
 		std::vector<std::string>	_tokenize(const std::string, char);
 		std::string 				_trim(const std::string&);

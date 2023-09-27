@@ -35,7 +35,13 @@ Epoll::Epoll(Epoll const& rhs) {
 Epoll& Epoll::operator=(Epoll const& rhs) {
 
 	if (this != &rhs) {
-        // TODO
+		
+		this->_servers = rhs.getServers();
+		this->_listener = rhs.getListener();
+		this->_toPoll = rhs.getToPoll();
+		for (int i = 0; i < MAX_EVENTS; i++) {
+			this->_events[i] = rhs.getReadyEvent(i);
+		}
 	}
 	return *this;
 }
@@ -44,20 +50,15 @@ Epoll::~Epoll() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-struct epoll_event const&	Epoll::getReadyEvent(int index) const {
+std::map<int, ServerContext> const&	Epoll::getServers() const { return this->_servers; }
+int									Epoll::getListener() const { return this->_listener; }
+struct epoll_event const&			Epoll::getReadyEvent(int index) const {	return this->_events[index]; }
+struct epoll_event const&			Epoll::getToPoll() const { return this->_toPoll; }
 
-	return this->_events[index];
-}
-
-std::map<int, ServerContext> const&	Epoll::getServers() const { 
-
-	return this->_servers;
-}
-
-bool	Epoll::isNewClient(int fd) {
-
-	return this->_servers.find(fd) != this->_servers.end();
-}
+void	Epoll::setServers(std::map<int, ServerContext> const& servers) { this->_servers = servers; }
+void	Epoll::setListener(int listener) { this->_listener = listener; }
+void	Epoll::setReadyEvent(int index, struct epoll_event const& event) { this->_events[index] = event; }
+void    Epoll::setToPoll(struct epoll_event const& toPoll) { this->_toPoll = toPoll; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CREATION
 
@@ -92,6 +93,9 @@ void	Epoll::addSocketToEpoll(int fd) {
 
 void	Epoll::editSocketInEpoll(int fd, int eventToWatch) {
 
+	#ifdef DEBUG
+	std::cout << RED << "Editing socket " << fd << " in epoll" << NO_COLOR << std::endl;
+	#endif
 	std::memset((char *)&this->_toPoll, 0, sizeof(this->_toPoll));
 	this->_toPoll.events = eventToWatch; 
 	this->_toPoll.data.fd = fd;  
@@ -110,3 +114,7 @@ int		Epoll::waitForConnexions() {
 	return numEvents;
 }
 
+bool	Epoll::isNewClient(int fd) const {
+
+	return (this->_servers.find(fd) != this->_servers.end());
+}

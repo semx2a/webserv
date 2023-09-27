@@ -18,14 +18,16 @@ Socket::Socket(Socket const& rhs) : _port(rhs.getPort()) {
 	*this = rhs;
 }
 
-
 Socket::~Socket() {}
-
 
 Socket& Socket::operator=(Socket const& rhs) {
 
 	if (this != &rhs) {
-        // TODO
+		
+		this->_fd = rhs.getFd();
+		this->_ip = rhs.getIp();
+		this->_port = rhs.getPort();
+		this->_serverAddr = rhs.getServerAddr();    
 	}
 	return *this;
 }
@@ -33,9 +35,15 @@ Socket& Socket::operator=(Socket const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-int		Socket::getPort() const { return this->_port; }
+int							Socket::getFd() const { return this->_fd; }
+std::string	const &			Socket::getIp() const { return this->_ip; }
+int							Socket::getPort() const { return this->_port; }
+struct sockaddr_in const &	Socket::getServerAddr() const { return this->_serverAddr; }
 
-int		Socket::getFd() const { return this->_fd; }
+void	Socket::setFd(int fd) { this->_fd = fd; }
+void	Socket::setIp(std::string const& ip) { this->_ip = ip; }
+void	Socket::setPort(int port) { this->_port = port; }
+void	Socket::setServerAddr(struct sockaddr_in const& serverAddr) { this->_serverAddr = serverAddr; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS

@@ -25,10 +25,17 @@ class Socket {
 		~Socket();
 		Socket& operator=(Socket const& rhs);
 
-		int					getPort() const;
-		int					getFd() const;
+		int							getFd() const;
+		std::string const&			getIp() const;
+		int							getPort() const;
+		struct sockaddr_in const& 	getServerAddr() const;
 
-		void				setReusable();
+		void	setFd(int);
+		void	setIp(std::string const&);
+		void	setPort(int);
+		void	setServerAddr(struct sockaddr_in const&);
+
+		void	setReusable();
 
 	private:
 
@@ -39,10 +46,10 @@ class Socket {
 		int					_port;
 		struct sockaddr_in	_serverAddr;
 
-		void				_createSocket();
-		void				_setServerAddr();
-		void				_bindSock();
-		void				_startListening();
+		void		_createSocket();
+		void		_setServerAddr();
+		void		_bindSock();
+		void		_startListening();
 };
 
 #endif

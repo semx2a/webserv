@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 12:36:08 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:58:48 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,6 @@ Request::Request(void) : _method(), _target(), _query(), _version(), _headers(),
 Request::Request(Request const &src) {
 	if (this != &src)
 		*this = src;
-}
-
-Request::Request(std::vector<char> const & str) {
-	
-	if (!str.empty())
-		this->parser(str);
 }
 
 Request::~Request() {}
@@ -95,7 +89,7 @@ int Request::_find_last_occurrence(const std::vector<char> & haystack, const std
 }
 
 
-void Request::_parseBody(std::vector<char>& str_vec) {
+void Request::_parseBody(std::vector<char> const& str_vec) {
 	
 	int pos = this->_find_last_occurrence(str_vec, "\r\n\r\n");
 	
@@ -183,11 +177,12 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 		this->setIsFirstLine(true);
 }
 
-void Request::parser(std::vector<char> str_vec) {
+void Request::parser(std::vector<char> const& str_vec) {
 	
 	std::string			str(str_vec.begin(), str_vec.end());
 	std::istringstream	stream(str);
 
+	std::cout << "Request::parser" << std::endl;
 	if (str.empty())
 		return ;
 	this->_parseRequestLine(stream);

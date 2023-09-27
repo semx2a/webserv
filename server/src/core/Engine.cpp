@@ -2,27 +2,26 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-//Engine::Engine () {}
+Engine::Engine() {}
 
-Engine::Engine(std::vector<ServerContext> const& serversContexts) :	_serversContexts(serversContexts), 
-																	_epollEvents(serversContexts) {
+Engine::Engine(std::vector<ServerContext> const& serversContexts) :	_epollEvents(serversContexts) {
 }
 
-Engine::Engine(Engine const& rhs) : _serversContexts(rhs._serversContexts), 
-									_epollEvents(rhs._epollEvents) {
+Engine::Engine(Engine const& rhs) : _epollEvents(rhs.getEpollEvents()) {
 	*this = rhs;
 }
 
-Engine::~Engine() {
-
-	// TODO
-}
+Engine::~Engine() {}
 
 
 Engine& Engine::operator=(Engine const& rhs) {
 
 	if (this != &rhs) {
-        // TODO
+        
+		this->_epollEvents = rhs.getEpollEvents();
+		this->_buffersMap = rhs.getBuffersMap();
+		this->_requestsMap = rhs.getRequestsMap();
+		this->_serverContextsMap = rhs.getServersContexts();
 	}
 	return *this;
 }
@@ -30,9 +29,16 @@ Engine& Engine::operator=(Engine const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-std::vector<ServerContext> const&	Engine::getServerContexts() const { return this->_serversContexts; }
-
 Epoll const&						Engine::getEpollEvents() const { return this->_epollEvents; }
+std::map<int, ServerContext> const&	Engine::getServersContexts() const { return this->_serverContextsMap; }
+std::map<int, Buffer> const&		Engine::getBuffersMap() const { return this->_buffersMap; }
+std::map<int, Request> const&		Engine::getRequestsMap() const { return this->_requestsMap; }
+
+void	Engine::setEpollEvents(Epoll const& epollEvents) { this->_epollEvents = epollEvents; }
+void	Engine::setServersContexts(std::map<int, ServerContext> const& serversContextsMap) { this->_serverContextsMap = serversContextsMap; }
+void	Engine::setBuffersMap(std::map<int, Buffer> const& buffersMap) { this->_buffersMap = buffersMap; }
+void	Engine::setRequestsMap(std::map<int, Request> const& requestsMap) { this->_requestsMap = requestsMap; }
+
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
@@ -92,7 +98,8 @@ void	Engine::_addNewClient(int serverFd) {
 		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 	_epollEvents.addSocketToEpoll(clientSocket);
-	_buffersMap[clientSocket].setServerContext(_epollEvents.getServers().find(serverFd)->second);
+	//_buffersMap[clientSocket].setServerContext(_epollEvents.getServers().find(serverFd)->second);
+	_serverContextsMap[clientSocket] = _epollEvents.getServers().find(serverFd)->second;
 	log(clientSocket, "New request");
 	// TODO : set reusable ?	
 }
@@ -118,32 +125,45 @@ void	Engine::_readFromClient(int clientFd) {
 	_handleBuffer(clientFd);
 }
 
-void	Engine::_writeToClient(int clientFd) {
-
-	Response	res;
-	
-	res.buildResponse(this->_buffersMap[clientFd].getRequest(), this->_buffersMap[clientFd].getServerContext());
-	
-	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
-		throw std::runtime_error(SENDERR);
-	}
-	//TODO: dont close if header keep-alive
-	if (this->_clientRequest.getHeader("Connection") == "close")
-		_closeSocket(clientFd);
-}
-
-
 void	Engine::_handleBuffer(int clientFd) {
 
 	if (!this->_buffersMap[clientFd].isRequestEnded())
 		return ;
 
 	#ifdef DEBUG
-	std::cout << &this->_buffersMap[clientFd].getRequest()[0] << std::endl;
+	std::cout << std::endl;
+	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
+	std::cout << RED << "BUFFER of client " << clientFd << ":" << NO_COLOR << std::endl;
+	std::cout << &this->_buffersMap[clientFd].getRaw()[0] << std::endl;
+	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
 	#endif
-	this->_clientRequest.parser(_buffersMap[clientFd].getRequest());
+	//this->_clientRequest.parser(_buffersMap[clientFd].getRaw());
+	this->_requestsMap[clientFd].parser(this->_buffersMap[clientFd].getRaw());
+	//this->_buffersMap[clientFd].getRequest().parser(_buffersMap[clientFd].getRaw());
 	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
 }
+
+void	Engine::_writeToClient(int clientFd) {
+
+	Response	res;
+	
+	res.buildResponse(this->_requestsMap[clientFd], this->_serverContextsMap[clientFd]);
+	
+	std::cout << RED << "Response: " << res.getResponse() << NO_COLOR << std::endl;
+	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
+		throw std::runtime_error(SENDERR);
+	}
+	//TODO: dont close if header keep-alive
+	if (this->_requestsMap[clientFd].getHeader("Connection") == "close")
+		_closeSocket(clientFd);
+	else
+	{
+		_buffersMap.erase(clientFd);
+		_epollEvents.editSocketInEpoll(clientFd, EPOLLIN);
+	}
+}
+
+
 
 
 void	Engine::_closeSocket(int fd) {

@@ -22,25 +22,32 @@ class Engine {
 		~Engine();
 		Engine& operator=(Engine const& rhs);
 
-		std::vector<ServerContext> const&	getServerContexts() const;
 		Epoll const&						getEpollEvents() const;
+		std::map<int, ServerContext> const&	getServersContexts() const;
+		std::map<int, Buffer> const&		getBuffersMap() const;
+		std::map<int, Request> const&		getRequestsMap() const;
+
+		void	setEpollEvents(Epoll const&);
+		void	setServersContexts(std::map<int, ServerContext> const&);
+		void	setBuffersMap(std::map<int, Buffer> const&);
+		void	setRequestsMap(std::map<int, Request> const&);
 
 		void	connect();
 
 	private:
 
-		//Engine();
+		Engine();
 
-		std::vector<ServerContext>			_serversContexts;
 		Epoll								_epollEvents;
-		Request								_clientRequest;
+		std::map<int, ServerContext>		_serverContextsMap;
 		std::map<int, Buffer>				_buffersMap;
+		std::map<int, Request>				_requestsMap;
 
-		void				_addNewClient(int serverFd);
-		void				_readFromClient(int clientFd);
-		void				_writeToClient(int clientFd);
-		void				_handleBuffer(int clientFd);
-		void				_closeSocket(int fd);
+		void				_addNewClient(int);
+		void				_readFromClient(int);
+		void				_writeToClient(int);
+		void				_handleBuffer(int);
+		void				_closeSocket(int);
 
 };
 

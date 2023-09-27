@@ -9,7 +9,7 @@ Buffer::Buffer() {
 	_contentLength = 0;
 }
 
-Buffer::Buffer(Buffer const& rhs) : _serverContext(rhs.getServerContext()) {
+Buffer::Buffer(Buffer const& rhs) {
 
 	*this = rhs;
 }
@@ -18,7 +18,14 @@ Buffer::Buffer(Buffer const& rhs) : _serverContext(rhs.getServerContext()) {
 Buffer&	Buffer::operator=(Buffer const& rhs) {
 
 	if (this != &rhs) {
-		// TODO
+
+		this->_raw = rhs.getRaw();
+		this->_str = rhs.getStr();
+		this->_hasBody = rhs.hasBody();
+		this->_hasContentLength = rhs.hasContentLength();
+		this->_contentLength = rhs.contentLength();
+		this->_isTransferEncoding = rhs.isTransferEncoding();
+		this->_isEnded = rhs.isRequestEnded();
 	}
 	return *this;
 }
@@ -30,14 +37,13 @@ Buffer::~Buffer() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
+std::string const&			Buffer::getStr() const { return _str; }
+std::vector<char> const&	Buffer::getRaw() const { return _raw; }
 bool						Buffer::hasBody() const { return _hasBody; }
 bool						Buffer::hasContentLength() const { return _hasContentLength; }
 size_t						Buffer::contentLength() const { return _contentLength; }
 bool						Buffer::isTransferEncoding() const { return _isTransferEncoding; }
-std::vector<char> const&	Buffer::getRequest() const { return _raw; }
 bool						Buffer::isRequestEnded() const { return _isEnded; }
-ServerContext const&		Buffer::getServerContext() const { return _serverContext; }
-
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
@@ -48,7 +54,6 @@ void		Buffer::setHasBody(bool hasBody) { _hasBody = hasBody; }
 void		Buffer::setHasContentLength(bool hasContentLength) { _hasContentLength = hasContentLength; }
 void		Buffer::setIsTransferEncoding(bool isTransferEncoding) { _isTransferEncoding = isTransferEncoding; }
 void		Buffer::setIsEnded(bool isEnded) { _isEnded = isEnded; }
-void		Buffer::setServerContext(ServerContext const& serverContext) { _serverContext = serverContext; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::OTHERS
