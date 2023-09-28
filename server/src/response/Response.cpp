@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 18:43:51 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/28 12:43:44 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,19 @@ void Response::buildResponse() {
 	this->_response = res.str();
 }
 
+std::string Response::_trim(std::string const& str)
+{
+    const std::string ws = " \n\r\t\f\v";
+    
+    size_t start = str.find_first_not_of(ws);
+    if (start == std::string::npos)
+        return ""; // no content except whitespace
+
+    size_t end = str.find_last_not_of(ws);
+    
+    return str.substr(start, end-start+1);
+}
+
 t_lexicon Response::_initFile(std::string const& filename) {
 
 	std::ifstream	file(filename.c_str());
@@ -133,10 +146,10 @@ t_lexicon Response::_initFile(std::string const& filename) {
 		
 		key.clear();
 		value.clear();
-	
+
 		sstream >> key;
-		sstream >> value;
-		//value = value.substr(0, value.find_last_of(';'));
+		std::getline(sstream, value, ';');
+		value = this->_trim(value);
 		fileLexicon[key] = value;
 	}
 	

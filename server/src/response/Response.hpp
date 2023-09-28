@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 11:35:17 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 18:31:25 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/28 12:40:44 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ class Response {
 		Request			_request;
 		ServerContext	_serverContext;
 
+		std::string _trim(std::string const&);
 		t_lexicon	_initFile(std::string const&);
 };
 

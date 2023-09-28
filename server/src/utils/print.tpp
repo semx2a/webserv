@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/23 23:03:22 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/28 12:43:33 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ std::string	 print_map(std::map<KeyType, ValueType> const& myMap) {
 
 	sstream << std::endl;
 	for (it = myMap.begin(); it != myMap.end(); ++it) {
-		sstream << std::setw(27) << "map[" << it->first << "] = " << it->second; 
+		sstream << std::setw(27) << "map[" << it->first << "] = " << "'" << it->second << "'"; 
 		if (it != myMap.end() && it != --myMap.end()) 
 			sstream << std::endl;
 	}
