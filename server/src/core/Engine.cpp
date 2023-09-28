@@ -121,6 +121,9 @@ void	Engine::_readFromClient(int clientFd) {
 		buffer.resize(bytesRead);
 	}
 	this->_buffers[clientFd].add(buffer);
+	// TODO: catch RequestError 
+	// atoi du e.what()
+	// case switch sur le code d'erreur
 	this->_buffers[clientFd].checkEnd();
 	_handleBuffer(clientFd);
 }
@@ -145,6 +148,8 @@ void	Engine::_writeToClient(int clientFd) {
 
 	Response	res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 	
+	res.handleResponse();
+	res.buildResponse();
 	std::cout << RED << "Response: " << res.getResponse() << NO_COLOR << std::endl;
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);

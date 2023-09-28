@@ -16,6 +16,7 @@
 - [ ] retour recv 0 : ?
 - [ ] timeout
 - [ ] check max body size
+- [ ] connection header : close after ended or not
 
 
 # CONF
@@ -45,6 +46,7 @@ une fois que tout est parse
 - [x] fill with default if empty
 
 - [ ] ip : find_last_of ':' !!! not first of (vu qu'adresse ipv6 en contient plein)
+- [ ] error if alias AND root in location
 
 
 
@@ -54,4 +56,3 @@ une fois que tout est parse
 
 ## tests
 - [ ] content-length > max body size
-- [ ] 

@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/27 15:20:04 by seozcan          ###   ########.fr        #
+#    Updated: 2023/09/28 18:59:02 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,6 @@ UTILS	:=	$(addprefix $(SDIR), utils/)
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SOURCES::
 
 SRC		:=	$(addprefix $(CONF),		\
-				Config.cpp				\
 				ServerContext.cpp		\
 				LocationContext.cpp		\
 				Parser.cpp				\

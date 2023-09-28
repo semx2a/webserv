@@ -53,7 +53,9 @@ void	AContext::setMaxBodySize(size_t size) { this->_maxBodySize = size; }
 void	AContext::setRoot(std::string const& root) { this->_root = root; }
 void	AContext::addErrorPage(int code, std::string const& path) { this->_errorPages[code] = path; }
 void	AContext::setErrorPages(std::map<int, std::string> const& errorPages) { this->_errorPages = errorPages; }
+void	AContext::addIndex(std::string const& index) { this->_index.push_back(index); }
 void	AContext::setIndex(std::vector<std::string> const& index) { this->_index = index; }
+void	AContext::addAuthorizedMethod(std::string const& method) { this->_authorizedMethods.push_back(method); }
 void	AContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMethods) { this->_authorizedMethods = authorizedMethods; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS

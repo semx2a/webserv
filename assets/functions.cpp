@@ -59,7 +59,7 @@
 	getsockopt
 	setsockopt */
 #include <netdb.h>
-/*	gai_strerror */
+/*	gai_sxtrerror */
 #include <sys/errno.h>
 /*	errno */
 #include <arpa/inet.h>

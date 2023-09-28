@@ -109,8 +109,10 @@ void	Buffer::_searchContentLength() {
 	if (content_length_pos != std::string::npos) {
 		std::cout << "Content-Length found: " << this->_contentLength << std::endl;
 		this->setContentLength (std::atoll(_str.substr(content_length_pos + 16).c_str()));
-		if (this->_contentLength > this->_maxBodySize)
+		if (this->_contentLength > this->_maxBodySize) {
+			// TODO throw RequestError413("413");
 			throw std::runtime_error("Content-Length too big"); // TODO: build response
+		}
 		this->_hasBody = true;
 		this->_headerSize = this->_raw.size();
 	}

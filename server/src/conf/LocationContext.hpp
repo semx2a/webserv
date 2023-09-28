@@ -16,8 +16,7 @@ class LocationContext : public AContext {
 		void	setDefaults(void);
 		
 	private:
-		std::string					_alias;
-		
+		std::string		_alias;
 };
 
 std::ostream &	operator<<(std::ostream & o, LocationContext const & cc);

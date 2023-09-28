@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/28 12:43:44 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/28 19:03:12 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ Response::Response(Request const& request, ServerContext const& conf) : _request
 
 	this->setStatusCodes("../neoserv/status.codes");
 	this->setMimeTypes("../neoserv/mime.types");
-	this->buildResponse();
 }
 
 Response::Response(Response const& rhs) {
@@ -74,7 +73,116 @@ void	Response::setVersion(std::string const& version) { this->_version = version
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void Response::buildResponse() {
+void	Response::handleResponse() {
+
+	// TODO :check authorized methods
+	_checkTarget();
+	if (this->_request.getMethod() == "GET")
+		this->_handleGet();
+	else if (this->_request.getMethod() == "POST")
+		this->_handlePost();
+	else if (this->_request.getMethod() == "DELETE")
+		this->_handleDelete();
+	else
+		throw std::runtime_error("Method not implemented");
+}
+
+void	Response::_checkTarget() {
+
+	std::string			target	= this->_request.getTarget();
+	t_locationIterator	it 		= this->_serverContext.getLocations().find(target);
+	t_locationIterator	itEnd	= this->_serverContext.getLocations().end();
+
+	if (it != itEnd) {
+		std::string root = it->second.getRoot();
+		std::string alias = it->second.getAlias();
+		std::cout << "Root: " << root << std::endl;
+		std::cout << "Alias: " << alias << std::endl;
+		if (not root.empty())
+			this->_targetFinalPath = root + target.substr(1);
+		else if (not alias.empty())
+			this->_targetFinalPath = alias;
+	}
+	if (this->_targetFinalPath.empty()) { // if not found in locations or no root or alias
+		this->_targetFinalPath = this->_serverContext.getRoot() + target.substr(1);
+	}
+	if (target.find("?") != std::string::npos) {
+		this->_isCGI = true;
+	}
+	std::cout << "Target final path: " << this->_targetFinalPath << std::endl;
+}
+
+void	Response::_handleAutoIndex() {
+
+	DIR*				dir;
+//	struct dirent*		entry;
+
+	dir = opendir(this->_targetFinalPath.c_str());
+	if (!dir) {
+		
+		std::cout << "Could not open directory " << this->_targetFinalPath << std::endl;
+		return ;
+		//throw error?
+	}
+	//https://stackoverflow.com/questions/48671729/how-to-open-a-directory-with-c
+	//std::stringstream	bodyContent;
+	
+}
+
+void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
+
+	for (size_t i = 0; i < indexVec.size(); i++) {
+		this->_targetFinalPath += indexVec[i];
+		std::ifstream	file(this->_targetFinalPath.c_str());
+		if (file.is_open())
+			return;
+		this->_targetFinalPath = this->_targetFinalPath.substr(0, this->_targetFinalPath.size() - indexVec[i].size());
+	}
+	throw std::runtime_error("Could not open index file");
+}
+
+void	Response::_handleGet() {
+
+	if (this->_targetFinalPath.find('/') == this->_targetFinalPath.size() - 1) { // directory
+
+		if (this->_serverContext.getAutoindex() == true) {
+			this->_handleAutoIndex();
+			return ;
+		}
+		else {
+			t_locationIterator it = this->_serverContext.getLocations().find(this->_request.getTarget());
+			t_locationIterator itEnd = this->_serverContext.getLocations().end();
+
+			std::string index;
+			if (it != itEnd) {
+				_assignIndex(it->second.getIndex());
+			}
+			else {
+				_assignIndex(this->_serverContext.getIndex());
+			}
+		}
+	}
+
+	std::ifstream	file(this->_targetFinalPath.c_str());
+
+	if (!file.is_open()) {
+		throw std::runtime_error("Could not open " +  this->_targetFinalPath + " file");
+	}
+	std::stringstream	bodyContent;
+	std::string			line;
+	
+	while (std::getline(file, line) && !file.eof())
+		bodyContent << line << std::endl;
+	
+	file.close();
+	_bodyContent = bodyContent.str();
+}
+
+void	Response::_handlePost() {}
+
+void	Response::_handleDelete() {}
+
+void	Response::buildResponse() {
 	
 
 	std::stringstream res;

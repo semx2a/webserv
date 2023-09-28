@@ -2,7 +2,7 @@ MÉTHODE GET
 │
 ├── 1. Analyse de la requête
 │   ├── a. * Vérifier la validité de la requête (format, headers, version HTTP, etc.)
-│   ├── b. Extrait de l'URI
+│   ├── b. Extrait de l'URI 
 │   └── c. * Extrait des headers (comme `Host`, `Accept`, etc.)
 │
 ├── 2. Traitement en fonction de la configuration
@@ -65,3 +65,6 @@ MÉTHODE GET
   - faire un fork
   - dans le processus enfant, rediriger la sortie standard (stdout) vers le pipe, puis exécutez le script CGI
   - dans le processus parent, lire la sortie du script depuis l'autre extrémité du pipe
+
+### 3.a Autoindex
+If a request ends with a slash, NGINX treats it as a request for a directory and tries to find an index file in the directory. The index directive defines the index file’s name (the default value is index.html). To continue with the example, if the request URI is /images/some/path/, NGINX delivers the file /www/data/images/some/path/index.html if it exists. If it does not, NGINX returns HTTP code 404 (Not Found) by default. To configure NGINX to return an automatically generated directory listing instead, include the on parameter to the autoindex directive:

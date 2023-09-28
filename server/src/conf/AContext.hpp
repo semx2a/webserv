@@ -28,7 +28,9 @@ class AContext {
 		void	setRoot(std::string const& root);
 		void	addErrorPage(int code, std::string const& path);
 		void	setErrorPages(std::map<int, std::string> const& errorPages);
+		void	addIndex(std::string const& index);
 		void	setIndex(std::vector<std::string> const& index);
+		void	addAuthorizedMethod(std::string const& method);
 		void	setAuthorizedMethods(std::vector<std::string> const& authorizedMethods);
 
 		virtual void	setDefaults(void);
