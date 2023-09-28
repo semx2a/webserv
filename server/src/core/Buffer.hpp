@@ -24,16 +24,20 @@ class Buffer {
 
 		std::vector<char> const&	getRaw() const;
 		std::string const&			getStr() const;
+		size_t						getMaxBodySize() const;
 		bool						hasBody() const;
 		bool						hasContentLength() const;
 		size_t						contentLength() const;
+		size_t						getHeaderSize() const;
 		bool						isTransferEncoding() const;
 		bool						isRequestEnded() const;
 
 		void						setRaw(std::vector<char> request);
 		void						setStr(std::string requestStr);
+		void						setMaxBodySize(size_t maxBodySize);
 		void						setHasBody(bool hasBody);
 		void						setHasContentLength(bool hasContentLength);
+		void						setHeaderSize(size_t headerSize);
 		void						setIsTransferEncoding(bool isTransferEncoding);
 		void						setIsEnded(bool isEnded);
 
@@ -45,9 +49,11 @@ class Buffer {
 	private:
 		std::vector<char>		_raw;
 		std::string				_str;
+		size_t					_maxBodySize;
 		bool					_hasBody;
 		bool					_hasContentLength;
 		t_ull					_contentLength;
+		size_t					_headerSize;
 		bool					_isTransferEncoding;
 		bool					_isEnded;
 		

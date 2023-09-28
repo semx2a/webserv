@@ -98,8 +98,8 @@ void	Engine::_addNewClient(int serverFd) {
 		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 	_epollEvents.addSocketToEpoll(clientSocket);
-	//_buffersMap[clientSocket].setServerContext(_epollEvents.getServers().find(serverFd)->second);
 	_serverContextsMap[clientSocket] = _epollEvents.getServers().find(serverFd)->second;
+	_buffersMap[clientSocket].setMaxBodySize(_serverContextsMap[clientSocket].getMaxBodySize());
 	log(clientSocket, "New request");
 	// TODO : set reusable ?	
 }
@@ -137,9 +137,7 @@ void	Engine::_handleBuffer(int clientFd) {
 	std::cout << &this->_buffersMap[clientFd].getRaw()[0] << std::endl;
 	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
 	#endif
-	//this->_clientRequest.parser(_buffersMap[clientFd].getRaw());
 	this->_requestsMap[clientFd].parser(this->_buffersMap[clientFd].getRaw());
-	//this->_buffersMap[clientFd].getRequest().parser(_buffersMap[clientFd].getRaw());
 	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 

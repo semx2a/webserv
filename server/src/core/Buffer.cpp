@@ -39,9 +39,11 @@ Buffer::~Buffer() {
 
 std::string const&			Buffer::getStr() const { return _str; }
 std::vector<char> const&	Buffer::getRaw() const { return _raw; }
+size_t						Buffer::getMaxBodySize() const { return _maxBodySize; }
 bool						Buffer::hasBody() const { return _hasBody; }
 bool						Buffer::hasContentLength() const { return _hasContentLength; }
 size_t						Buffer::contentLength() const { return _contentLength; }
+size_t						Buffer::getHeaderSize() const { return _headerSize; }
 bool						Buffer::isTransferEncoding() const { return _isTransferEncoding; }
 bool						Buffer::isRequestEnded() const { return _isEnded; }
 
@@ -49,9 +51,11 @@ bool						Buffer::isRequestEnded() const { return _isEnded; }
 
 void		Buffer::setContentLength(size_t contentLength) { _contentLength = contentLength; }
 void		Buffer::setRaw(std::vector<char> request) { _raw = request; }
+void		Buffer::setMaxBodySize(size_t maxBodySize) { _maxBodySize = maxBodySize; }
 void		Buffer::setStr(std::string requestStr) { _str = requestStr; }
 void		Buffer::setHasBody(bool hasBody) { _hasBody = hasBody; }
 void		Buffer::setHasContentLength(bool hasContentLength) { _hasContentLength = hasContentLength; }
+void		Buffer::setHeaderSize(size_t headerSize) { _headerSize = headerSize; }
 void		Buffer::setIsTransferEncoding(bool isTransferEncoding) { _isTransferEncoding = isTransferEncoding; }
 void		Buffer::setIsEnded(bool isEnded) { _isEnded = isEnded; }
 
@@ -82,22 +86,19 @@ void		Buffer::checkEnd() {
 	if (this->_raw.size() < 4)
 		return;
 
-	if (_str.find(DB_CRLF)) {
+	if (_str.find(DB_CRLF) != std::string::npos) {
 
 		this->_searchTransferEncoding();
 		this->_searchContentLength();
 		if (this->_isTransferEncoding) {
 			this->_checkEndTransferEncoding();
-			return;
 		}
 		else if (this->_hasContentLength) {
 			this->_hasBody = true;
 			this->_checkEndContentLength();
-			return;
 		}
 		else {
 			_isEnded = true;
-			std::cout << "Request is ended" << std::endl;
 		}
 	}
 }
@@ -106,9 +107,12 @@ void	Buffer::_searchContentLength() {
 
 	size_t content_length_pos = _str.find("Content-Length: ");
 	if (content_length_pos != std::string::npos) {
-		this->setContentLength (std::atoll(_str.substr(content_length_pos + 16).c_str()));
 		std::cout << "Content-Length found: " << this->_contentLength << std::endl;
+		this->setContentLength (std::atoll(_str.substr(content_length_pos + 16).c_str()));
+		if (this->_contentLength > this->_maxBodySize)
+			throw std::runtime_error("Content-Length too big"); // TODO: build response
 		this->_hasBody = true;
+		this->_headerSize = this->_raw.size();
 	}
 }
 
@@ -123,7 +127,7 @@ void	Buffer::_searchTransferEncoding() {
 
 void	Buffer::_checkEndContentLength() {
 
-	if (this->_raw.size() >= this->_contentLength) {
+	if (this->_raw.size() - this->_headerSize >= this->_contentLength) {
 		this->_isEnded = true;
 	}
 }
