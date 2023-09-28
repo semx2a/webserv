@@ -1,6 +1,7 @@
 statusCodes {
 
-	1xx		Informational - Request received, continuing process"; 100  "Continue;
+	1xx		Informational - Request received, continuing process;
+	100  	Continue;
 	101		Switching Protocols;
 	2xx		Success - The action was successfully received, understood, and accepted;
 	200		OK;
