@@ -24,13 +24,13 @@ class Engine {
 
 		Epoll const&						getEpollEvents() const;
 		std::map<int, ServerContext> const&	getServersContexts() const;
-		std::map<int, Buffer> const&		getBuffersMap() const;
-		std::map<int, Request> const&		getRequestsMap() const;
+		std::map<int, Buffer> const&		getBuffers() const;
+		std::map<int, Request> const&		getRequests() const;
 
 		void	setEpollEvents(Epoll const&);
 		void	setServersContexts(std::map<int, ServerContext> const&);
-		void	setBuffersMap(std::map<int, Buffer> const&);
-		void	setRequestsMap(std::map<int, Request> const&);
+		void	setBuffers(std::map<int, Buffer> const&);
+		void	setRequests(std::map<int, Request> const&);
 
 		void	connect();
 
@@ -38,10 +38,10 @@ class Engine {
 
 		Engine();
 
-		Epoll								_epollEvents;
-		std::map<int, ServerContext>		_serverContextsMap;
-		std::map<int, Buffer>				_buffersMap;
-		std::map<int, Request>				_requestsMap;
+		Epoll								_epoll;
+		std::map<int, ServerContext>		_serverContexts;
+		std::map<int, Buffer>				_buffers;
+		std::map<int, Request>				_requests;
 
 		void				_addNewClient(int);
 		void				_readFromClient(int);

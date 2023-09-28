@@ -34,14 +34,13 @@ class Epoll {
 		struct epoll_event const&				getReadyEvent(int index) const;
 		struct epoll_event const&				getToPoll() const;
 
-		bool	isNewClient(int fd) const;
-
 		void	setServers(std::map<int, ServerContext> const&);
 		void	setListener(int);
 		void	setReadyEvent(int, struct epoll_event const&);
 		void	setToPoll(struct epoll_event const&);
 
 		int			waitForConnexions();
+		bool		isNewClient(int fd) const;
 		void		addSocketToEpoll(int fd);
 		void		editSocketInEpoll(int fd, int eventToWatch); //TODO
 

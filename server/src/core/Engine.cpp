@@ -4,10 +4,10 @@
 
 Engine::Engine() {}
 
-Engine::Engine(std::vector<ServerContext> const& serversContexts) :	_epollEvents(serversContexts) {
+Engine::Engine(std::vector<ServerContext> const& serversContexts) : _epoll(serversContexts) {
 }
 
-Engine::Engine(Engine const& rhs) : _epollEvents(rhs.getEpollEvents()) {
+Engine::Engine(Engine const& rhs) : _epoll(rhs.getEpollEvents()) {
 	*this = rhs;
 }
 
@@ -18,10 +18,10 @@ Engine& Engine::operator=(Engine const& rhs) {
 
 	if (this != &rhs) {
         
-		this->_epollEvents = rhs.getEpollEvents();
-		this->_buffersMap = rhs.getBuffersMap();
-		this->_requestsMap = rhs.getRequestsMap();
-		this->_serverContextsMap = rhs.getServersContexts();
+		this->_epoll = rhs.getEpollEvents();
+		this->_buffers = rhs.getBuffers();
+		this->_requests = rhs.getRequests();
+		this->_serverContexts = rhs.getServersContexts();
 	}
 	return *this;
 }
@@ -29,15 +29,15 @@ Engine& Engine::operator=(Engine const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-Epoll const&						Engine::getEpollEvents() const { return this->_epollEvents; }
-std::map<int, ServerContext> const&	Engine::getServersContexts() const { return this->_serverContextsMap; }
-std::map<int, Buffer> const&		Engine::getBuffersMap() const { return this->_buffersMap; }
-std::map<int, Request> const&		Engine::getRequestsMap() const { return this->_requestsMap; }
+Epoll const&						Engine::getEpollEvents() const { return this->_epoll; }
+std::map<int, ServerContext> const&	Engine::getServersContexts() const { return this->_serverContexts; }
+std::map<int, Buffer> const&		Engine::getBuffers() const { return this->_buffers; }
+std::map<int, Request> const&		Engine::getRequests() const { return this->_requests; }
 
-void	Engine::setEpollEvents(Epoll const& epollEvents) { this->_epollEvents = epollEvents; }
-void	Engine::setServersContexts(std::map<int, ServerContext> const& serversContextsMap) { this->_serverContextsMap = serversContextsMap; }
-void	Engine::setBuffersMap(std::map<int, Buffer> const& buffersMap) { this->_buffersMap = buffersMap; }
-void	Engine::setRequestsMap(std::map<int, Request> const& requestsMap) { this->_requestsMap = requestsMap; }
+void	Engine::setEpollEvents(Epoll const& epollEvents) { this->_epoll = epollEvents; }
+void	Engine::setServersContexts(std::map<int, ServerContext> const& serversContextsMap) { this->_serverContexts = serversContextsMap; }
+void	Engine::setBuffers(std::map<int, Buffer> const& buffersMap) { this->_buffers = buffersMap; }
+void	Engine::setRequests(std::map<int, Request> const& requestsMap) { this->_requests = requestsMap; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
@@ -53,10 +53,10 @@ void	Engine::connect() {
 
 		while (true) {
 
-			nb_events = this->_epollEvents.waitForConnexions();
+			nb_events = this->_epoll.waitForConnexions();
 			for (int i = 0; i < nb_events; ++i) {
 
-				event = this->_epollEvents.getReadyEvent(i);
+				event = this->_epoll.getReadyEvent(i);
 				event_fd = event.data.fd;
 				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
 					log(event_fd, "Epoll error");
@@ -66,7 +66,7 @@ void	Engine::connect() {
 					log(event_fd, "Closed connexion");
 					_closeSocket(event_fd);
 				}
-				else if (this->_epollEvents.isNewClient(event_fd)) {
+				else if (this->_epoll.isNewClient(event_fd)) {
 					_addNewClient(event_fd);
 				}
 				else if (event.events & EPOLLIN) {
@@ -97,9 +97,9 @@ void	Engine::_addNewClient(int serverFd) {
 	catch(const std::exception& e) {
 		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
-	_epollEvents.addSocketToEpoll(clientSocket);
-	_serverContextsMap[clientSocket] = _epollEvents.getServers().find(serverFd)->second;
-	_buffersMap[clientSocket].setMaxBodySize(_serverContextsMap[clientSocket].getMaxBodySize());
+	_epoll.addSocketToEpoll(clientSocket);
+	_serverContexts[clientSocket] = _epoll.getServers().find(serverFd)->second;
+	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].getMaxBodySize());
 	log(clientSocket, "New request");
 	// TODO : set reusable ?	
 }
@@ -120,42 +120,42 @@ void	Engine::_readFromClient(int clientFd) {
 	else {
 		buffer.resize(bytesRead);
 	}
-	this->_buffersMap[clientFd].add(buffer);
-	this->_buffersMap[clientFd].checkEnd();
+	this->_buffers[clientFd].add(buffer);
+	this->_buffers[clientFd].checkEnd();
 	_handleBuffer(clientFd);
 }
 
 void	Engine::_handleBuffer(int clientFd) {
 
-	if (!this->_buffersMap[clientFd].isRequestEnded())
+	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
 
 	#ifdef DEBUG
 	std::cout << std::endl;
 	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
 	std::cout << RED << "BUFFER of client " << clientFd << ":" << NO_COLOR << std::endl;
-	std::cout << &this->_buffersMap[clientFd].getRaw()[0] << std::endl;
+	std::cout << &this->_buffers[clientFd].getRaw()[0] << std::endl;
 	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
 	#endif
-	this->_requestsMap[clientFd].parser(this->_buffersMap[clientFd].getRaw());
-	this->_epollEvents.editSocketInEpoll(clientFd, EPOLLOUT);
+	this->_requests[clientFd].parser(this->_buffers[clientFd].getRaw());
+	this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
 void	Engine::_writeToClient(int clientFd) {
 
-	Response	res(this->_requestsMap[clientFd], this->_serverContextsMap[clientFd]);
+	Response	res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 	
 	std::cout << RED << "Response: " << res.getResponse() << NO_COLOR << std::endl;
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
 	}
 	//TODO: dont close if header keep-alive
-	if (this->_requestsMap[clientFd].getHeader("Connection") == "close")
+	if (this->_requests[clientFd].getHeader("Connection") == "close")
 		_closeSocket(clientFd);
 	else
 	{
-		_buffersMap.erase(clientFd);
-		_epollEvents.editSocketInEpoll(clientFd, EPOLLIN);
+		_buffers.erase(clientFd);
+		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
 	}
 }
 
@@ -164,6 +164,7 @@ void	Engine::_writeToClient(int clientFd) {
 
 void	Engine::_closeSocket(int fd) {
 
-	this->_buffersMap.erase(fd);
+	this->_buffers.erase(fd);
 	close(fd);
 }
+
