@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/29 09:22:04 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/29 10:16:11 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Response::Response() {
+Response::Response() : _statusCode("200"), _version("HTTP/1.1") {
 
-	this->setStatusCodes("../neoserv/status.codes");
+	this->setStatusMessages("../neoserv/status.codes");
 	this->setMimeTypes("../neoserv/mime.types");	
 }
 
-Response::Response(Request const& request, ServerContext const& conf) : _request(request), _serverContext(conf) {
+Response::Response(Request const& request, ServerContext const& conf) : _request(request), _serverContext(conf), _statusCode("200"), _version("HTTP/1.1") {
 
-	this->setStatusCodes("../neoserv/status.codes");
+	this->setStatusMessages("../neoserv/status.codes");
 	this->setMimeTypes("../neoserv/mime.types");
 }
 
@@ -43,9 +43,8 @@ Response& Response::operator=(Response const& rhs)
 	{
 		this->_response = rhs.getResponse();
 		this->_statusLine = rhs.getStatusLine();
-		this->_statusCodes = rhs.getStatusCodes();
+		this->_statusMessages = rhs.getStatusMessages();
 		this->_mimeTypes = rhs.getMimeTypes();
-		this->_version = rhs.getVersion();
 	}
 	return (*this);
 }
@@ -53,23 +52,28 @@ Response& Response::operator=(Response const& rhs)
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-t_lexicon				Response::getStatusCodes() const { return (this->_statusCodes); }
-t_lexicon				Response::getMimeTypes() const { return (this->_mimeTypes); }
-std::string const & 	Response::getStatusCode(std::string const& code) const { return (this->_statusCodes.find(code)->second); }
-std::string const &		Response::getMimeType(std::string const& extension) const { return (this->_mimeTypes.find(extension)->second); }
-std::string const &		Response::getVersion() const { return (this->_version); }
-std::string const &		Response::getResponse() const {	return (this->_response); }
-std::string const &		Response::getStatusLine() const { return (this->_statusLine); }
-ServerContext const &	Response::getServerContext() const { return (this->_serverContext); }
 Request const &			Response::getRequest() const { return (this->_request); }
+ServerContext const &	Response::getServerContext() const { return (this->_serverContext); }
+t_lexicon				Response::getStatusMessages() const { return (this->_statusMessages); }
+t_lexicon				Response::getMimeTypes() const { return (this->_mimeTypes); }
+std::string const & 	Response::getStatusMessage(std::string const& code) const { return (this->_statusMessages.find(code)->second); }
+std::string const &		Response::getMimeType(std::string const& extension) const { return (this->_mimeTypes.find(extension)->second); }
+std::string const &		Response::getStatusCode() const { return (this->_statusCode); }
+std::string const &		Response::getVersion() const { return (this->_version); }
+std::string const &		Response::getStatusLine() const { return (this->_statusLine); }
+std::string const &		Response::getHeaders(void) const { return (this->_headers); }
+std::string const &		Response::getBodyContent() const { return (this->_bodyContent); }
+std::string const &		Response::getResponse() const {	return (this->_response); }
 
 
-void	Response::setStatusLine(std::string const& statusLine) { this->_statusLine = statusLine; }
-void	Response::setStatusCodes(std::string const& filename) { this->_statusCodes = this->_initFile(filename); }
-void	Response::setMimeTypes(std::string const& filename) { this->_mimeTypes = this->_initFile(filename); }
-void	Response::setResponse(std::string const& response) { this->_response = response; }
+void	Response::setStatusMessages(std::string const& filename) { this->_statusMessages = this->_initFile(filename); }
+void	Response::setStatusCode(std::string const& statusCode) { this->_statusCode = statusCode; }
 void	Response::setVersion(std::string const& version) { this->_version = version; }
-
+void	Response::setMimeTypes(std::string const& filename) { this->_mimeTypes = this->_initFile(filename); }
+void	Response::setStatusLine(std::string const& statusLine) { this->_statusLine = statusLine; }
+void	Response::setBodyContent(std::string const & body) { this->_bodyContent = body; }
+void	Response::setHeaders(std::string const& headers) { this->_headers = headers; }
+void	Response::setResponse(std::string const& response) { this->_response = response; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
@@ -196,37 +200,61 @@ void	Response::_handlePost() {}
 
 void	Response::_handleDelete() {}
 
+void	Response::_buildStatusLine() {
+	
+	std::stringstream line;
+
+	line << this->_request.getVersion() + " ";
+	line << this->_statusCode + " ";
+	line << this->getStatusMessage(this->_statusCode);
+	line << CRLF;
+	
+	this->setStatusLine(line.str());
+}
+
+void	Response::_buildHeaders() {
+
+	std::stringstream	headers;
+	
+	headers << "Content-Type: " << "text/html" << CRLF;
+	headers << "Content-Length: " << this->_bodyContent.size() << CRLF;
+	headers << CRLF;
+
+	this->setHeaders(headers.str());
+}
+
+void	Response::_buildBody() {
+	
+	std::stringstream 	body;
+	
+	body	<< "<!DOCTYPE html>\n"
+			<< "<html>\n"
+			<< "<head>\n"
+			<< "<title>Page Title</title>\n"
+			<< "</head>\n"
+			<< "<body>\n"
+			<< "\n"
+			<< "<h1>This is a Heading</h1>\n"
+			<< "<p>This is a paragraph.</p>\n"
+			<< "\n"
+			<< "</body>\n"
+			<< "</html>\n";
+
+	this->setBodyContent(body.str());
+}
+
 void	Response::buildResponse() {
+
+	std::stringstream	res;
+
+	this->_buildStatusLine();
+	this->_buildBody();
+	this->_buildHeaders();
+
+	res << this->getStatusLine();
+	res << this->getHeaders();
+	res << this->getBodyContent();
 	
-
-	std::stringstream res;
-
-	int 				statusCode		= 200;
-	std::string 		statusMessage	= "OK";
-	std::string 		headerName		= "Content-Type";
-	std::string 		headerValue		= "text/html";
-	std::stringstream 	bodyContent;
-	
-	bodyContent	<< "<!DOCTYPE html>\n"
-				<< "<html>\n"
-				<< "<head>\n"
-				<< "<title>Page Title</title>\n"
-				<< "</head>\n"
-				<< "<body>\n"
-				<< "\n"
-				<< "<h1>This is a Heading</h1>\n"
-				<< "<p>This is a paragraph.</p>\n"
-				<< "\n"
-				<< "</body>\n"
-				<< "</html>\n";
-
-	// Build the response message here
-	res << "HTTP/1.1 " 			<< statusCode				<< " " << statusMessage	<< "\r\n";
-	res << headerName 			<< ": "						<< headerValue			<< "\r\n";
-	res << "Content-Length: "	<< bodyContent.str().size()							<< "\r\n";
-	res << "\r\n";
-	res << bodyContent.str();		
-		
 	this->_response = res.str();
 }
 
