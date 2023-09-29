@@ -1,6 +1,6 @@
 #include "Epoll.hpp"
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
 Epoll::Epoll() {}
 
@@ -13,8 +13,8 @@ Epoll::Epoll(std::vector<ServerContext> const& serversContexts) {
 
 			for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->getListen().begin(); ipPortIt != serversIt->getListen().end(); ipPortIt++) {
 
-				#ifdef DEBUG
-				std::cout << "Listening on " << ipPortIt->first << ": " << ipPortIt->second << std::endl;
+				#ifdef DEBUG_EPOLL
+					std::cout << "Listening on " << ipPortIt->first << ": " << ipPortIt->second << std::endl;
 				#endif
 				int newServerListener = _pollPort(ipPortIt->first, ipPortIt->second);
 				this->_servers[newServerListener] = *serversIt;
@@ -48,7 +48,8 @@ Epoll& Epoll::operator=(Epoll const& rhs) {
 
 Epoll::~Epoll() {}
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
+
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
 std::map<int, ServerContext> const&	Epoll::getServers() const { return this->_servers; }
 int									Epoll::getListener() const { return this->_listener; }
@@ -60,7 +61,8 @@ void	Epoll::setListener(int listener) { this->_listener = listener; }
 void	Epoll::setReadyEvent(int index, struct epoll_event const& event) { this->_events[index] = event; }
 void    Epoll::setToPoll(struct epoll_event const& toPoll) { this->_toPoll = toPoll; }
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CREATION
+
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CREATION
 
 void	Epoll::_createEpollEvent() {
 
@@ -89,13 +91,10 @@ void	Epoll::addSocketToEpoll(int fd) {
 	}
 }
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MODIFICATION
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MODIFICATION
 
 void	Epoll::editSocketInEpoll(int fd, int eventToWatch) {
 
-	#ifdef DEBUG
-	std::cout << RED << "Editing socket " << fd << " in epoll" << NO_COLOR << std::endl;
-	#endif
 	std::memset((char *)&this->_toPoll, 0, sizeof(this->_toPoll));
 	this->_toPoll.events = eventToWatch; 
 	this->_toPoll.data.fd = fd;  

@@ -2,19 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-AContext::AContext() : _autoindex(false), _cgi(false), _maxBodySize(1048576) {
-
-//	this->_locations["/"] = "../www/html";
-//	this->_errorPages[404] = "../www/html/error/404.html";
-//	//NOTE: mettre valeurs par defaut APRES le parsing, SI le vecteur est vide (pareil pour les autres vecteurs)
-//	this->_index.push_back("index.html");
-//	this->_authorizedMethods.push_back("GET");
-//	this->_authorizedMethods.push_back("POST");
-//	this->_authorizedMethods.push_back("DELETE");
-//	//If the directive is not present then either *:80 is used if nginx runs with the superuser privileges, or *:8000 otherwise.
-//	this->_listen["*"] = 80;
-//	this->_serverNames.push_back("localhost");
-}
+AContext::AContext() : _autoindex(false), _cgi(false), _maxBodySize(1048576) {}
 
 AContext::AContext(AContext const& rhs) { *this = rhs; }
 

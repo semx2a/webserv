@@ -1,6 +1,6 @@
 #include "Buffer.hpp"
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
 Buffer::Buffer() {
 
@@ -35,7 +35,7 @@ Buffer::~Buffer() {
 }
 
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
 std::string const&			Buffer::getStr() const { return _str; }
 std::vector<char> const&	Buffer::getRaw() const { return _raw; }
@@ -47,7 +47,7 @@ size_t						Buffer::getHeaderSize() const { return _headerSize; }
 bool						Buffer::isTransferEncoding() const { return _isTransferEncoding; }
 bool						Buffer::isRequestEnded() const { return _isEnded; }
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void		Buffer::setContentLength(size_t contentLength) { _contentLength = contentLength; }
 void		Buffer::setRaw(std::vector<char> request) { _raw = request; }
@@ -60,7 +60,7 @@ void		Buffer::setIsTransferEncoding(bool isTransferEncoding) { _isTransferEncodi
 void		Buffer::setIsEnded(bool isEnded) { _isEnded = isEnded; }
 
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::OTHERS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::OTHERS
 
 void		Buffer::add(std::vector<char> raw) { 
 	

@@ -1,8 +1,7 @@
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef ENGINE_HPP
+# define ENGINE_HPP
 
-# define DEBUG
-//# define DEBUG_SERVER
+//# define DEBUG_ENGINE
 
 #include <exception>
 #include <iostream>
@@ -13,6 +12,7 @@
 #include "Epoll.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "ResponseHandler.hpp"
 
 class Engine {
 

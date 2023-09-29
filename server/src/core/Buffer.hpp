@@ -1,5 +1,7 @@
-#ifndef CLIENT_DATA_HPP
-# define CLIENT_DATA_HPP
+#ifndef BUFFER_HPP
+# define BUFFER_HPP
+
+//# define DEBUG_BUFFER
 
 # define DB_CRLF "\r\n\r\n"
 

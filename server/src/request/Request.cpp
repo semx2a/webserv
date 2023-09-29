@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/06 18:48:05 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/27 17:01:54y seozcan          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Request.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
@@ -22,6 +10,7 @@ Request::Request(Request const &src) {
 }
 
 Request::~Request() {}
+
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMPARISON OPERATORS::
 
@@ -40,6 +29,7 @@ Request &Request::operator=(Request const &rhs)
 	return *this;
 }
 
+
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
 void Request::setMethod(const std::string method) { this->_method = method; }
@@ -57,6 +47,7 @@ std::string const & 		Request::getQuery(void) const { return this->_query; }
 std::vector<char> const & 	Request::getBody(void) const { return this->_body; }
 std::string const & 		Request::getHeader(std::string const & key) const { return this->_headers.find(key)->second; }
 t_headers const &		 	Request::getHeaders(void) const { return this->_headers; }
+
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
@@ -174,7 +165,7 @@ void Request::parser(std::vector<char> const& str_vec) {
 		this->_parseBody(str_vec);
 
 	#ifdef DEBUG_REQUEST
-	std::cout << *this << std::endl;
+		std::cout << *this << std::endl;
 	#endif
 
 }

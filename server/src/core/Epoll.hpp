@@ -1,6 +1,8 @@
 #ifndef EPOLL_HPP
 # define EPOLL_HPP
 
+//# define DEBUG_EPOLL
+
 #include <algorithm>
 #include <iostream>
 #include <vector>

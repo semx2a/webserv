@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Response.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/29 10:16:11 by seozcan          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Response.hpp"
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
@@ -56,6 +44,7 @@ Request const &			Response::getRequest() const { return (this->_request); }
 ServerContext const &	Response::getServerContext() const { return (this->_serverContext); }
 t_lexicon				Response::getStatusMessages() const { return (this->_statusMessages); }
 t_lexicon				Response::getMimeTypes() const { return (this->_mimeTypes); }
+bool					Response::getCgi() const { return (this->_isCGI); }
 std::string const & 	Response::getStatusMessage(std::string const& code) const { return (this->_statusMessages.find(code)->second); }
 std::string const &		Response::getMimeType(std::string const& extension) const { return (this->_mimeTypes.find(extension)->second); }
 std::string const &		Response::getStatusCode() const { return (this->_statusCode); }
@@ -64,6 +53,7 @@ std::string const &		Response::getStatusLine() const { return (this->_statusLine
 std::string const &		Response::getHeaders(void) const { return (this->_headers); }
 std::string const &		Response::getBodyContent() const { return (this->_bodyContent); }
 std::string const &		Response::getResponse() const {	return (this->_response); }
+std::string const &		Response::getTargetFinalPath() const { return (this->_targetFinalPath); }
 
 
 void	Response::setStatusMessages(std::string const& filename) { this->_statusMessages = this->_initFile(filename); }
@@ -74,136 +64,12 @@ void	Response::setStatusLine(std::string const& statusLine) { this->_statusLine 
 void	Response::setBodyContent(std::string const & body) { this->_bodyContent = body; }
 void	Response::setHeaders(std::string const& headers) { this->_headers = headers; }
 void	Response::setResponse(std::string const& response) { this->_response = response; }
+void	Response::setTargetFinalPath(std::string const& targetFinalPath) { this->_targetFinalPath = targetFinalPath; }
+void	Response::setCgi(bool const& isCGI) { this->_isCGI = isCGI; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void	Response::handleResponse() {
 
-	// TODO :check authorized methods
-	_checkTarget();
-	if (this->_request.getMethod() == "GET")
-		this->_handleGet();
-	else if (this->_request.getMethod() == "POST")
-		this->_handlePost();
-	else if (this->_request.getMethod() == "DELETE")
-		this->_handleDelete();
-	else
-		throw std::runtime_error("Method not implemented");
-}
-
-void	Response::_checkTarget() {
-
-	std::string			target	= this->_request.getTarget();
-	t_locationIterator	it 		= this->_serverContext.getLocations().find(target);
-	t_locationIterator	itEnd	= this->_serverContext.getLocations().end();
-
-	if (it != itEnd) {
-		std::string root = it->second.getRoot();
-		std::string alias = it->second.getAlias();
-		#ifdef DEBUG_RESPONSE
-		std::cout << "Root: " << root << std::endl;
-		std::cout << "Alias: " << alias << std::endl;
-		#endif
-		if (not root.empty())
-			this->_targetFinalPath = root + target.substr(1);
-		else if (not alias.empty())
-			this->_targetFinalPath = alias;
-	}
-	if (this->_targetFinalPath.empty()) { // if not found in locations or no root or alias
-		this->_targetFinalPath = this->_serverContext.getRoot() + target.substr(1);
-	}
-	if (target.find("?") != std::string::npos) {
-		this->_isCGI = true;
-	}
-	#ifdef DEBUG_RESPONSE
-		std::cout << "Target: " << target << std::endl;
-		std::cout << "Target final path: " << this->_targetFinalPath << std::endl;
-	#endif
-}
-
-void	Response::_handleAutoIndex() {
-
-	std::cout << "Enter AutoIndex" << std::endl;
-	DIR*				dir;
-	struct dirent*		entry;
-	std::stringstream	fileTree;
-
-	dir = opendir(this->_targetFinalPath.c_str());
-	if (!dir) {
-		
-		std::cout << "Could not open directory " << this->_targetFinalPath << std::endl;
-		return ;
-		//throw std::runtime_error("Could not open directory " + this->_targetFinalPath);
-	}
-
-	while ((entry = readdir(dir)) != NULL) {
-
-		fileTree << entry->d_name;		
-	}
-	
-	closedir(dir);
-
-	std::cout << fileTree.str() << std::endl;
-}
-
-void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
-
-	for (size_t i = 0; i < indexVec.size(); i++) {
-		
-		this->_targetFinalPath += indexVec[i];
-		
-		std::ifstream	file(this->_targetFinalPath.c_str());
-		if (file.is_open())
-			return;
-			
-		this->_targetFinalPath = this->_targetFinalPath.substr(0, this->_targetFinalPath.size() - indexVec[i].size());
-	}
-	//throw std::runtime_error("Could not open index file");
-}
-
-void	Response::_handleGet() {
-
-	if (this->_targetFinalPath.find('/') == this->_targetFinalPath.size() - 1) { // directory
-		
-		if (this->_serverContext.getAutoindex() == true) {
-			this->_handleAutoIndex();
-			return ;
-		}
-		else {
-			t_locationIterator it = this->_serverContext.getLocations().find(this->_request.getTarget());
-			t_locationIterator itEnd = this->_serverContext.getLocations().end();
-
-			std::string index;
-			if (it != itEnd) {
-				_assignIndex(it->second.getIndex());
-			}
-			else {
-				_assignIndex(this->_serverContext.getIndex());
-			}
-		}
-	}
-
-	std::ifstream	file(this->_targetFinalPath.c_str());
-
-	if (!file.is_open()) {
-		//throw std::runtime_error("Could not open " +  this->_targetFinalPath + " file"); 
-		// À fix: le serveur quitte lorsqu'il ne trouve pas le path (ex ../www/html/favicon.ico)
-		// Devrait renvoyer erreur 404
-		return ;
-	}
-	std::stringstream	bodyContent;
-	std::string			line;
-	
-	while (std::getline(file, line) && !file.eof())
-		bodyContent << line << std::endl;
-	
-	file.close();
-	_bodyContent = bodyContent.str();
-}
-
-void	Response::_handlePost() {}
-
-void	Response::_handleDelete() {}
 
 void	Response::_buildStatusLine() {
 	
@@ -232,18 +98,18 @@ void	Response::_buildBody() {
 	
 	std::stringstream 	body;
 	
-	body	<< "<!DOCTYPE html>\n"
-			<< "<html>\n"
-			<< "<head>\n"
-			<< "<title>Page Title</title>\n"
-			<< "</head>\n"
-			<< "<body>\n"
-			<< "\n"
-			<< "<h1>This is a Heading</h1>\n"
-			<< "<p>This is a paragraph.</p>\n"
-			<< "\n"
-			<< "</body>\n"
-			<< "</html>\n";
+	body	<< "<!DOCTYPE html>\n";
+//			<< "<html>\n"
+//			<< "<head>\n"
+//			<< "<title>Page Title</title>\n"
+//			<< "</head>\n"
+//			<< "<body>\n"
+//			<< "\n"
+//			<< "<h1>This is a Heading</h1>\n"
+//			<< "<p>This is a paragraph.</p>\n"
+//			<< "\n"
+//			<< "</body>\n"
+//			<< "</html>\n";
 
 	this->setBodyContent(body.str());
 }

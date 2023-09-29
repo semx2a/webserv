@@ -53,8 +53,8 @@ void	Parser::parse() {
 		this->_linesRead++;
 		this->trimAndReplaceWhitespaces(line);
 
-		#ifdef DEBUG
-		std::cout << "[main scope] line " << _linesRead << ": " << line << std::endl;
+		#ifdef DEBUG_PARSER
+			std::cout << "[main scope] line " << _linesRead << ": " << line << std::endl;
 		#endif
 
 		if (isCommentOrEmptyLine(line)) {

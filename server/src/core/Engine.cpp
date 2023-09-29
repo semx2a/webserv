@@ -1,6 +1,6 @@
 #include "Engine.hpp"
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
 Engine::Engine() {}
 
@@ -29,7 +29,7 @@ Engine& Engine::operator=(Engine const& rhs) {
 }
 
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
 Epoll const&						Engine::getEpollEvents() const { return this->_epoll; }
 std::map<int, ServerContext> const&	Engine::getServersContexts() const { return this->_serverContexts; }
@@ -42,7 +42,7 @@ void	Engine::setBuffers(std::map<int, Buffer> const& buffersMap) { this->_buffer
 void	Engine::setRequests(std::map<int, Request> const& requestsMap) { this->_requests = requestsMap; }
 
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 
 void	Engine::connect() {
@@ -132,28 +132,30 @@ void	Engine::_readFromClient(int clientFd) {
 
 void	Engine::_handleBuffer(int clientFd) {
 
+	#ifdef DEBUG_BUFFER
+		std::cout << std::endl;
+		std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
+		std::cout << RED << "BUFFER of client " << clientFd << ":" << NO_COLOR << std::endl;
+		std::cout << &this->_buffers[clientFd].getRaw()[0] << std::endl;
+		std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
+	#endif
+
 	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
 
-	#ifdef DEBUG_BUFFER
-	std::cout << std::endl;
-	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
-	std::cout << RED << "BUFFER of client " << clientFd << ":" << NO_COLOR << std::endl;
-	std::cout << &this->_buffers[clientFd].getRaw()[0] << std::endl;
-	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
-	#endif
 	this->_requests[clientFd].parser(this->_buffers[clientFd].getRaw());
 	this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
 void	Engine::_writeToClient(int clientFd) {
 
-	Response	res(this->_requests[clientFd], this->_serverContexts[clientFd]);
+	Response		res(this->_requests[clientFd], this->_serverContexts[clientFd]);
+	ResponseHandler	resHandler(&res);
 	
-	res.handleResponse();
+	resHandler.handleResponse();
 	res.buildResponse();
 	#ifdef DEBUG_RESPONSE
-	std::cout << RED << "RESPONSE:\n" << res.getResponse() << NO_COLOR << std::endl;
+		std::cout << RED << "RESPONSE:\n" << res.getResponse() << NO_COLOR << std::endl;
 	#endif
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);

@@ -27,11 +27,13 @@ ServerContext& ServerContext::operator=(ServerContext const& rhs) {
 
 ServerContext::~ServerContext() {}
 
+
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
 std::map<std::string, int> const &				ServerContext::getListen(void) const { return this->_listen; }
 std::map<std::string, LocationContext> const &	ServerContext::getLocations(void) const { return this->_locations; }
 std::vector<std::string> const &				ServerContext::getServerNames(void) const { return this->_serverNames; }
+
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
@@ -39,6 +41,7 @@ void	ServerContext::setListen(std::string const& ip, int port) { this->_listen[i
 void	ServerContext::addLocation(std::string const& location, LocationContext const& locationContext) { this->_locations[location] = locationContext; }
 void	ServerContext::setLocations(std::map<std::string, LocationContext> locationsMap) { this->_locations = locationsMap; }
 void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) { this->_serverNames = serverNames; }
+
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 

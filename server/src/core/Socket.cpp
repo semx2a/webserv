@@ -1,6 +1,6 @@
 #include "Socket.hpp"
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
 Socket::Socket() {}
 
@@ -33,7 +33,7 @@ Socket& Socket::operator=(Socket const& rhs) {
 }
 
 
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
 int							Socket::getFd() const { return this->_fd; }
 std::string	const &			Socket::getIp() const { return this->_ip; }
@@ -46,7 +46,7 @@ void	Socket::setPort(int port) { this->_port = port; }
 void	Socket::setServerAddr(struct sockaddr_in const& serverAddr) { this->_serverAddr = serverAddr; }
 
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 void	Socket::_createSocket() {
 

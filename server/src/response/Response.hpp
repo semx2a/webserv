@@ -36,6 +36,7 @@ class Response {
 		ServerContext const&	getServerContext() const;
 		t_lexicon				getStatusMessages() const;
 		t_lexicon				getMimeTypes() const;
+		bool					getCgi() const;
 		std::string const&		getStatusMessage(std::string const &) const;
 		std::string const&		getMimeType(std::string const&) const;
 		std::string const&		getStatusCode() const;
@@ -44,6 +45,7 @@ class Response {
 		std::string const&		getHeaders(void) const;
 		std::string const&		getBodyContent() const;
 		std::string const&		getResponse() const;
+		std::string const&		getTargetFinalPath() const;
 
 		void	setStatusMessages(std::string const&);
 		void	setStatusCode(std::string const&);
@@ -53,8 +55,9 @@ class Response {
 		void	setBodyContent(std::string const&);
 		void	setHeaders(std::string const&);
 		void	setResponse(std::string const&);
+		void	setCgi(bool const&);
+		void	setTargetFinalPath(std::string const&);
 		
-		void	handleResponse();
 		void	buildResponse();
 
 	private:
@@ -80,12 +83,6 @@ class Response {
 		std::string _trim(std::string const&);
 		t_lexicon	_initFile(std::string const&);
 
-		void		_checkTarget();
-		void 		_handleAutoIndex();
-		void		_handleGet();
-		void		_handlePost();
-		void		_handleDelete();
-		void		_assignIndex(std::vector<std::string> const&);
 
 		void		_buildStatusLine();
 		void		_buildHeaders();

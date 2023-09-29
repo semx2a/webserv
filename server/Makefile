@@ -86,6 +86,7 @@ SRC		:=	$(addprefix $(CONF),		\
 			$(addprefix $(REQ), 		\
 				Request.cpp)			\
 			$(addprefix $(REP),			\
+			 	ResponseHandler.cpp		\
 				Response.cpp)			\
 			$(addprefix $(UTILS),		\
 				print.cpp)

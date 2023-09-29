@@ -10,8 +10,8 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 
 		this->_linesRead++;
 		this->trimAndReplaceWhitespaces(line);
-		#ifdef DEBUG
-		std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
+		#ifdef DEBUG_PARSER
+			std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
 		#endif
 		if (isCommentOrEmptyLine(line)) {
 			continue;
@@ -57,7 +57,7 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 
 		this->_linesRead++;
 		this->trimAndReplaceWhitespaces(line);
-		#ifdef DEBUG
+		#ifdef DEBUG_PARSER
 		std::cout << "[Location scope] line " << _linesRead << ": " << line << std::endl;
 		#endif
 		if (isCommentOrEmptyLine(line)) {
