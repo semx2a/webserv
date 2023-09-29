@@ -2,16 +2,25 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Response::Response() : _statusCode("200"), _version("HTTP/1.1") {
+/* Response::Response() : 
+			_statusCode("200"),
+			_version("HTTP/1.1"),
+			_isCGI(false),
+			_path(""),
+			_handler(this),
+			_builder(this) {
 
 	this->setStatusMessages("../neoserv/status.codes");
 	this->setMimeTypes("../neoserv/mime.types");	
-}
 
-Response::Response(Request const& request, ServerContext const& conf) : _request(request), _serverContext(conf), _statusCode("200"), _version("HTTP/1.1") {
+	this->_handler.handleResponse();
+	this->_builder.buildResponse();
 
-	this->setStatusMessages("../neoserv/status.codes");
-	this->setMimeTypes("../neoserv/mime.types");
+} */
+
+Response::Response(Request const& request, ServerContext const& conf) : _request(request), _serverContext(conf) {
+
+	//TODO
 }
 
 Response::Response(Response const& rhs) {
@@ -29,10 +38,7 @@ Response& Response::operator=(Response const& rhs)
 {
 	if (this != &rhs)
 	{
-		this->_response = rhs.getResponse();
-		this->_statusLine = rhs.getStatusLine();
-		this->_statusMessages = rhs.getStatusMessages();
-		this->_mimeTypes = rhs.getMimeTypes();
+		//TODO
 	}
 	return (*this);
 }
@@ -42,87 +48,43 @@ Response& Response::operator=(Response const& rhs)
 
 Request const &			Response::getRequest() const { return (this->_request); }
 ServerContext const &	Response::getServerContext() const { return (this->_serverContext); }
-t_lexicon				Response::getStatusMessages() const { return (this->_statusMessages); }
-t_lexicon				Response::getMimeTypes() const { return (this->_mimeTypes); }
-bool					Response::getCgi() const { return (this->_isCGI); }
-std::string const & 	Response::getStatusMessage(std::string const& code) const { return (this->_statusMessages.find(code)->second); }
-std::string const &		Response::getMimeType(std::string const& extension) const { return (this->_mimeTypes.find(extension)->second); }
-std::string const &		Response::getStatusCode() const { return (this->_statusCode); }
-std::string const &		Response::getVersion() const { return (this->_version); }
+
+StatusCodes const &		Response::getStatusCodes() const { return this->_statusCodes; }
+MimeTypes const &		Response::getMimeTypes() const { return this->_mimeTypes; }
+
+std::string const &		Response::getPath() const { return (this->_path); }
+
 std::string const &		Response::getStatusLine() const { return (this->_statusLine); }
 std::string const &		Response::getHeaders(void) const { return (this->_headers); }
-std::string const &		Response::getBodyContent() const { return (this->_bodyContent); }
-std::string const &		Response::getResponse() const {	return (this->_response); }
-std::string const &		Response::getTargetFinalPath() const { return (this->_targetFinalPath); }
+std::string const &		Response::getBody() const { return (this->_body); }
+
+std::string const &		Response::getResponseStr() const { return (this->_responseStr); }
 
 
-void	Response::setStatusMessages(std::string const& filename) { this->_statusMessages = this->_initFile(filename); }
-void	Response::setStatusCode(std::string const& statusCode) { this->_statusCode = statusCode; }
-void	Response::setVersion(std::string const& version) { this->_version = version; }
-void	Response::setMimeTypes(std::string const& filename) { this->_mimeTypes = this->_initFile(filename); }
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: SETTERS::
+
+void	Response::setRequest(Request const& request) { this->_request = request; }
+void	Response::setServerContext(ServerContext const& serverContext) { this->_serverContext = serverContext; }
+
+void	Response::setStatusCodes(StatusCodes const& statusCodes) { this->_statusCodes = statusCodes; }
+void	Response::setMimeTypes(MimeTypes const& mimeTypes) { this->_mimeTypes = mimeTypes; }
+
+void	Response::setPath(std::string const& targetFinalPath) { this->_path = targetFinalPath; }
+
 void	Response::setStatusLine(std::string const& statusLine) { this->_statusLine = statusLine; }
-void	Response::setBodyContent(std::string const & body) { this->_bodyContent = body; }
 void	Response::setHeaders(std::string const& headers) { this->_headers = headers; }
-void	Response::setResponse(std::string const& response) { this->_response = response; }
-void	Response::setTargetFinalPath(std::string const& targetFinalPath) { this->_targetFinalPath = targetFinalPath; }
-void	Response::setCgi(bool const& isCGI) { this->_isCGI = isCGI; }
+void 	Response::setBody(std::string const& body) { this->_body = body; }
+void	Response::setResponseStr(std::string const& responseStr) { this->_responseStr = responseStr; }
 
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-std::string Response::_trim(std::string const& str)
-{
-    const std::string ws = " \n\r\t\f\v";
-    
-    size_t start = str.find_first_not_of(ws);
-    if (start == std::string::npos)
-        return ""; // no content except whitespace
 
-    size_t end = str.find_last_not_of(ws);
-    
-    return str.substr(start, end-start+1);
-}
-
-t_lexicon Response::_initFile(std::string const& filename) {
-
-	std::ifstream	file(filename.c_str());
-
-	if (!file.is_open())
-		throw std::runtime_error("Could not open " +  filename + " file");
-
-	t_lexicon		fileLexicon;
-	std::string		line;
-	
-	while (std::getline(file, line) && !file.eof())
-	{
-
-		if (line.empty())
-			continue;
-
-		if (line.find_first_of("{}") != std::string::npos)
-			continue;
-		
-		std::string			key;
-		std::string			value;
-		std::stringstream 	sstream(line);
-		
-		key.clear();
-		value.clear();
-
-		sstream >> key;
-		std::getline(sstream, value, ';');
-		value = this->_trim(value);
-		fileLexicon[key] = value;
-	}
-	
-	file.close();
-	return (fileLexicon);
-}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
 
 std::ostream& operator<<(std::ostream& o, Response const& rhs) {
-	o << rhs.getResponse();
+	o << rhs.getResponseStr();
 	return (o);
 }
 	

@@ -3,6 +3,8 @@
 
 #include "Response.hpp"
 
+class Response;
+
 class ResponseBuilder {
 
 	public:
@@ -10,14 +12,14 @@ class ResponseBuilder {
 		ResponseBuilder(ResponseBuilder const&);
 		~ResponseBuilder();
 		ResponseBuilder& operator=(ResponseBuilder const&);
-
+		
 		void	buildResponse();
 
 	private:
 		ResponseBuilder();
 
 		Response*	_response;
-
+		
 		void		_buildStatusLine();
 		void		_buildHeaders();
 		void		_buildBody();

@@ -40,7 +40,7 @@ void	ResponseHandler::setResponse(Response* response) { this->_response = respon
 void	ResponseHandler::handleResponse() {
 
 	// TODO :check authorized methods
-	_checkTarget();
+	_setPath();
 	if (_response->getRequest().getMethod() == "GET")
 		this->_handleGet();
 	else if (_response->getRequest().getMethod() == "POST")
@@ -51,7 +51,7 @@ void	ResponseHandler::handleResponse() {
 		throw std::runtime_error("Method not implemented");
 }
 
-void	ResponseHandler::_checkTarget() {
+void	ResponseHandler::_setPath() {
 
 	std::string			target	= _response->getRequest().getTarget();
 	t_locationIterator	it 		= _response->getServerContext().getLocations().find(target);
@@ -60,24 +60,20 @@ void	ResponseHandler::_checkTarget() {
 	if (it != itEnd) {
 		std::string root = it->second.getRoot();
 		std::string alias = it->second.getAlias();
-		#ifdef DEBUG_RESPONSE_HANDLER
-			std::cout << "Root: " << root << std::endl;
-			std::cout << "Alias: " << alias << std::endl;
-		#endif
 		if (not root.empty())
-			_response->setTargetFinalPath(root + target.substr(1));
+			_response->setPath(root + target.substr(1));
 		else if (not alias.empty())
-			_response->setTargetFinalPath(alias);
+			_response->setPath(alias);
 	}
-	if (_response->getTargetFinalPath().empty()) { // if not found in locations or no root or alias
-		_response->setTargetFinalPath(_response->getServerContext().getRoot() + target.substr(1));
+	if (_response->getPath().empty()) { // if not found in locations or no root or alias
+		_response->setPath(_response->getServerContext().getRoot() + target.substr(1));
 	}
 	if (target.find("?") != std::string::npos) {
-		_response->setCgi(true);
+		// CGI
 	}
 	#ifdef DEBUG_RESPONSE_HANDLER
 		std::cout << "Target: " << target << std::endl;
-		std::cout << "Target final path: " << _response->getTargetFinalPath() << std::endl;
+		std::cout << "Target final path: " << _response->getPath() << std::endl;
 	#endif
 }
 
@@ -88,17 +84,17 @@ void	ResponseHandler::_handleAutoIndex() {
 	struct dirent*		entry;
 	std::stringstream	fileTree;
 
-	dir = opendir(_response->getTargetFinalPath().c_str());
+	dir = opendir(_response->getPath().c_str());
 	if (!dir) {
 		
-		std::cout << "Could not open directory " << _response->getTargetFinalPath() << std::endl;
+		std::cout << "Could not open directory " << _response->getPath() << std::endl;
 		return ;
-		//throw std::runtime_error("Could not open directory " + _response->getTargetFinalPath());
+		//throw std::runtime_error("Could not open directory " + _response->getPath());
 	}
 
 	while ((entry = readdir(dir)) != NULL) {
 
-		fileTree << entry->d_name;		
+		fileTree << entry->d_name;	
 	}
 	
 	closedir(dir);
@@ -110,20 +106,20 @@ void	ResponseHandler::_assignIndex(std::vector<std::string> const& indexVec) {
 
 	for (size_t i = 0; i < indexVec.size(); i++) {
 		
-		_response->setTargetFinalPath(_response->getTargetFinalPath() + indexVec[i]);
+		_response->setPath(_response->getPath() + indexVec[i]);
 		
-		std::ifstream	file(_response->getTargetFinalPath().c_str());
+		std::ifstream	file(_response->getPath().c_str());
 		if (file.is_open())
 			return;
 			
-		_response->setTargetFinalPath(_response->getTargetFinalPath().substr(0, _response->getTargetFinalPath().size() - indexVec[i].size()));
+		_response->setPath(_response->getPath().substr(0, _response->getPath().size() - indexVec[i].size()));
 	}
 	//throw std::runtime_error("Could not open index file");
 }
 
 void	ResponseHandler::_handleGet() {
 
-	if (_response->getTargetFinalPath().find('/') == _response->getTargetFinalPath().size() - 1) { // directory
+	if (_response->getPath().find('/') == _response->getPath().size() - 1) { // directory
 		
 		if (_response->getServerContext().getAutoindex() == true) {
 			_handleAutoIndex();
@@ -143,10 +139,10 @@ void	ResponseHandler::_handleGet() {
 		}
 	}
 
-	std::ifstream	file(_response->getTargetFinalPath().c_str());
+	std::ifstream	file(_response->getPath().c_str());
 
 	if (!file.is_open()) {
-		//throw std::runtime_error("Could not open " +  _response->getTargetFinalPath() + " file"); 
+		//throw std::runtime_error("Could not open " +  _response->getPath() + " file"); 
 		// À fix: le serveur quitte lorsqu'il ne trouve pas le path (ex ../www/html/favicon.ico)
 		// Devrait renvoyer erreur 404
 		return ;
@@ -158,7 +154,7 @@ void	ResponseHandler::_handleGet() {
 		bodyContent << line << std::endl;
 	
 	file.close();
-	_response->setBodyContent(bodyContent.str());
+	_response->setBody(bodyContent.str());
 }
 
 void	ResponseHandler::_handlePost() {}

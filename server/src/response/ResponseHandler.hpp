@@ -1,22 +1,27 @@
 #ifndef RESPONSE_HANDLER_HPP
 # define RESPONSE_HANDLER_HPP
 
-//# define DEBUG_RESPONSE_HANDLER
+# define DEBUG_RESPONSE_HANDLER
 
 #include "Response.hpp"
+
+typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
+typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;
+
+class Response;
 
 class ResponseHandler {
 
 	public:
 		
-		ResponseHandler(Response* response);
-		ResponseHandler(ResponseHandler const& rhs);
+		ResponseHandler(Response*);
+		ResponseHandler(ResponseHandler const&);
 		~ResponseHandler();
-		ResponseHandler& operator=(ResponseHandler const& rhs);
+		ResponseHandler& operator=(ResponseHandler const&);
 
 		Response*	getResponse() const;
 
-		void		setResponse(Response* response);
+		void		setResponse(Response*);
 
 		void	handleResponse();
 
@@ -25,7 +30,7 @@ class ResponseHandler {
 
 		Response*	_response;
 
-		void		_checkTarget();
+		void		_setPath();
 		void 		_handleAutoIndex();
 		void		_handleGet();
 		void		_handlePost();

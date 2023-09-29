@@ -86,8 +86,11 @@ SRC		:=	$(addprefix $(CONF),		\
 			$(addprefix $(REQ), 		\
 				Request.cpp)			\
 			$(addprefix $(REP),			\
+			   	AFile.cpp				\
+			  	MimeTypes.cpp			\
 			 	ResponseHandler.cpp		\
 				ResponseBuilder.cpp		\
+				StatusCodes.cpp			\
 				Response.cpp)			\
 			$(addprefix $(UTILS),		\
 				print.cpp)

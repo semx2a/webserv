@@ -146,16 +146,17 @@ void	Engine::_writeToClient(int clientFd) {
 
 	Response		res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 
-	ResponseHandler	resHandler(&res);
-	resHandler.handleResponse();
-
-	ResponseBuilder	resBuilder(&res);
-	resBuilder.buildResponse();
+	ResponseHandler handle(&res);
+	handle.handleResponse();
+	ResponseBuilder build(&res);
+	build.buildResponse();
+	//ResponseHandler handle(this->_requests[clientFd], this->_serverContexts[clientFd]);
+	//ResponseBuilder build(handle);
 
 	log(clientFd, "Response about to be sent!");
-	std::cout << RED << res.getResponse() << NO_COLOR << std::endl;
+	std::cout << RED << res.getResponseStr() << NO_COLOR << std::endl;
 
-	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
+	if ((send(clientFd, res.getResponseStr().c_str(), res.getResponseStr().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
 	}
 	//TODO: dont close if header keep-alive
