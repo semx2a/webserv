@@ -133,11 +133,8 @@ void	Engine::_readFromClient(int clientFd) {
 void	Engine::_handleBuffer(int clientFd) {
 
 	#ifdef DEBUG_BUFFER
-		std::cout << std::endl;
-		std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
-		std::cout << RED << "BUFFER of client " << clientFd << ":" << NO_COLOR << std::endl;
-		std::cout << &this->_buffers[clientFd].getRaw()[0] << std::endl;
-		std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
+		log(clientFd, "Buffer received");
+		std::cout << RED << &this->_buffers[clientFd].getRaw()[0] << NO_COLOR << std::endl;
 	#endif
 
 	if (!this->_buffers[clientFd].isRequestEnded())
@@ -155,7 +152,8 @@ void	Engine::_writeToClient(int clientFd) {
 	resHandler.handleResponse();
 	res.buildResponse();
 	#ifdef DEBUG_RESPONSE
-		std::cout << RED << "RESPONSE:\n" << res.getResponse() << NO_COLOR << std::endl;
+		log(clientFd, "Response about to be sent!");
+		std::cout << RED << res.getResponse() << NO_COLOR << std::endl;
 	#endif
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);

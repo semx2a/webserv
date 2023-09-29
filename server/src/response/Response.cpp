@@ -98,18 +98,18 @@ void	Response::_buildBody() {
 	
 	std::stringstream 	body;
 	
-	body	<< "<!DOCTYPE html>\n";
-//			<< "<html>\n"
-//			<< "<head>\n"
-//			<< "<title>Page Title</title>\n"
-//			<< "</head>\n"
-//			<< "<body>\n"
-//			<< "\n"
-//			<< "<h1>This is a Heading</h1>\n"
-//			<< "<p>This is a paragraph.</p>\n"
-//			<< "\n"
-//			<< "</body>\n"
-//			<< "</html>\n";
+	body	<< "<!DOCTYPE html>\n"
+			<< "<html>\n"
+			<< "<head>\n"
+			<< "<title>Page Title</title>\n"
+			<< "</head>\n"
+			<< "<body>\n"
+			<< "\n"
+			<< "<h1>This is a Heading</h1>\n"
+			<< "<p>This is a paragraph.</p>\n"
+			<< "\n"
+			<< "</body>\n"
+			<< "</html>\n";
 
 	this->setBodyContent(body.str());
 }
