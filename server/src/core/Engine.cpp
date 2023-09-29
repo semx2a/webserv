@@ -102,7 +102,7 @@ void	Engine::_addNewClient(int serverFd) {
 	_epoll.addSocketToEpoll(clientSocket);
 	_serverContexts[clientSocket] = _epoll.getServers().find(serverFd)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].getMaxBodySize());
-	log(clientSocket, "New request");
+	log(clientSocket, "New client added");
 	// TODO : set reusable ?	
 }
 
