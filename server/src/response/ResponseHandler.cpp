@@ -51,29 +51,34 @@ void	ResponseHandler::handleResponse() {
 		throw std::runtime_error("Method not implemented");
 }
 
-void	ResponseHandler::_setPath() {
+void ResponseHandler::_setPath() {
 
-	std::string			target	= _response->getRequest().getTarget();
-	t_locationIterator	it 		= _response->getServerContext().getLocations().find(target);
-	t_locationIterator	itEnd	= _response->getServerContext().getLocations().end();
+	std::string target = _response->getRequest().getTarget();
+	t_locationIterator it = _response->getServerContext().getLocations().find(target);
+	t_locationIterator itEnd = _response->getServerContext().getLocations().end();
 
+	std::string path;
 	if (it != itEnd) {
 		std::string root = it->second.getRoot();
 		std::string alias = it->second.getAlias();
-		if (not root.empty())
-			_response->setPath(root + target.substr(1));
-		else if (not alias.empty())
-			_response->setPath(alias);
+		if (!root.empty()) {
+			path = root + target;
+		}
+		else if (!alias.empty()) {
+			path = alias;
+		}
 	}
-	if (_response->getPath().empty()) { // if not found in locations or no root or alias
-		_response->setPath(_response->getServerContext().getRoot() + target.substr(1));
+	if (path.empty()) { // if not found in locations or no root or alias
+		path = _response->getServerContext().getRoot() + target;
 	}
-	if (target.find("?") != std::string::npos) {
-		// CGI
+	size_t pos = 0;
+	while ((pos = path.find("//", pos)) != std::string::npos) {
+		path.replace(pos, 2, "/");
 	}
+	_response->setPath(path);
+
 	#ifdef DEBUG_RESPONSE_HANDLER
-		std::cout << "Target: " << target << std::endl;
-		std::cout << "Target final path: " << _response->getPath() << std::endl;
+	std::cout << "Path: " << _response->getPath() << std::endl;
 	#endif
 }
 
