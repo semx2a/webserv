@@ -72,7 +72,7 @@ void	Socket::_setServerAddr() {
 
 void	Socket::_bindSock() {
 
-	std::cout << "Binding listening socket " << this->_fd << " to port " << this->_port << " ..." << std::endl;
+	std::cout << RED << "Binding listening socket " << this->_fd << " to port " << this->_port << " ..." << NO_COLOR << std::endl;
 	if (bind(this->_fd, (struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) == -1) {
 		
 		close(this->_fd);
