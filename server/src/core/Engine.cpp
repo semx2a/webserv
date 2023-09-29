@@ -150,7 +150,7 @@ void	Engine::_writeToClient(int clientFd) {
 	
 	res.handleResponse();
 	res.buildResponse();
-	std::cout << RED << "Response: " << res.getResponse() << NO_COLOR << std::endl;
+	std::cout << RED << "RESPONSE:\n" << res.getResponse() << NO_COLOR << std::endl;
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
 	}

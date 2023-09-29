@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 10:34:31 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/28 19:03:12 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/09/29 09:22:04 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,37 +114,48 @@ void	Response::_checkTarget() {
 
 void	Response::_handleAutoIndex() {
 
+	std::cout << "Enter AutoIndex" << std::endl;
 	DIR*				dir;
-//	struct dirent*		entry;
+	struct dirent*		entry;
+	std::stringstream	fileTree;
 
 	dir = opendir(this->_targetFinalPath.c_str());
 	if (!dir) {
 		
 		std::cout << "Could not open directory " << this->_targetFinalPath << std::endl;
 		return ;
-		//throw error?
+		//throw std::runtime_error("Could not open directory " + this->_targetFinalPath);
 	}
-	//https://stackoverflow.com/questions/48671729/how-to-open-a-directory-with-c
-	//std::stringstream	bodyContent;
+
+	while ((entry = readdir(dir)) != NULL) {
+
+		fileTree << entry->d_name;		
+	}
 	
+	closedir(dir);
+
+	std::cout << fileTree.str() << std::endl;
 }
 
 void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 
 	for (size_t i = 0; i < indexVec.size(); i++) {
+		
 		this->_targetFinalPath += indexVec[i];
+		
 		std::ifstream	file(this->_targetFinalPath.c_str());
 		if (file.is_open())
 			return;
+			
 		this->_targetFinalPath = this->_targetFinalPath.substr(0, this->_targetFinalPath.size() - indexVec[i].size());
 	}
-	throw std::runtime_error("Could not open index file");
+	//throw std::runtime_error("Could not open index file");
 }
 
 void	Response::_handleGet() {
 
 	if (this->_targetFinalPath.find('/') == this->_targetFinalPath.size() - 1) { // directory
-
+		
 		if (this->_serverContext.getAutoindex() == true) {
 			this->_handleAutoIndex();
 			return ;
@@ -166,7 +177,10 @@ void	Response::_handleGet() {
 	std::ifstream	file(this->_targetFinalPath.c_str());
 
 	if (!file.is_open()) {
-		throw std::runtime_error("Could not open " +  this->_targetFinalPath + " file");
+		//throw std::runtime_error("Could not open " +  this->_targetFinalPath + " file"); 
+		// À fix: le serveur quitte lorsqu'il ne trouve pas le path (ex ../www/html/favicon.ico)
+		// Devrait renvoyer erreur 404
+		return ;
 	}
 	std::stringstream	bodyContent;
 	std::string			line;
@@ -245,7 +259,7 @@ t_lexicon Response::_initFile(std::string const& filename) {
 		if (line.empty())
 			continue;
 
-		if (line.find_first_of('{' || '}') != std::string::npos)
+		if (line.find_first_of("{}") != std::string::npos)
 			continue;
 		
 		std::string			key;
@@ -262,8 +276,6 @@ t_lexicon Response::_initFile(std::string const& filename) {
 	}
 	
 	file.close();
-	std::cout << "file:\n" << print_map(fileLexicon) << std::endl;
-
 	return (fileLexicon);
 }
 
