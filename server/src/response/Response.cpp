@@ -67,67 +67,8 @@ void	Response::setResponse(std::string const& response) { this->_response = resp
 void	Response::setTargetFinalPath(std::string const& targetFinalPath) { this->_targetFinalPath = targetFinalPath; }
 void	Response::setCgi(bool const& isCGI) { this->_isCGI = isCGI; }
 
+
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
-
-
-
-void	Response::_buildStatusLine() {
-	
-	std::stringstream line;
-
-	line << this->_request.getVersion() + " ";
-	line << this->_statusCode + " ";
-	line << this->getStatusMessage(this->_statusCode);
-	line << CRLF;
-	
-	this->setStatusLine(line.str());
-}
-
-void	Response::_buildHeaders() {
-
-	std::stringstream	headers;
-	
-	headers << "Content-Type: " << "text/html" << CRLF;
-	headers << "Content-Length: " << this->_bodyContent.size() << CRLF;
-	headers << CRLF;
-
-	this->setHeaders(headers.str());
-}
-
-void	Response::_buildBody() {
-	
-	std::stringstream 	body;
-	
-	body	<< "<!DOCTYPE html>\n"
-			<< "<html>\n"
-			<< "<head>\n"
-			<< "<title>Page Title</title>\n"
-			<< "</head>\n"
-			<< "<body>\n"
-			<< "\n"
-			<< "<h1>This is a Heading</h1>\n"
-			<< "<p>This is a paragraph.</p>\n"
-			<< "\n"
-			<< "</body>\n"
-			<< "</html>\n";
-
-	this->setBodyContent(body.str());
-}
-
-void	Response::buildResponse() {
-
-	std::stringstream	res;
-
-	this->_buildStatusLine();
-	this->_buildBody();
-	this->_buildHeaders();
-
-	res << this->getStatusLine();
-	res << this->getHeaders();
-	res << this->getBodyContent();
-	
-	this->_response = res.str();
-}
 
 std::string Response::_trim(std::string const& str)
 {

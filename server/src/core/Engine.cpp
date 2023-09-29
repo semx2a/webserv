@@ -145,10 +145,12 @@ void	Engine::_handleBuffer(int clientFd) {
 void	Engine::_writeToClient(int clientFd) {
 
 	Response		res(this->_requests[clientFd], this->_serverContexts[clientFd]);
+
 	ResponseHandler	resHandler(&res);
-	
 	resHandler.handleResponse();
-	res.buildResponse();
+
+	ResponseBuilder	resBuilder(&res);
+	resBuilder.buildResponse();
 
 	log(clientFd, "Response about to be sent!");
 	std::cout << RED << res.getResponse() << NO_COLOR << std::endl;

@@ -58,8 +58,6 @@ class Response {
 		void	setCgi(bool const&);
 		void	setTargetFinalPath(std::string const&);
 		
-		void	buildResponse();
-
 	private:
 
 		Request			_request;
@@ -84,9 +82,6 @@ class Response {
 		t_lexicon	_initFile(std::string const&);
 
 
-		void		_buildStatusLine();
-		void		_buildHeaders();
-		void		_buildBody();
 };
 
 std::ostream& operator<<(std::ostream& o, Response const& rhs);
