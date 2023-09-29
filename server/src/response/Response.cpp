@@ -100,8 +100,10 @@ void	Response::_checkTarget() {
 	if (it != itEnd) {
 		std::string root = it->second.getRoot();
 		std::string alias = it->second.getAlias();
+		#ifdef DEBUG_RESPONSE
 		std::cout << "Root: " << root << std::endl;
 		std::cout << "Alias: " << alias << std::endl;
+		#endif
 		if (not root.empty())
 			this->_targetFinalPath = root + target.substr(1);
 		else if (not alias.empty())
@@ -113,7 +115,10 @@ void	Response::_checkTarget() {
 	if (target.find("?") != std::string::npos) {
 		this->_isCGI = true;
 	}
-	std::cout << "Target final path: " << this->_targetFinalPath << std::endl;
+	#ifdef DEBUG_RESPONSE
+		std::cout << "Target: " << target << std::endl;
+		std::cout << "Target final path: " << this->_targetFinalPath << std::endl;
+	#endif
 }
 
 void	Response::_handleAutoIndex() {

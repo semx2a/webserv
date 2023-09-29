@@ -72,8 +72,8 @@ void	Socket::_setServerAddr() {
 
 void	Socket::_bindSock() {
 
-	std::cout << "Binding socket on port " << this->_port << " with fd " << _fd << " ..." << std::endl;
-	if (bind(this->_fd,(struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) == -1) {
+	std::cout << "Binding listening socket " << this->_fd << " to port " << this->_port << " ..." << std::endl;
+	if (bind(this->_fd, (struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) == -1) {
 		
 		close(this->_fd);
 		// TODO : close general des sockets

@@ -13,6 +13,8 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
+//# define DEBUG_REQUEST
+
 # include <string>
 # include <iostream>
 # include <map>

@@ -1,18 +1,20 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
-#include <arpa/inet.h>
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
 #include <exception>
 #include <iostream>
-#include <netinet/in.h>
 #include <sstream>
 #include <stdexcept>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <unistd.h>
+
+extern "C" {
+	#include <netinet/in.h>
+	#include <sys/epoll.h>
+	#include <sys/socket.h>
+	#include <unistd.h>
+}
 
 const int MAX_EVENTS = 10;
 
@@ -20,9 +22,7 @@ class Socket {
 
 	public:
 
-		Socket(int port);
 		Socket(std::string const& ip, int port);
-		Socket(std::string conf_file);
 		Socket(Socket const& rhs);
 		~Socket();
 		Socket& operator=(Socket const& rhs);

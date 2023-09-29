@@ -1,6 +1,8 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
+//# define DEBUG_RESPONSE
+
 # include <iostream>
 # include <string>
 # include <vector>

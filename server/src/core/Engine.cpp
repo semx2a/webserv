@@ -5,6 +5,8 @@
 Engine::Engine() {}
 
 Engine::Engine(std::vector<ServerContext> const& serversContexts) : _epoll(serversContexts) {
+
+	std::cout	<< BCYAN << "\n~~~Server initialized~~~\n" << NO_COLOR << std::endl;
 }
 
 Engine::Engine(Engine const& rhs) : _epoll(rhs.getEpollEvents()) {
@@ -133,7 +135,7 @@ void	Engine::_handleBuffer(int clientFd) {
 	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
 
-	#ifdef DEBUG
+	#ifdef DEBUG_BUFFER
 	std::cout << std::endl;
 	std::cout << RED << "_________________________________________________________" << NO_COLOR << std::endl;
 	std::cout << RED << "BUFFER of client " << clientFd << ":" << NO_COLOR << std::endl;
@@ -150,7 +152,9 @@ void	Engine::_writeToClient(int clientFd) {
 	
 	res.handleResponse();
 	res.buildResponse();
+	#ifdef DEBUG_RESPONSE
 	std::cout << RED << "RESPONSE:\n" << res.getResponse() << NO_COLOR << std::endl;
+	#endif
 	if ((send(clientFd, res.getResponse().c_str(), res.getResponse().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
 	}

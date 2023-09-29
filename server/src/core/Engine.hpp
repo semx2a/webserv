@@ -2,6 +2,7 @@
 # define SERVER_HPP
 
 # define DEBUG
+//# define DEBUG_SERVER
 
 #include <exception>
 #include <iostream>

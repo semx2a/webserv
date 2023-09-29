@@ -35,8 +35,8 @@ void	log(int client_fd, std::string str)
 	
 	std::cout << "  " << str_of(total_len , "_") << std::endl;
 
-	std::cout << " |" << ORANGE << date_str << str_of(len_between, " ") << CYAN << header_str << NO_COLOR << "|" << std::endl;
-	std::cout << " |" << PURPLE << str << NO_COLOR << str_of(len, " ") << "|" << std::endl;
+	std::cout << " | " << ORANGE << date_str << str_of(len_between, " ") << " " << CYAN << header_str << NO_COLOR << " |" << std::endl;
+	std::cout << " | " << PURPLE << str << NO_COLOR << str_of(len, " ") << " |" << std::endl;
 	
 	std::cout << "  " << str_of(total_len, "‾") << std::endl;
 }

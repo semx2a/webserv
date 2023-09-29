@@ -173,7 +173,9 @@ void Request::parser(std::vector<char> const& str_vec) {
 	if (!stream.eof())
 		this->_parseBody(str_vec);
 
+	#ifdef DEBUG_REQUEST
 	std::cout << *this << std::endl;
+	#endif
 
 }
 
