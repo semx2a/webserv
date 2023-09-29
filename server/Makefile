@@ -88,7 +88,8 @@ SRC		:=	$(addprefix $(CONF),		\
 			$(addprefix $(REP),			\
 			   	AFile.cpp				\
 			  	MimeTypes.cpp			\
-			 	ResponseHandler.cpp		\
+			 	AHandler.cpp			\
+				HandleGet.cpp			\
 				ResponseBuilder.cpp		\
 				StatusCodes.cpp			\
 				Response.cpp)			\
