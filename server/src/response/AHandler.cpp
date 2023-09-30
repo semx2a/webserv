@@ -2,6 +2,8 @@
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
+AHandler::AHandler() : _request(), _serverContext() {}
+
 AHandler::AHandler(Request const& request, ServerContext const& serverContext) : _request(request), _serverContext(serverContext) {
 
 	_setPath();

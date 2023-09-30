@@ -40,7 +40,7 @@ void	ResponseBuilder::_buildStatusLine() {
 	
 	std::stringstream line;
 
-	line << this->_response->getRequest().getVersion() + " ";
+//	line << this->_response->getRequest().getVersion() + " ";
 //	line << this->_response->getStatusCode() + " ";
 //	line << this->_response->getStatusMessage(this->_response->getStatusCode());
 	line << CRLF;

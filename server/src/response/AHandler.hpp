@@ -21,8 +21,6 @@ extern "C" {
 }
 # define DEBUG_RESPONSE_HANDLER
 
-#include "Response.hpp"
-
 typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
 typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;
 
@@ -30,6 +28,7 @@ class AHandler {
 
 	public:
 		
+		AHandler();
 		AHandler(Request const&, ServerContext const&);
 		AHandler(AHandler const&);
 		virtual ~AHandler();
@@ -50,7 +49,6 @@ class AHandler {
 		virtual void	handle() = 0;
 
 	protected:
-		AHandler();
 
 		Request			_request;
 		ServerContext	_serverContext;

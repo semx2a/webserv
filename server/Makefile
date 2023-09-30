@@ -90,6 +90,7 @@ SRC		:=	$(addprefix $(CONF),		\
 			  	MimeTypes.cpp			\
 			 	AHandler.cpp			\
 				HandleGet.cpp			\
+				Response.cpp			\
 				ResponseBuilder.cpp		\
 				StatusCodes.cpp)		\
 			$(addprefix $(UTILS),		\

@@ -7,7 +7,6 @@ class HandleGet : public AHandler {
 
 	public:
 		HandleGet(Request const&, ServerContext const&);
-		HandleGet(Response*);
 		HandleGet(HandleGet const&);
 		virtual ~HandleGet();
 		HandleGet& operator=(HandleGet const&);
@@ -18,4 +17,5 @@ class HandleGet : public AHandler {
 		void 		_handleAutoIndex();
 		void		_assignIndex(std::vector<std::string> const&);
 };
+
 #endif
