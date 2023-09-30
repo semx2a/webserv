@@ -9,6 +9,7 @@ Response::Response() {
 
 Response::Response(Request const& request, ServerContext const& serverContext) : _request(request), _serverContext(serverContext) {
 
+	_expandTarget();
 	//TODO
 }
 
@@ -68,6 +69,8 @@ std::string const&	Response::responseStr() {
 	return _responseStr;
 }
 
+Request const&	Response::request() const { return _request; }
+
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMMON::
 
 void Response::_expandTarget() {
@@ -91,6 +94,7 @@ void Response::_expandTarget() {
 	}
 
 	if (path.empty()) { // if not found in locations or no root or alias
+	 	std::cout << "_serverContext.root() = " << _serverContext.root() << std::endl;
 		path = _serverContext.root() + target;
 	}
 
@@ -107,9 +111,12 @@ void Response::_expandTarget() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GET::
 
-void	Response::_handleGet () {
+void	Response::handleGet () {
 
-	if (_path.find('/') == _path.size() - 1) { // directory
+	if (_path.find_last_of('/') == _path.size() - 1) { // directory
+	  	#ifdef DEBUG_RESPONSE
+		 	std::cout << "target is a directory" << std::endl;
+		#endif
 		_expandDirectory();
 	}
 
@@ -145,7 +152,6 @@ void	Response::_expandDirectory() {
 		if (it != itEnd) {
 			_assignIndex(it->second.index());
 		}
-
 		else {
 			_assignIndex(_serverContext.index());
 		}

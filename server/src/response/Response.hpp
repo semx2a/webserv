@@ -33,7 +33,15 @@ class Response {
 		Response& operator=(Response const& rhs);
 
 		// :::::::::::::::::::::::::: ACCESSORS
+		// CONTEXT
+		Request const&		request() const;
+
+		// UTILS
 		std::string const&	responseStr() ; // TODO : vrai accesseur const
+
+		// :::::::::::::::::::::::::::::: METHODS
+		// GET
+		void		handleGet();
 		
 	private:
 
@@ -52,14 +60,11 @@ class Response {
 		std::string		_headers;
 		std::string		_body;
 
-		// FINAL
 		std::string		_responseStr;
 
 		// :::::::::::::::::::::::::::::: METHODS
 		void		_expandTarget();
-
 		// GET
-		void		_handleGet();
 		void		_expandDirectory();
 		void		_autoIndex();
 		void		_assignIndex(std::vector<std::string> const&);
