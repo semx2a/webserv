@@ -37,30 +37,32 @@ Response& Response::operator=(Response const& rhs)
 
 std::string const&	Response::responseStr() { 
 	
-	std::stringstream	bodyStream;
-	
-	bodyStream	<< "<!DOCTYPE html>\n"
-			<< "<html>\n"
-			<< "<head>\n"
-			<< "<title>Page Title</title>\n"
-			<< "</head>\n"
-			<< "<body>\n"
-			<< "\n"
-			<< "<h1>This is a Heading</h1>\n"
-			<< "<p>This is a paragraph.</p>\n"
-			<< "\n"
-			<< "</body>\n"
-			<< "</html>\n";
+//	std::stringstream	bodyStream;
+//	
+//	bodyStream	<< "<!DOCTYPE html>\n"
+//			<< "<html>\n"
+//			<< "<head>\n"
+//			<< "<title>Page Title</title>\n"
+//			<< "</head>\n"
+//			<< "<body>\n"
+//			<< "\n"
+//			<< "<h1>This is a Heading</h1>\n"
+//			<< "<p>This is a paragraph.</p>\n"
+//			<< "\n"
+//			<< "</body>\n"
+//			<< "</html>\n";
+//	_body = bodyStream.str();
 	
 	std::stringstream res;
 
 	res << _request.version() + " ";
 	res << "200 "; //_statusCode + " ";
 	res << "OK"; // _statusMessage(this->_response->statusCode());
-	res << "Content-Type: " << "text/html" << CRLF;
-	res << "Content-Length: " << bodyStream.str().size() << CRLF;
 	res << CRLF;
-	res << bodyStream.str();
+	res << "Content-Type: " << "text/html" << CRLF;
+	res << "Content-Length: " << _body.size() << CRLF;
+	res << CRLF;
+	res << _body;
 
 	_responseStr = res.str();
 	return _responseStr;
@@ -75,7 +77,9 @@ void Response::_expandTarget() {
 	t_locationIterator itEnd = _serverContext.locations().end();
 
 	std::string path;
+
 	if (it != itEnd) {
+
 		std::string root = it->second.root();
 		std::string alias = it->second.alias();
 		if (!root.empty()) {
@@ -85,16 +89,18 @@ void Response::_expandTarget() {
 			path = alias;
 		}
 	}
+
 	if (path.empty()) { // if not found in locations or no root or alias
 		path = _serverContext.root() + target;
 	}
+
 	size_t pos = 0;
 	while ((pos = path.find("//", pos)) != std::string::npos) {
 		path.replace(pos, 2, "/");
 	}
 	_path = path;
 
-	#ifdef DEBUG_RESPONSE_HANDLER
+	#ifdef DEBUG_RESPONSE
 	std::cout << "Path: " << _path << std::endl;
 	#endif
 }
@@ -122,8 +128,7 @@ void	Response::_handleGet () {
 		bodyContent << line << std::endl;
 	
 	file.close();
-	std::cout << "TODO: set body content" << std::endl;
-	//setBody(bodyContent.str());
+	_body = bodyContent.str();
 }
 
 void	Response::_expandDirectory() {
