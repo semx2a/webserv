@@ -11,7 +11,6 @@
 #include "ServerContext.hpp"
 #include "Epoll.hpp"
 #include "Request.hpp"
-#include "Response.hpp"
 
 class Engine {
 
@@ -42,6 +41,7 @@ class Engine {
 		std::map<int, ServerContext>		_serverContexts;
 		std::map<int, Buffer>				_buffers;
 		std::map<int, Request>				_requests;
+		AHandler *							_resHandler;
 
 		void				_addNewClient(int);
 		void				_readFromClient(int);

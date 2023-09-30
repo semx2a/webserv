@@ -59,8 +59,6 @@ class AHandler {
 		std::string		_path;
 
 		void		_setPath();
-		void 		_handleAutoIndex();
-		void		_assignIndex(std::vector<std::string> const&);
 
 };
 

@@ -5,7 +5,25 @@
 HandleGet::HandleGet(Request const& request, ServerContext const& serverContext) 
 : AHandler (request, serverContext) {}
 
+HandleGet::HandleGet(HandleGet const& rhs) : AHandler(rhs) {
 
+	if (this != &rhs)
+		*this = rhs;
+}
+
+HandleGet::~HandleGet() {}
+
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMPARISON OPERATORS::
+
+HandleGet& HandleGet::operator=(HandleGet const& rhs) {
+
+	if (this != &rhs) {
+		//TODO
+	}
+	return *this;
+}
+
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
 void	HandleGet::handle() {
 
@@ -44,5 +62,46 @@ void	HandleGet::handle() {
 		bodyContent << line << std::endl;
 	
 	file.close();
-	setBody(bodyContent.str());
+	std::cout << "TODO: set body content" << std::endl;
+	//setBody(bodyContent.str());
+}
+
+void	HandleGet::_assignIndex(std::vector<std::string> const& indexVec) {
+
+	for (size_t i = 0; i < indexVec.size(); i++) {
+		
+		setPath(this->_path + indexVec[i]);
+		
+		std::ifstream	file(this->_path.c_str());
+		if (file.is_open())
+			return;
+			
+		setPath(this->_path.substr(0, this->_path.size() - indexVec[i].size()));
+	}
+	//throw std::runtime_error("Could not open index file");
+}
+
+void	HandleGet::_handleAutoIndex() {
+
+	std::cout << "Enter AutoIndex" << std::endl;
+	DIR*				dir;
+	struct dirent*		entry;
+	std::stringstream	fileTree;
+
+	dir = opendir(this->_path.c_str());
+	if (!dir) {
+		
+		std::cout << "Could not open directory " << this->_path << std::endl;
+		return ;
+		//throw std::runtime_error("Could not open directory " + _path);
+	}
+
+	while ((entry = readdir(dir)) != NULL) {
+
+		fileTree << entry->d_name;	
+	}
+	
+	closedir(dir);
+
+	std::cout << fileTree.str() << std::endl;
 }

@@ -15,5 +15,7 @@ class HandleGet : public AHandler {
 		void	handle();
 
 	private:
+		void 		_handleAutoIndex();
+		void		_assignIndex(std::vector<std::string> const&);
 };
 #endif

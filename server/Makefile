@@ -91,8 +91,7 @@ SRC		:=	$(addprefix $(CONF),		\
 			 	AHandler.cpp			\
 				HandleGet.cpp			\
 				ResponseBuilder.cpp		\
-				StatusCodes.cpp			\
-				Response.cpp)			\
+				StatusCodes.cpp)		\
 			$(addprefix $(UTILS),		\
 				print.cpp)
 

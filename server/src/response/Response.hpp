@@ -1,6 +1,10 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
+#include "HandleGet.hpp"
+#include "StatusLine.hpp"
+#include "Headers.hpp"
+#include "Body.hpp"
 
 class ResponseHandler;
 class ResponseBuilder;
@@ -29,11 +33,11 @@ class Response {
 		
 	private:
 
-//		AHandler *		_method;
+		AHandler *		_method;
+		StatusLine		_statusLine;
+		Headers			_headers;
+		Body			_body;
 
-		std::string		_statusLine;
-		std::string		_headers;
-		std::string		_body;
 		std::string		_responseStr;
 
 };

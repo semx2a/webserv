@@ -144,12 +144,17 @@ void	Engine::_handleBuffer(int clientFd) {
 
 void	Engine::_writeToClient(int clientFd) {
 
-	Response		res(this->_requests[clientFd], this->_serverContexts[clientFd]);
+	//Response		res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 
-	ResponseHandler handle(&res);
-	handle.handleResponse();
-	ResponseBuilder build(&res);
-	build.buildResponse();
+	if (this->_requests[clientFd].getMethod() == "GET")
+		this->_resHandler = new HandleGet (this->_requests[clientFd], this->_serverContexts[clientFd]);
+	//else if (this->_requests[clientFd].getMethod() == "POST")
+	//[...]
+
+	
+	//handle.handleResponse();
+	//ResponseBuilder build(&res);
+	//build.buildResponse();
 	//ResponseHandler handle(this->_requests[clientFd], this->_serverContexts[clientFd]);
 	//ResponseBuilder build(handle);
 
