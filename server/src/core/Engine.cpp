@@ -9,7 +9,7 @@ Engine::Engine(std::vector<ServerContext> const& serversContexts) : _epoll(serve
 	std::cout	<< BCYAN << "\n~~~Server ready~~~\n" << NO_COLOR << std::endl;
 }
 
-Engine::Engine(Engine const& rhs) : _epoll(rhs.getEpollEvents()) {
+Engine::Engine(Engine const& rhs) : _epoll(rhs.epoll()) {
 	*this = rhs;
 }
 
@@ -20,10 +20,10 @@ Engine& Engine::operator=(Engine const& rhs) {
 
 	if (this != &rhs) {
         
-		this->_epoll = rhs.getEpollEvents();
-		this->_buffers = rhs.getBuffers();
-		this->_requests = rhs.getRequests();
-		this->_serverContexts = rhs.getServersContexts();
+		this->_epoll = rhs.epoll();
+		this->_buffers = rhs.buffers();
+		this->_requests = rhs.requests();
+		this->_serverContexts = rhs.serverContexts();
 	}
 	return *this;
 }
@@ -31,10 +31,10 @@ Engine& Engine::operator=(Engine const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-Epoll const&						Engine::getEpollEvents() const { return this->_epoll; }
-std::map<int, ServerContext> const&	Engine::getServersContexts() const { return this->_serverContexts; }
-std::map<int, Buffer> const&		Engine::getBuffers() const { return this->_buffers; }
-std::map<int, Request> const&		Engine::getRequests() const { return this->_requests; }
+Epoll const&						Engine::epoll() const { return this->_epoll; }
+std::map<int, ServerContext> const&	Engine::serverContexts() const { return this->_serverContexts; }
+std::map<int, Buffer> const&		Engine::buffers() const { return this->_buffers; }
+std::map<int, Request> const&		Engine::requests() const { return this->_requests; }
 
 void	Engine::setEpollEvents(Epoll const& epollEvents) { this->_epoll = epollEvents; }
 void	Engine::setServersContexts(std::map<int, ServerContext> const& serversContextsMap) { this->_serverContexts = serversContextsMap; }
@@ -58,7 +58,7 @@ void	Engine::connect() {
 			nb_events = this->_epoll.waitForConnexions();
 			for (int i = 0; i < nb_events; ++i) {
 
-				event = this->_epoll.getReadyEvent(i);
+				event = this->_epoll.readyEvent(i);
 				event_fd = event.data.fd;
 				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
 					log(event_fd, "Epoll error");
@@ -100,8 +100,8 @@ void	Engine::_addNewClient(int serverFd) {
 		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 	_epoll.addSocketToEpoll(clientSocket);
-	_serverContexts[clientSocket] = _epoll.getServers().find(serverFd)->second;
-	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].getMaxBodySize());
+	_serverContexts[clientSocket] = _epoll.servers().find(serverFd)->second;
+	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
 	log(clientSocket, "New client added");
 	// TODO : set reusable ?	
 }
@@ -133,39 +133,27 @@ void	Engine::_readFromClient(int clientFd) {
 void	Engine::_handleBuffer(int clientFd) {
 
 	log(clientFd, "Buffer received");
-	std::cout << RED << &this->_buffers[clientFd].getRaw()[0] << NO_COLOR << std::endl;
+	std::cout << RED << &this->_buffers[clientFd].raw()[0] << NO_COLOR << std::endl;
 
 	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
 
-	this->_requests[clientFd].parser(this->_buffers[clientFd].getRaw());
+	this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
 	this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
 void	Engine::_writeToClient(int clientFd) {
 
-	Response	res;
-
-	if (this->_requests[clientFd].getMethod() == "GET")
-		res.setMethodHandler(new HandleGet (this->_requests[clientFd], this->_serverContexts[clientFd]));
-	//else if (this->_requests[clientFd].getMethod() == "POST")
-	//[...]
-
-	
-	//handle.handleResponse();
-	//ResponseBuilder build(&res);
-	//build.buildResponse();
-	//ResponseHandler handle(this->_requests[clientFd], this->_serverContexts[clientFd]);
-	//ResponseBuilder build(handle);
+	Response res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 
 	log(clientFd, "Response about to be sent!");
-	std::cout << RED << res.getResponseStr() << NO_COLOR << std::endl;
+	std::cout << RED << res.responseStr() << NO_COLOR << std::endl;
 
-	if ((send(clientFd, res.getResponseStr().c_str(), res.getResponseStr().length(), 0)) < 0) {
+	if ((send(clientFd, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);
 	}
 	//TODO: dont close if header keep-alive
-	if (this->_requests[clientFd].getHeader("Connection") == "close")
+	if (this->_requests[clientFd].header("Connection") == "close")
 		_closeSocket(clientFd);
 	else
 	{

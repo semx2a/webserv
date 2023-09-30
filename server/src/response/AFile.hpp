@@ -18,8 +18,8 @@ class AFile {
 
 		AFile& operator=(AFile const&);
 
-		t_lexicon const&	getLexicon() const;
-		std::string const&	getFileName() const;
+		t_lexicon const&	lexicon() const;
+		std::string const&	fileName() const;
 
 		void	setFileName(std::string const&);
 		void	setLexicon(std::string const&);

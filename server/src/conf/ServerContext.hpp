@@ -14,9 +14,9 @@ class ServerContext : public AContext {
 		ServerContext& operator=(ServerContext const& rhs);
 		~ServerContext();
 
-		std::map<std::string, int> const&				getListen(void) const;
-		std::map<std::string, LocationContext> const&	getLocations() const;
-		std::vector<std::string> const&					getServerNames(void) const;
+		std::map<std::string, int> const&				listen(void) const;
+		std::map<std::string, LocationContext> const&	locations() const;
+		std::vector<std::string> const&					serverNames(void) const;
 
 		void	setListen(std::string const& ip, int port);
 		void	addLocation(std::string const& location, LocationContext const& locationContext);

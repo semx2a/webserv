@@ -13,7 +13,7 @@ int	main(int ac, char **av) {
 		conf_file = (ac == 1) ? "../neoserv/conf/default.conf" : av[1];
 		
 		Parser	parser(conf_file);
-		Engine	webserv (parser.getServerContexts());
+		Engine	webserv (parser.serverContexts());
 		webserv.connect();
 	}
 	catch (const std::exception& e) {

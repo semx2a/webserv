@@ -6,4 +6,4 @@ MimeTypes::MimeTypes(std::string const & path) : AFile(path) {}
 
 MimeTypes::~MimeTypes() {}
 
-std::string const &	MimeTypes::getExtension(std::string const & extension) const { return this->getLexicon().find(extension)->second; }
+std::string const &	MimeTypes::extension(std::string const & extension) const { return this->lexicon().find(extension)->second; }

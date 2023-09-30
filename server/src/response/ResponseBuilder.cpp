@@ -29,9 +29,9 @@ void	ResponseBuilder::buildResponse() {
 	this->_buildBody();
 	this->_buildHeaders();
 
-	res << this->_response->getStatusLine();
-	res << this->_response->getHeaders();
-	res << this->_response->getBody();
+	res << this->_response->statusLine();
+	res << this->_response->headers();
+	res << this->_response->body();
 	
 	this->_response->setResponseStr(res.str());
 }
@@ -40,9 +40,9 @@ void	ResponseBuilder::_buildStatusLine() {
 	
 	std::stringstream line;
 
-//	line << this->_response->getRequest().getVersion() + " ";
-//	line << this->_response->getStatusCode() + " ";
-//	line << this->_response->getStatusMessage(this->_response->getStatusCode());
+//	line << this->_response->request().version() + " ";
+//	line << this->_response->statusCode() + " ";
+//	line << this->_response->statusMessage(this->_response->statusCode());
 	line << CRLF;
 	
 	this->_response->setStatusLine(line.str());
@@ -53,7 +53,7 @@ void	ResponseBuilder::_buildHeaders() {
 	std::stringstream	headers;
 	
 	headers << "Content-Type: " << "text/html" << CRLF;
-	headers << "Content-Length: " << this->_response->getBody().size() << CRLF;
+	headers << "Content-Length: " << this->_response->body().size() << CRLF;
 	headers << CRLF;
 
 	this->_response->setHeaders(headers.str());

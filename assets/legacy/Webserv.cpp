@@ -36,9 +36,9 @@ Webserv &	    Webserv::operator=(Webserv const & rhs) {
 	
 	if (this != &rhs) {
 		
-		this->setPort(rhs.getPort());
-		this->setSocket(rhs.getSocket());
-		this->setBuffer(rhs.getBuffer());
+		this->setPort(rhs.port());
+		this->setSocket(rhs.socket());
+		this->setBuffer(rhs.buffer());
 	}
 	
 	return *this;
@@ -46,11 +46,11 @@ Webserv &	    Webserv::operator=(Webserv const & rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-int				Webserv::getPort(void) const { return this->_port; }
+int				Webserv::port(void) const { return this->_port; }
 
-int				Webserv::getSocket(void) const { return this->_serverSocket; }
+int				Webserv::socket(void) const { return this->_serverSocket; }
 
-const char *	Webserv::getBuffer(void) const { return this->_buffer; }
+const char *	Webserv::buffer(void) const { return this->_buffer; }
 
 void			Webserv::setPort(const int port) { this->_port = port; }
 
@@ -68,7 +68,7 @@ void			Webserv::setBuffer(const char * str) {
 void			Webserv::_createSocket() {
 	
 	this->setSocket(socket(AF_INET, SOCK_STREAM, 0));
-	if (this->getSocket() == 0) {
+	if (this->socket() == 0) {
 		
 		std::cerr << "Socket creation failed." << std::endl;
 		exit(1);
@@ -80,9 +80,9 @@ void			Webserv::_bindSocket() {
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
-	serverAddr.sin_port = htons(this->getPort());
+	serverAddr.sin_port = htons(this->port());
 
-	if (bind(this->getSocket(), (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+	if (bind(this->socket(), (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
 		
 		std::cerr << "Binding failed." << std::endl;
 		exit(1);
@@ -91,7 +91,7 @@ void			Webserv::_bindSocket() {
 
 void    		Webserv::_listenForConnections() {
 	
-	if (listen(this->getSocket(), 5) < 0) {
+	if (listen(this->socket(), 5) < 0) {
 		
 		std::cerr << "Listening failed." << std::endl;
 		exit(1);
@@ -100,7 +100,7 @@ void    		Webserv::_listenForConnections() {
 
 void	 	   Webserv::_handleConnection(int clientSocket) {
 	
-	int bytesRead = read(clientSocket, (void *)this->getBuffer(), BUFFER_SIZE);
+	int bytesRead = read(clientSocket, (void *)this->buffer(), BUFFER_SIZE);
 	if (bytesRead < 0) {
 		
 		std::cerr << "Reading from client failed." << std::endl;
@@ -108,7 +108,7 @@ void	 	   Webserv::_handleConnection(int clientSocket) {
 		return;
 	}
 
-	std::cout << "Received data from client: " << this->getBuffer() << std::endl;
+	std::cout << "Received data from client: " << this->buffer() << std::endl;
 
 	std::string response = "Hello, Client!";
 	send(clientSocket, response.c_str(), response.length(), 0);
@@ -126,7 +126,7 @@ void    		Webserv::run() {
 		struct sockaddr_in clientAddr;
 		socklen_t clientAddrLen = sizeof(clientAddr);
 
-		if ((newSocket = accept(this->getSocket(), (struct sockaddr *)&clientAddr, &clientAddrLen)) < 0) {
+		if ((newSocket = accept(this->socket(), (struct sockaddr *)&clientAddr, &clientAddrLen)) < 0) {
 			std::cerr << "Accepting connection failed." << std::endl;
 			continue;
 		}

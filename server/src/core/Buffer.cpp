@@ -19,8 +19,8 @@ Buffer&	Buffer::operator=(Buffer const& rhs) {
 
 	if (this != &rhs) {
 
-		this->_raw = rhs.getRaw();
-		this->_str = rhs.getStr();
+		this->_raw = rhs.raw();
+		this->_str = rhs.str();
 		this->_hasBody = rhs.hasBody();
 		this->_hasContentLength = rhs.hasContentLength();
 		this->_contentLength = rhs.contentLength();
@@ -37,13 +37,13 @@ Buffer::~Buffer() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-std::string const&			Buffer::getStr() const { return _str; }
-std::vector<char> const&	Buffer::getRaw() const { return _raw; }
-size_t						Buffer::getMaxBodySize() const { return _maxBodySize; }
+std::string const&			Buffer::str() const { return _str; }
+std::vector<char> const&	Buffer::raw() const { return _raw; }
+size_t						Buffer::maxBodySize() const { return _maxBodySize; }
 bool						Buffer::hasBody() const { return _hasBody; }
 bool						Buffer::hasContentLength() const { return _hasContentLength; }
 size_t						Buffer::contentLength() const { return _contentLength; }
-size_t						Buffer::getHeaderSize() const { return _headerSize; }
+size_t						Buffer::headerSize() const { return _headerSize; }
 bool						Buffer::isTransferEncoding() const { return _isTransferEncoding; }
 bool						Buffer::isRequestEnded() const { return _isEnded; }
 

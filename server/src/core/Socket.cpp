@@ -13,7 +13,7 @@ Socket::Socket(std::string const& ip, int port) : _ip(ip), _port(port) {
 	this->_startListening();
 }
 
-Socket::Socket(Socket const& rhs) : _port(rhs.getPort()) {
+Socket::Socket(Socket const& rhs) : _port(rhs.port()) {
 
 	*this = rhs;
 }
@@ -24,10 +24,10 @@ Socket& Socket::operator=(Socket const& rhs) {
 
 	if (this != &rhs) {
 		
-		this->_fd = rhs.getFd();
-		this->_ip = rhs.getIp();
-		this->_port = rhs.getPort();
-		this->_serverAddr = rhs.getServerAddr();
+		this->_fd = rhs.fd();
+		this->_ip = rhs.ip();
+		this->_port = rhs.port();
+		this->_serverAddr = rhs.serverAddr();
 	}
 	return *this;
 }
@@ -35,10 +35,10 @@ Socket& Socket::operator=(Socket const& rhs) {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
 
-int							Socket::getFd() const { return this->_fd; }
-std::string	const &			Socket::getIp() const { return this->_ip; }
-int							Socket::getPort() const { return this->_port; }
-struct sockaddr_in const &	Socket::getServerAddr() const { return this->_serverAddr; }
+int							Socket::fd() const { return this->_fd; }
+std::string	const &			Socket::ip() const { return this->_ip; }
+int							Socket::port() const { return this->_port; }
+struct sockaddr_in const &	Socket::serverAddr() const { return this->_serverAddr; }
 
 void	Socket::setFd(int fd) { this->_fd = fd; }
 void	Socket::setIp(std::string const& ip) { this->_ip = ip; }
@@ -67,7 +67,7 @@ void	Socket::_setServerAddr() {
 
 	this->_serverAddr.sin_family = AF_INET;
 	this->_serverAddr.sin_port = htons(_port);
-	this->_serverAddr.sin_addr.s_addr = htonl(_getIntIp(_ip));
+	this->_serverAddr.sin_addr.s_addr = htonl(_intIp(_ip));
 }
 
 void	Socket::_bindSock() {
@@ -92,7 +92,7 @@ void	Socket::_startListening() {
 }
 
 
-uint32_t	Socket::_getIntIp(std::string const& ip) {
+uint32_t	Socket::_intIp(std::string const& ip) {
 
 	uint32_t result = 0;
 	std::istringstream ss(ip);

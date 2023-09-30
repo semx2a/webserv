@@ -5,7 +5,7 @@ AFile::AFile() : _lexicon(), _fileName("") {}
 
 AFile::AFile(const std::string &filename) : _lexicon(), _fileName(filename) {
 
-	this->setLexicon(this->getFileName());
+	this->setLexicon(this->fileName());
 }
 
 AFile::AFile(const AFile &rhs) {
@@ -21,16 +21,16 @@ AFile &AFile::operator=(const AFile &rhs) {
 
 	if (this != &rhs) {
 
-		this->_lexicon = rhs.getLexicon();
-		this->_fileName = rhs.getFileName();
+		this->_lexicon = rhs.lexicon();
+		this->_fileName = rhs.fileName();
 	}
 	return *this;
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::string const& 	AFile::getFileName() const { return this->_fileName; }
-t_lexicon const& 	AFile::getLexicon() const { return this->_lexicon; }
+std::string const& 	AFile::fileName() const { return this->_fileName; }
+t_lexicon const& 	AFile::lexicon() const { return this->_lexicon; }
 
 void	AFile::setFileName(std::string const& filename) { this->_fileName = filename; }
 void	AFile::setLexicon(std::string const& filename) { this->_lexicon = this->_initFile(filename); }

@@ -24,13 +24,13 @@ class Buffer {
 		Buffer &operator=(Buffer const& rhs);
 		~Buffer();
 
-		std::vector<char> const&	getRaw() const;
-		std::string const&			getStr() const;
-		size_t						getMaxBodySize() const;
+		std::vector<char> const&	raw() const;
+		std::string const&			str() const;
+		size_t						maxBodySize() const;
 		bool						hasBody() const;
 		bool						hasContentLength() const;
 		size_t						contentLength() const;
-		size_t						getHeaderSize() const;
+		size_t						headerSize() const;
 		bool						isTransferEncoding() const;
 		bool						isRequestEnded() const;
 

@@ -10,7 +10,7 @@ class LocationContext : public AContext {
 		LocationContext& operator=(LocationContext const& rhs);
 		~LocationContext();
 
-		std::string const&	getAlias() const;
+		std::string const&	alias() const;
 		void				setAlias(std::string const& alias);
 
 		void	setDefaults(void);

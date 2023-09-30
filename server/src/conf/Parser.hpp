@@ -25,9 +25,9 @@ class Parser {
 		Parser(std::string const& conf_filename);
 		~Parser();
 
-		std::vector<ServerContext> const &	getServerContexts(void) const;
-		std::string const &					getConfFileName(void) const;
-		size_t								getLinesRead(void) const;
+		std::vector<ServerContext> const &	serverContexts(void) const;
+		std::string const &					confFileName(void) const;
+		size_t								linesRead(void) const;
 
 		void	parse();
 

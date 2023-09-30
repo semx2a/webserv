@@ -34,13 +34,13 @@ class Request {
 		void	setHeaders(const t_headers);
 		void	setBody(const std::vector<char>);
 		
-		std::string const &			getMethod(void) const;
-		std::string const &			getTarget(void) const;
-		std::string const &			getQuery(void) const;
-		std::string const &			getVersion(void) const;
-		std::vector<char> const &	getBody(void) const;
-		std::string const &			getHeader(std::string const &) const;
-		t_headers const &			getHeaders(void) const;
+		std::string const &			method(void) const;
+		std::string const &			target(void) const;
+		std::string const &			query(void) const;
+		std::string const &			version(void) const;
+		std::vector<char> const &	body(void) const;
+		std::string const &			header(std::string const &) const;
+		t_headers const &			headers(void) const;
 
 		//METHODS
 		void	parser(std::vector<char> const& raw);

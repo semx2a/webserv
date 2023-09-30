@@ -17,9 +17,9 @@ Parser &	Parser::operator=(Parser const & rhs) {
 
 	if (this != &rhs) {
 
-		this->_linesRead = rhs.getLinesRead();
-		this->_confFilename = rhs.getConfFileName();
-		this->_serversContexts = rhs.getServerContexts();
+		this->_linesRead = rhs.linesRead();
+		this->_confFilename = rhs.confFileName();
+		this->_serversContexts = rhs.serverContexts();
 	}
 	return *this;
 }
@@ -28,11 +28,11 @@ Parser::~Parser(void) {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::vector<ServerContext> const&	Parser::getServerContexts(void) const { return this->_serversContexts; }
+std::vector<ServerContext> const&	Parser::serverContexts(void) const { return this->_serversContexts; }
 
-std::string const&					Parser::getConfFileName(void) const { return this->_confFilename; }
+std::string const&					Parser::confFileName(void) const { return this->_confFilename; }
 
-size_t								Parser::getLinesRead(void) const { return this->_linesRead; }
+size_t								Parser::linesRead(void) const { return this->_linesRead; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
@@ -241,9 +241,9 @@ Parser::InvalidParam::InvalidParam(std::string const& err, Parser const &p) : Er
 
 	std::stringstream stream;
 
-	stream << "neoserv: " << err << " in " + p.getConfFileName() + ":";
-	stream << p.getLinesRead() << std::endl;
-	stream << "neoserv: configuration file " << p.getConfFileName() << " test failed" << std::endl;
+	stream << "neoserv: " << err << " in " + p.confFileName() + ":";
+	stream << p.linesRead() << std::endl;
+	stream << "neoserv: configuration file " << p.confFileName() << " test failed" << std::endl;
 
 	_msg = stream.str();
 }

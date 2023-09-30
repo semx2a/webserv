@@ -10,13 +10,13 @@ AContext& AContext::operator=(AContext const& rhs) {
 
 	if (this != &rhs) {
 
-		this->_autoindex = rhs.getAutoindex();
-		this->_cgi = rhs.getCgi();
-		this->_maxBodySize = rhs.getMaxBodySize();
-		this->_errorPages = rhs.getErrorPages();
-		this->_index = rhs.getIndex();
-		this->_root = rhs.getRoot();
-		this->_authorizedMethods = rhs.getAuthorizedMethods();
+		this->_autoindex = rhs.autoindex();
+		this->_cgi = rhs.cgi();
+		this->_maxBodySize = rhs.maxBodySize();
+		this->_errorPages = rhs.errorPages();
+		this->_index = rhs.index();
+		this->_root = rhs.root();
+		this->_authorizedMethods = rhs.authorizedMethods();
 	}
 	return *this;
 }
@@ -25,13 +25,13 @@ AContext::~AContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-bool											AContext::getAutoindex(void) const { return this->_autoindex; }
-bool											AContext::getCgi(void) const { return this->_cgi; }
-size_t											AContext::getMaxBodySize(void) const { return this->_maxBodySize; }
-std::string const &								AContext::getRoot(void) const { return this->_root; }
-std::map<int, std::string> const &				AContext::getErrorPages(void) const { return this->_errorPages; }
-std::vector<std::string> const & 				AContext::getIndex(void) const { return this->_index; }
-std::vector<std::string> const &				AContext::getAuthorizedMethods(void) const { return this->_authorizedMethods; }
+bool											AContext::autoindex(void) const { return this->_autoindex; }
+bool											AContext::cgi(void) const { return this->_cgi; }
+size_t											AContext::maxBodySize(void) const { return this->_maxBodySize; }
+std::string const &								AContext::root(void) const { return this->_root; }
+std::map<int, std::string> const &				AContext::errorPages(void) const { return this->_errorPages; }
+std::vector<std::string> const & 				AContext::index(void) const { return this->_index; }
+std::vector<std::string> const &				AContext::authorizedMethods(void) const { return this->_authorizedMethods; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 

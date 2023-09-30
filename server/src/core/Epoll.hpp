@@ -30,10 +30,10 @@ class Epoll {
 		~Epoll();
 		Epoll& operator=(Epoll const& rhs);
 		
-		std::map<int, ServerContext> const&		getServers() const;
-		int										getListener() const;
-		struct epoll_event const&				getReadyEvent(int index) const;
-		struct epoll_event const&				getToPoll() const;
+		std::map<int, ServerContext> const&		servers() const;
+		int										listener() const;
+		struct epoll_event const&				readyEvent(int index) const;
+		struct epoll_event const&				toPoll() const;
 
 		void	setServers(std::map<int, ServerContext> const&);
 		void	setListener(int);

@@ -14,13 +14,13 @@ class AContext {
 		AContext& operator=(AContext const& rhs);
 		virtual ~AContext();
 
-		bool										getAutoindex() const;
-		bool										getCgi() const;
-		size_t										getMaxBodySize() const;
-		std::string const&							getRoot() const;
-		std::map<int, std::string> const&			getErrorPages() const;
-		std::vector<std::string> const&				getIndex() const;
-		std::vector<std::string> const&				getAuthorizedMethods() const;
+		bool										autoindex() const;
+		bool										cgi() const;
+		size_t										maxBodySize() const;
+		std::string const&							root() const;
+		std::map<int, std::string> const&			errorPages() const;
+		std::vector<std::string> const&				index() const;
+		std::vector<std::string> const&				authorizedMethods() const;
 
 		void	setAutoindex(bool autoindex);
 		void	setCgi(bool cgi);

@@ -19,12 +19,12 @@ Request &Request::operator=(Request const &rhs)
 
 	if (this != &rhs)
 	{
-		this->setMethod(rhs.getMethod());
-		this->setTarget(rhs.getTarget());
-		this->setVersion(rhs.getVersion());
-		this->setQuery(rhs.getQuery());
-		this->setBody(rhs.getBody());
-		this->setHeaders(rhs.getHeaders());
+		this->setMethod(rhs.method());
+		this->setTarget(rhs.target());
+		this->setVersion(rhs.version());
+		this->setQuery(rhs.query());
+		this->setBody(rhs.body());
+		this->setHeaders(rhs.headers());
 	}
 	return *this;
 }
@@ -40,13 +40,13 @@ void Request::setBody(const std::vector<char> body) { this->_body = body; }
 void Request::setHeaders(const std::map<std::string, std::string> headers) { this->_headers = headers; }
 
 
-std::string const & 		Request::getMethod(void) const { return this->_method; }
-std::string const & 		Request::getTarget(void) const { return this->_target; }
-std::string const & 		Request::getVersion(void) const { return this->_version; }
-std::string const & 		Request::getQuery(void) const { return this->_query; }
-std::vector<char> const & 	Request::getBody(void) const { return this->_body; }
-std::string const & 		Request::getHeader(std::string const & key) const { return this->_headers.find(key)->second; }
-t_headers const &		 	Request::getHeaders(void) const { return this->_headers; }
+std::string const & 		Request::method(void) const { return this->_method; }
+std::string const & 		Request::target(void) const { return this->_target; }
+std::string const & 		Request::version(void) const { return this->_version; }
+std::string const & 		Request::query(void) const { return this->_query; }
+std::vector<char> const & 	Request::body(void) const { return this->_body; }
+std::string const & 		Request::header(std::string const & key) const { return this->_headers.find(key)->second; }
+t_headers const &		 	Request::headers(void) const { return this->_headers; }
 
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
@@ -140,7 +140,7 @@ void Request::_parseHeaders(std::istringstream &stream) {
 		//this->_headers[hd_key] = this->_tokenize(hd_values, ',');
 	}
 	
-	if (this->getHeaders().empty())
+	if (this->headers().empty())
 		throw HeadersException();
 }
 
@@ -175,12 +175,12 @@ void Request::parser(std::vector<char> const& str_vec) {
 std::ostream &operator<<(std::ostream &o, Request const &r) {
 
 	o << "  " << str_of(60, ":") << std::endl << std::endl;
-	o << "method: " 	<< r.getMethod() << std::endl;
-	o << "target: "		<< r.getTarget() << std::endl;
-	o << "version: "	<< r.getVersion() << std::endl;
-	o << "query: "		<< r.getQuery() << std::endl;
-	o << "headers: "	<< print_map(r.getHeaders()) << std::endl;
-	o << "body: " 		<< print_vector(r.getBody()) << std::endl;
+	o << "method: " 	<< r.method() << std::endl;
+	o << "target: "		<< r.target() << std::endl;
+	o << "version: "	<< r.version() << std::endl;
+	o << "query: "		<< r.query() << std::endl;
+	o << "headers: "	<< print_map(r.headers()) << std::endl;
+	o << "body: " 		<< print_vector(r.body()) << std::endl;
 
 	return o;
 }

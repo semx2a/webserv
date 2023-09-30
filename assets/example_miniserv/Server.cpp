@@ -3,11 +3,11 @@
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
 Engine::Engine () :	config (), 
-					epollEvents (config.getPorts ()) {
+					epollEvents (config.ports ()) {
 }
 
 Engine::Engine (std::string const& conf_file) :	config (conf_file), 
-												epollEvents (config.getPorts ()) {
+												epollEvents (config.ports ()) {
 }
 
 Engine::Engine (Engine const& rhs) {
@@ -31,7 +31,7 @@ Engine& Engine::operator= (Engine const& rhs) {
 
 Config const&	Engine::getConfig () const { return config; }
 
-Epoll const&	Engine::getEpollEvents () const { return epollEvents; }
+Epoll const&	Engine::epoll () const { return epollEvents; }
 
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
@@ -49,7 +49,7 @@ void	Engine::connect () {
 			nb_events = epollEvents.waitForConnexions ();
 			for (int i = 0; i < nb_events; ++i) {
 
-				event = epollEvents.getReadyEvent (i);
+				event = epollEvents.readyEvent (i);
 				if ((event.events & EPOLLERR) || (event.events & EPOLLHUP) || (event.events & EPOLLRDHUP)) {
 					close (event.data.fd);// TODO : delete corresponding nodes in client map
 				}

@@ -84,16 +84,16 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 		}
 	}
 //	context.setDefaults();
-	if (not context.getRoot().empty() and not context.getAlias().empty())
+	if (not context.root().empty() and not context.alias().empty())
 		throw std::runtime_error("Alias and root cannot be set at the same time");
-	if (context.getIndex().empty())
+	if (context.index().empty())
 		context.addIndex("index.html");
-	if (context.getAuthorizedMethods().empty()) {
+	if (context.authorizedMethods().empty()) {
 		context.addAuthorizedMethod("GET");
 		context.addAuthorizedMethod("POST");
 		context.addAuthorizedMethod("DELETE");
 	}
-	if (context.getErrorPages().empty())
+	if (context.errorPages().empty())
 		context.addErrorPage(404, "../www/html/404.html");
 }
 

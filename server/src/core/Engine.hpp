@@ -22,10 +22,10 @@ class Engine {
 		~Engine();
 		Engine& operator=(Engine const& rhs);
 
-		Epoll const&						getEpollEvents() const;
-		std::map<int, ServerContext> const&	getServersContexts() const;
-		std::map<int, Buffer> const&		getBuffers() const;
-		std::map<int, Request> const&		getRequests() const;
+		Epoll const&						epoll() const;
+		std::map<int, ServerContext> const&	serverContexts() const;
+		std::map<int, Buffer> const&		buffers() const;
+		std::map<int, Request> const&		requests() const;
 
 		void	setEpollEvents(Epoll const&);
 		void	setServersContexts(std::map<int, ServerContext> const&);

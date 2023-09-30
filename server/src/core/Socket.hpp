@@ -31,10 +31,10 @@ class Socket {
 		~Socket();
 		Socket& operator=(Socket const& rhs);
 
-		int							getFd() const;
-		std::string const&			getIp() const;
-		int							getPort() const;
-		struct sockaddr_in const& 	getServerAddr() const;
+		int							fd() const;
+		std::string const&			ip() const;
+		int							port() const;
+		struct sockaddr_in const& 	serverAddr() const;
 
 		void	setFd(int);
 		void	setIp(std::string const&);
@@ -56,7 +56,7 @@ class Socket {
 		void		_setServerAddr();
 		void		_bindSock();
 		void		_startListening();
-		uint32_t	_getIntIp(std::string const&);
+		uint32_t	_intIp(std::string const&);
 };
 
 #endif

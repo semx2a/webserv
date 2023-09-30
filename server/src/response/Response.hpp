@@ -1,39 +1,69 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
-#include "HandleGet.hpp"
+# define DEBUG_RESPONSE
+
+# include <iostream>
+# include <string>
+# include <vector>
+# include <map>
+# include <fstream>
+
+extern "C" {
+	#include <sys/types.h>
+	#include <dirent.h> //opendir closedir readdir
+}
+
+#include "Request.hpp"
+#include "ServerContext.hpp"
+#include "StatusCodes.hpp"
+#include "MimeTypes.hpp"
+
+typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
+typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;
 
 class Response {
 
 	public:
 
 		Response();
+		Response(Request const& request, ServerContext const& serverContext);
 		Response(Response const& rhs);
 		~Response();
 		Response& operator=(Response const& rhs);
 
-
-		AHandler*				getMethodHandler() const;
-		std::string const&		getStatusLine() const;
-		std::string const&		getHeaders(void) const;
-		std::string const&		getBody() const;
-		std::string const&		getResponseStr() const;
-
-
-		void	setMethodHandler(AHandler*);
-		void	setStatusLine(std::string const&);
-		void	setHeaders(std::string const&);
-		void	setBody(std::string const&);
-		void	setResponseStr(std::string const&);
+		// :::::::::::::::::::::::::: ACCESSORS
+		std::string const&	responseStr() ; // TODO : vrai accesseur const
 		
 	private:
 
-		AHandler *		_methodHandler;
+		// ::::::::::::::::::::::::::: ATTRIBUTES
+		// CONTEXT
+		Request			_request;
+		ServerContext	_serverContext;
+
+		// UTILS
+		StatusCodes		_statusCodes;
+		MimeTypes 		_mimeTypes;
+		std::string		_path;
+
+		// COMPONENTS
 		std::string		_statusLine;
 		std::string		_headers;
 		std::string		_body;
 
+		// FINAL
 		std::string		_responseStr;
+
+		// :::::::::::::::::::::::::::::: METHODS
+		void		_expandTarget();
+
+		// GET
+		void		_handleGet();
+		void		_expandDirectory();
+		void		_autoIndex();
+		void		_assignIndex(std::vector<std::string> const&);
+
 
 };
 

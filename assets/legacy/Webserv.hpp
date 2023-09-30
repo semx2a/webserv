@@ -57,9 +57,9 @@ class Webserv {
 
 		Webserv &			operator=(Webserv const & rhs);
 
-		int					getPort(void) const;
-		int					getSocket(void) const;
-		const char *		getBuffer(void) const;
+		int					port(void) const;
+		int					socket(void) const;
+		const char *		buffer(void) const;
 
 		void				setPort(const int);
 		void				setSocket(const int);
