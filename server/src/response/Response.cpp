@@ -92,9 +92,10 @@ void Response::_expandTarget() {
 			path = alias;
 		}
 	}
-
-	if (path.empty()) { // if not found in locations or no root or alias
-	 	std::cout << "_serverContext.root() = " << _serverContext.root() << std::endl;
+	else {
+		if (_request.headers().find("Accept") != _request.headers().end()) {
+			//TODO : get path for extension (l'inverse de l'existant)
+		}
 		path = _serverContext.root() + target;
 	}
 
@@ -105,7 +106,7 @@ void Response::_expandTarget() {
 	_path = path;
 
 	#ifdef DEBUG_RESPONSE
-	std::cout << "Path: " << _path << std::endl;
+		std::cout << "[DEBUG] Expanded path: " << _path << std::endl;
 	#endif
 }
 
@@ -115,7 +116,7 @@ void	Response::handleGet () {
 
 	if (_path.find_last_of('/') == _path.size() - 1) { // directory
 	  	#ifdef DEBUG_RESPONSE
-		 	std::cout << "target is a directory" << std::endl;
+		 	std::cout << "[DEBUG] Target is a directory" << std::endl;
 		#endif
 		_expandDirectory();
 	}

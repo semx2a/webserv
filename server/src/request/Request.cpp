@@ -165,7 +165,7 @@ void Request::parser(std::vector<char> const& str_vec) {
 		this->_parseBody(str_vec);
 
 	#ifdef DEBUG_REQUEST
-		std::cout << *this << std::endl;
+		std::cout << "[DEBUG]" << *this << std::endl;
 	#endif
 
 }
