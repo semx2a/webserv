@@ -18,15 +18,18 @@ class AFile {
 
 		AFile& operator=(AFile const&);
 
-		t_lexicon const&	lexicon() const;
 		std::string const&	fileName() const;
+
+		static t_lexicon const&	lexicon();
 
 		void	setFileName(std::string const&);
 		void	setLexicon(std::string const&);
 
 	protected:
-		t_lexicon	_lexicon;
-		std::string	_fileName;
+		static t_lexicon	_lexicon;
+		std::string			_fileName;
+
+		static t_lexicon	_initLexicon();
 
 		std::string _trim(std::string const&);
 		t_lexicon	_initFile(std::string const&);
