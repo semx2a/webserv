@@ -94,7 +94,7 @@ void Response::_expandTarget() {
 	}
 	else {
 		if (_request.headers().find("Accept") != _request.headers().end()) {
-			//TODO : get path for extension (l'inverse de l'existant)
+			
 		}
 		path = _serverContext.root() + target;
 	}
