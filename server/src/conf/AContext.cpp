@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-AContext::AContext() : _autoindex(false), _cgi(false), _maxBodySize(1048576) {}
+AContext::AContext() : _autoindex(false), _maxBodySize(1048576) {}
 
 AContext::AContext(AContext const& rhs) { *this = rhs; }
 
@@ -11,7 +11,6 @@ AContext& AContext::operator=(AContext const& rhs) {
 	if (this != &rhs) {
 
 		this->_autoindex = rhs.autoindex();
-		this->_cgi = rhs.cgi();
 		this->_maxBodySize = rhs.maxBodySize();
 		this->_errorPages = rhs.errorPages();
 		this->_index = rhs.index();
@@ -26,7 +25,6 @@ AContext::~AContext() {}
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
 bool											AContext::autoindex(void) const { return this->_autoindex; }
-bool											AContext::cgi(void) const { return this->_cgi; }
 size_t											AContext::maxBodySize(void) const { return this->_maxBodySize; }
 std::string const &								AContext::root(void) const { return this->_root; }
 std::map<int, std::string> const &				AContext::errorPages(void) const { return this->_errorPages; }
@@ -36,7 +34,6 @@ std::vector<std::string> const &				AContext::authorizedMethods(void) const { re
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void	AContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
-void	AContext::setCgi(bool cgi) { this->_cgi = cgi; }
 void	AContext::setMaxBodySize(size_t size) { this->_maxBodySize = size; }
 void	AContext::setRoot(std::string const& root) { this->_root = root; }
 void	AContext::addErrorPage(int code, std::string const& path) { this->_errorPages[code] = path; }
@@ -54,8 +51,6 @@ void	AContext::setDefaults() {
 		this->_root = "../www";
 	else 
 		this->_root = "../www/" + this->_root;
-//	if (this->_index.empty()) // nginx does not set up a default index
-//		this->_index.push_back("../www/html/index.html");
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");

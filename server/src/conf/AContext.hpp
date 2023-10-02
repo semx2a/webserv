@@ -15,7 +15,6 @@ class AContext {
 		virtual ~AContext();
 
 		bool										autoindex() const;
-		bool										cgi() const;
 		size_t										maxBodySize() const;
 		std::string const&							root() const;
 		std::map<int, std::string> const&			errorPages() const;
@@ -23,7 +22,6 @@ class AContext {
 		std::vector<std::string> const&				authorizedMethods() const;
 
 		void	setAutoindex(bool autoindex);
-		void	setCgi(bool cgi);
 		void 	setMaxBodySize(size_t size);
 		void	setRoot(std::string const& root);
 		void	addErrorPage(int code, std::string const& path);
@@ -37,7 +35,6 @@ class AContext {
 
 	protected:
 		bool								_autoindex;
-		bool								_cgi;
 		size_t								_maxBodySize;
 		std::string							_root;
 		std::map<int, std::string>			_errorPages;		

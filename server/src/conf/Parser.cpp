@@ -79,7 +79,6 @@ typename Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirec
     typename Parser::DirectiveMap<ServerContext>::type directiveMap;
 
 	directiveMap["autoindex"] = &Parser::parseAutoindex<ServerContext>;
-	directiveMap["cgi"] = &Parser::parseCgi<ServerContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<ServerContext>;
 	directiveMap["root"] = &Parser::parseRoot<ServerContext>;
     directiveMap["listen"] = &Parser::parseListen<ServerContext>;
@@ -94,7 +93,7 @@ typename Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirec
 typename Parser::DirectiveMap<LocationContext>::type Parser::initializeLocationDirectives() {
     typename Parser::DirectiveMap<LocationContext>::type directiveMap;
 
-	directiveMap["cgi"] = &Parser::parseCgi<LocationContext>;
+	//directiveMap["~ \.php$"] = &Parser::parseCgi<LocationContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<LocationContext>;
 	directiveMap["alias"] = &Parser::parseAlias<LocationContext>;
 	directiveMap["root"] = &Parser::parseRoot<LocationContext>;
@@ -225,7 +224,7 @@ void	Parser::buildAndThrowParamError(std::string const& line) const {
 
 	std::string param = line.substr(0, line.find_first_of(" "));
 	param.substr(0, param.find_first_of(";"));
-	std::string err = "Error: Invalid parameter '" + param + "'";
+	std::string err = "Invalid parameter '" + param + "'";
 	throw Parser::InvalidParam(err, *this);
 }
 

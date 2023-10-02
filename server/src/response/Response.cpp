@@ -106,28 +106,30 @@ void Response::_expandTarget() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GET::
 
+static bool	is_directory(std::string const& path) {
+
+	return path.find_last_of('/') == path.size() - 1;
+}
+
 void	Response::handleGet () {
 
-	if (_path.find_last_of('/') == _path.size() - 1) { // directory
-	  	#ifdef DEBUG_RESPONSE
-		 	std::cout << "[DEBUG] Target is a directory" << std::endl;
+	if (is_directory(_path)) {
+		#ifdef DEBUG_RESPONSE
+		std::cout << "[DEBUG] Target is a directory" << std::endl;
 		#endif
 		_expandDirectory();
 	}
 
 	std::ifstream	file(_path.c_str());
-
 	if (!file.is_open()) {
-
 		throw Response::HttpError("404");
 		return ;
 	}
+
 	std::stringstream	bodyContent;
 	std::string			line;
-	
 	while (std::getline(file, line) && !file.eof())
 		bodyContent << line << std::endl;
-	
 	file.close();
 	_body = bodyContent.str();
 }

@@ -10,15 +10,8 @@ ServerContext& ServerContext::operator=(ServerContext const& rhs) {
 
 	if (this != &rhs) {
 
-		this->_autoindex = rhs.autoindex();
-		this->_cgi = rhs.cgi();
-		this->_maxBodySize = rhs.maxBodySize();
-		this->_errorPages = rhs.errorPages();
-		this->_index = rhs.index();
-		this->_root = rhs.root();
+		AContext::operator=(rhs);
 		this->_locations = rhs.locations();
-		this->_autoindex = rhs.autoindex();
-		this->_authorizedMethods = rhs.authorizedMethods();
 		this->_listen = rhs.listen();
 		this->_serverNames = rhs.serverNames();
 	}
@@ -59,7 +52,6 @@ void	ServerContext::setDefaults() {
 std::ostream &	operator<<(std::ostream & o, ServerContext const & sc) {
 
 	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.autoindex()		<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "cgi: " 				<< HIGREEN << sc.cgi()								<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.maxBodySize()						<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.root()								<< NO_COLOR << std::endl;
 	o << HIPURPLE << std::setw(21) << "listen: " 			<< HIGREEN << print_map(sc.listen()) 				<< NO_COLOR << std::endl;
