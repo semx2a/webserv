@@ -15,10 +15,7 @@ Response::Response(Request const& request, ServerContext const& serverContext) :
 			handleGet();
 		_statusLine = "HTTP/1.1 200 OK";
 		_statusLine += CRLF;
-
-		std::cout << "No error" << std::endl;
-
-	}
+		}
 	}
 	catch (Response::HttpError& e) {
 
@@ -96,10 +93,10 @@ void Response::_expandTarget() {
 		path = _serverContext.root() + target;
 	}
 
-	size_t pos = 0;
-	while ((pos = path.find("//", pos)) != std::string::npos) {
-		path.replace(pos, 2, "/");
-	}
+//	size_t pos = 0;
+//	while ((pos = path.find("//", pos)) != std::string::npos) {
+//		path.replace(pos, 2, "/");
+//	}
 	_path = path;
 
 	#ifdef DEBUG_RESPONSE
@@ -164,7 +161,9 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 		
 		_path += indexVec[i];
 		
-		std::cout << "Trying to open " << _path << std::endl;
+		#ifdef DEBUG_RESPONSE
+			std::cout << "[DEBUG] Trying to open " << _path << std::endl;
+		#endif
 		std::ifstream	file(_path.c_str());
 		if (file.is_open())
 			return;
