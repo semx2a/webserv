@@ -54,7 +54,7 @@ void	Parser::parse() {
 		this->trimAndReplaceWhitespaces(line);
 
 		#ifdef DEBUG_PARSER
-			std::cout << "[main scope] line " << _linesRead << ": " << line << std::endl;
+		std::cout << "[main scope] line " << _linesRead << ": " << line << std::endl;
 		#endif
 
 		if (isCommentOrEmptyLine(line)) {
@@ -93,7 +93,6 @@ typename Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirec
 typename Parser::DirectiveMap<LocationContext>::type Parser::initializeLocationDirectives() {
     typename Parser::DirectiveMap<LocationContext>::type directiveMap;
 
-	//directiveMap["~ \.php$"] = &Parser::parseCgi<LocationContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<LocationContext>;
 	directiveMap["alias"] = &Parser::parseAlias<LocationContext>;
 	directiveMap["root"] = &Parser::parseRoot<LocationContext>;
@@ -218,6 +217,14 @@ void	Parser::trimAndReplaceWhitespaces(std::string& input) {
 		}
 		input += word;
 	}
+}
+
+void	Parser::searchIfCgi(LocationContext& locationContext, std::string& path) {
+
+	if (path != "*.py")
+		return;
+	locationContext.setIsPyCgi(true);
+	path = path.substr(path.find_first_of("*") + 1, path.size() - path.find_first_of("*") - 1);
 }
 
 void	Parser::buildAndThrowParamError(std::string const& line) const {

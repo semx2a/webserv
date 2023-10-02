@@ -41,8 +41,11 @@ class Response {
 		// CONTEXT
 		Request const&		request() const;
 
-		// UTILS
-		std::string const&	responseStr() ; // TODO : vrai accesseur const
+		// COMPONENTS
+		std::string const&	statusLine() const;
+		std::string const&	headers() const;
+		std::string const&	body() const;
+		std::string const&	responseStr() const;
 
 		// :::::::::::::::::::::::::::::: METHODS
 		// GET
@@ -80,14 +83,18 @@ class Response {
 
 		// :::::::::::::::::::::::::::::: METHODS
 		void		_expandTarget();
+		void		_setRootOrAlias(t_locationIterator, std::string const&, std::string&);
 		// GET
+		bool		_isDirectory();
 		void		_expandDirectory();
 		void		_autoIndex();
 		void		_assignIndex(std::vector<std::string> const&);
+		bool		_isCgi();
+		void		_runCgi();
 
 
 };
 
-std::ostream& operator<<(std::ostream& o, Response const& rhs);
+std::ostream& operator<<(std::ostream&, Response const&);
 
 #endif

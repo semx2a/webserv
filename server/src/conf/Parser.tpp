@@ -23,10 +23,8 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 
 			LocationContext	newLocationCtxt;
 			std::string path = line.substr(line.find_first_of(" ") + 1, line.find_first_of("{") - line.find_first_of(" ") - 1);
-			if (path.find("~ \\.py$")) {
-				newLocationCtxt.setIsPyCgi(true);
-			}
 			this->trimAndReplaceWhitespaces(path);
+			searchIfCgi(newLocationCtxt, path);
 			parseLocationContext(stream, newLocationCtxt);
 			context.addLocation(path, newLocationCtxt);
 		} 

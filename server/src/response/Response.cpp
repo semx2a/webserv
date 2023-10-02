@@ -18,10 +18,10 @@ Response::Response(Request const& request, ServerContext const& serverContext) :
 		}
 	}
 	catch (Response::HttpError& e) {
-
   		#ifdef DEBUG_RESPONSE
-			std::cout << "HttpError: " << e.statusCode() << std::endl;
+		std::cout << "HttpError: " << e.statusCode() << std::endl;
 		#endif
+
 		StatusLine	statusLine(e.statusCode());
 		statusLine.build();
 		this->_statusLine = statusLine.getMessage();
@@ -60,66 +60,62 @@ Response& Response::operator=(Response const& rhs)
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::string const&	Response::responseStr() { return _responseStr; }
+Request const&		Response::request() const { return _request; }
 
-Request const&	Response::request() const { return _request; }
+std::string const&	Response::statusLine() const { return _statusLine; }
+std::string const&	Response::headers() const { return _headers; }
+std::string const&	Response::body() const { return _body; }
+std::string const&	Response::responseStr() const { return _responseStr; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMMON::
 
 void Response::_expandTarget() {
 
 	std::string target = _request.target();
+	std::string path;
+
 	t_locationIterator it = _serverContext.locations().find(target);
 	t_locationIterator itEnd = _serverContext.locations().end();
 
-	std::string path;
-
 	if (it != itEnd) {
-
-		std::string root = it->second.root();
-		std::string alias = it->second.alias();
-		if (!root.empty()) {
-			path = root + target;
-		}
-		else if (!alias.empty()) {
-			path = alias;
-		}
+		_setRootOrAlias(it, target, path);
 	}
-	else {
-		if (_request.headers().find("Accept") != _request.headers().end()) {
-			// find extension in mimetypes: if not found, return 406 ? check if CGI ?
-			// "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
-		}
+	if (path.empty()) { // if no root or alias in location or no location at all
 		path = _serverContext.root() + target;
 	}
-
-//	size_t pos = 0;
-//	while ((pos = path.find("//", pos)) != std::string::npos) {
-//		path.replace(pos, 2, "/");
-//	}
 	_path = path;
 
 	#ifdef DEBUG_RESPONSE
-		std::cout << "[DEBUG] Expanded path: " << _path << std::endl;
+	std::cout << "[DEBUG] Expanded path: " << _path << std::endl;
 	#endif
+}
+
+void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target, std::string& path) {
+
+	std::string root = it->second.root();
+	std::string alias = it->second.alias();
+	if (!root.empty()) {
+		path = root + target;
+	}
+	else if (!alias.empty()) {
+		path = alias;
+	}
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GET::
 
-static bool	is_directory(std::string const& path) {
-
-	return path.find_last_of('/') == path.size() - 1;
-}
-
 void	Response::handleGet () {
 
-	if (is_directory(_path)) {
-		#ifdef DEBUG_RESPONSE
-		std::cout << "[DEBUG] Target is a directory" << std::endl;
-		#endif
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering handleGet" << std::endl;
+	#endif
+
+	if (_isDirectory()) {
 		_expandDirectory();
 	}
-
+	else if (_isCgi()) {
+		_runCgi();
+	}
 	std::ifstream	file(_path.c_str());
 	if (!file.is_open()) {
 		throw Response::HttpError("404");
@@ -134,7 +130,21 @@ void	Response::handleGet () {
 	_body = bodyContent.str();
 }
 
+bool	Response::_isDirectory() {
+
+	return _path.find_last_of('/') == _path.size() - 1;
+}
+
+bool	Response::_isCgi() {
+
+	return _path.find(".php") != std::string::npos;
+}
+
 void	Response::_expandDirectory() {
+
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Target is a directory" << std::endl;
+	#endif
 
 	if (_serverContext.autoindex() == true) {
 		_autoIndex();
@@ -152,7 +162,7 @@ void	Response::_expandDirectory() {
 			_assignIndex(_serverContext.index());
 		}
 		else {
-			throw Response::HttpError("403");
+			throw Response::HttpError("404");
 		}
 	}
 }
@@ -164,8 +174,9 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 		_path += indexVec[i];
 		
 		#ifdef DEBUG_RESPONSE
-			std::cout << "[DEBUG] Trying to open " << _path << std::endl;
+		std::cout << "[DEBUG] Trying to open " << _path << std::endl;
 		#endif
+
 		std::ifstream	file(_path.c_str());
 		if (file.is_open())
 			return;
@@ -177,7 +188,9 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 
 void	Response::_autoIndex() {
 
-	std::cout << "Enter AutoIndex" << std::endl;
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering AutoIndex" << std::endl;
+	#endif
 	DIR*				dir;
 	struct dirent*		entry;
 	std::stringstream	fileTree;
@@ -200,13 +213,21 @@ void	Response::_autoIndex() {
 	std::cout << fileTree.str() << std::endl;
 }
 
+void	Response::_runCgi() {
+
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering runCgi" << std::endl;
+	#endif
+
+	
+}
+
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
 
-//std::ostream& operator<<(std::ostream& o, Response const& rhs) {
-//	//o << rhs.responseStr();
-//	//TODO
-//	return (o);
-//}
+std::ostream& operator<<(std::ostream& o, Response const& rhs) {
+	o << rhs.responseStr();
+	return (o);
+}
 	
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ERRORS::
 
