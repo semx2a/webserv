@@ -42,6 +42,8 @@ class Response {
 		// :::::::::::::::::::::::::::::: METHODS
 		// GET
 		void		handleGet();
+		void		handlePost();
+		void		handleDelete();
 		
 	private:
 

@@ -9,6 +9,9 @@ Response::Response() {
 
 Response::Response(Request const& request, ServerContext const& serverContext) : _request(request), _serverContext(serverContext) {
 
+	if (this->request().getVersion() != "HTTP/1.1") {
+//		throw Error(505); //HTTP version non supported
+	}
 	_expandTarget();
 	//TODO
 }
@@ -139,6 +142,22 @@ void	Response::handleGet () {
 	_body = bodyContent.str();
 }
 
+void	Response::handlePost() {
+
+	
+}
+
+void	Response::handleDelete(void) {
+
+	if (access(this->_path.c_str(), F_OK) == -1)
+		//throw (404);
+	else if (access(this->path.c_str(), W_OK | X_OK) == -1)
+		//throw (403)
+	if (std::remove(this->_path.c_str()) != 0)
+		//throw (204);
+	// throw 200	
+}
+
 void	Response::_expandDirectory() {
 
 	if (_serverContext.autoindex() == true) {
@@ -176,6 +195,7 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 
 void	Response::_autoIndex() {
 
+	//À DEBUG
 	std::cout << "Enter AutoIndex" << std::endl;
 	DIR*				dir;
 	struct dirent*		entry;

@@ -40,9 +40,9 @@ void	ResponseBuilder::_buildStatusLine() {
 	
 	std::stringstream line;
 
-//	line << this->_response->request().version() + " ";
-//	line << this->_response->statusCode() + " ";
-//	line << this->_response->statusMessage(this->_response->statusCode());
+	line << "HTTP/1.1 "; // Pas besoin d'utiliser la version de la requête
+	line << this->_response->statusCode() + " ";
+	line << this->_response->statusMessage(this->_response->statusCode());
 	line << CRLF;
 	
 	this->_response->setStatusLine(line.str());
