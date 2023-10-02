@@ -51,7 +51,7 @@ void	AContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMe
 void	AContext::setDefaults() {
 	
 	if (this->_root.empty())
-		this->_root = "../www/";
+		this->_root = "../www";
 	else 
 		this->_root = "../www/" + this->_root;
 //	if (this->_index.empty()) // nginx does not set up a default index
