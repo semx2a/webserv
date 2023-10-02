@@ -54,8 +54,8 @@ void	AContext::setDefaults() {
 		this->_root = "../www/";
 	else 
 		this->_root = "../www/" + this->_root;
-	if (this->_index.empty())
-		this->_index.push_back("../www/html/index.html");
+//	if (this->_index.empty()) // nginx does not set up a default index
+//		this->_index.push_back("../www/html/index.html");
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
