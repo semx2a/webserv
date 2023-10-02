@@ -9,8 +9,35 @@ Response::Response() {
 
 Response::Response(Request const& request, ServerContext const& serverContext) : _request(request), _serverContext(serverContext) {
 
-	_expandTarget();
-	//TODO
+	try {
+		_expandTarget();
+		if (_request.method() == "GET") {
+			handleGet();
+		_statusLine = "HTTP/1.1 200 OK";
+		_statusLine += CRLF;
+
+		std::cout << "No error" << std::endl;
+
+	}
+	}
+	catch (Response::HttpError& e) {
+
+  		#ifdef DEBUG_RESPONSE
+			std::cout << "HttpError: " << e.statusCode() << std::endl;
+		#endif
+		StatusLine	statusLine(e.statusCode());
+		statusLine.build();
+		this->_statusLine = statusLine.getMessage();
+		std::stringstream bodyError;
+		bodyError << "<html><body><h1>" << e.statusCode() << "</h1></body></html>";
+		_body = bodyError.str();
+	}
+	std::stringstream headers;
+	headers << "Content-Type: text/html" << CRLF;
+	headers << "Content-Length: " << _body.length() << CRLF;
+	headers << CRLF;
+	_headers = headers.str();
+	_responseStr = _statusLine + _headers + _body;
 }
 
 Response::Response(Response const& rhs) {
@@ -36,38 +63,7 @@ Response& Response::operator=(Response const& rhs)
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::string const&	Response::responseStr() { 
-	
-//	std::stringstream	bodyStream;
-//	
-//	bodyStream	<< "<!DOCTYPE html>\n"
-//			<< "<html>\n"
-//			<< "<head>\n"
-//			<< "<title>Page Title</title>\n"
-//			<< "</head>\n"
-//			<< "<body>\n"
-//			<< "\n"
-//			<< "<h1>This is a Heading</h1>\n"
-//			<< "<p>This is a paragraph.</p>\n"
-//			<< "\n"
-//			<< "</body>\n"
-//			<< "</html>\n";
-//	_body = bodyStream.str();
-	
-	std::stringstream res;
-
-	res << _request.version() + " ";
-	res << "200 "; //_statusCode + " ";
-	res << "OK"; // _statusMessage(this->_response->statusCode());
-	res << CRLF;
-	res << "Content-Type: " << "text/html" << CRLF;
-	res << "Content-Length: " << _body.size() << CRLF;
-	res << CRLF;
-	res << _body;
-
-	_responseStr = res.str();
-	return _responseStr;
-}
+std::string const&	Response::responseStr() { return _responseStr; }
 
 Request const&	Response::request() const { return _request; }
 
@@ -94,7 +90,8 @@ void Response::_expandTarget() {
 	}
 	else {
 		if (_request.headers().find("Accept") != _request.headers().end()) {
-			
+			// find extension in mimetypes: if not found, return 406 ? check if CGI ?
+			// "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
 		}
 		path = _serverContext.root() + target;
 	}
@@ -124,9 +121,8 @@ void	Response::handleGet () {
 	std::ifstream	file(_path.c_str());
 
 	if (!file.is_open()) {
-		//throw std::runtime_error("Could not open " +  _path + " file"); 
-		// À fix: le serveur quitte lorsqu'il ne trouve pas le path (ex ../www/html/favicon.ico)
-		// Devrait renvoyer erreur 404
+
+		throw Response::HttpError("404");
 		return ;
 	}
 	std::stringstream	bodyContent;
@@ -153,8 +149,11 @@ void	Response::_expandDirectory() {
 		if (it != itEnd) {
 			_assignIndex(it->second.index());
 		}
-		else {
+		else if (not _serverContext.index().empty()) {
 			_assignIndex(_serverContext.index());
+		}
+		else {
+			throw Response::HttpError("403");
 		}
 	}
 }
@@ -165,13 +164,14 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 		
 		_path += indexVec[i];
 		
+		std::cout << "Trying to open " << _path << std::endl;
 		std::ifstream	file(_path.c_str());
 		if (file.is_open())
 			return;
 			
 		_path = _path.substr(0, _path.size() - indexVec[i].size());
 	}
-	//throw std::runtime_error("Could not open index file");
+	throw Response::HttpError("403");
 }
 
 void	Response::_autoIndex() {
@@ -207,3 +207,11 @@ void	Response::_autoIndex() {
 //	return (o);
 //}
 	
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ERRORS::
+
+Response::HttpError::HttpError(std::string const& statusCode) : _statusCode(statusCode) {}
+Response::HttpError::~HttpError() throw() {}
+
+std::string const&	Response::HttpError::statusCode() const { return _statusCode; }
+
+const char*			Response::HttpError::what() const throw() { return _statusCode.c_str(); }

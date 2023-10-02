@@ -16,8 +16,13 @@ extern "C" {
 
 #include "Request.hpp"
 #include "ServerContext.hpp"
+
 #include "StatusCodes.hpp"
 #include "MimeTypes.hpp"
+
+#include "StatusLine.hpp"
+#include "Headers.hpp"
+#include "Body.hpp"
 
 typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
 typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;
@@ -42,7 +47,20 @@ class Response {
 		// :::::::::::::::::::::::::::::: METHODS
 		// GET
 		void		handleGet();
-		
+
+		// :::::::::::::::::::::::::::: EXCEPTIONS
+		class HttpError : public std::exception {
+			private:
+				std::string _statusCode;
+
+			public:
+				HttpError(std::string const& statusCode);
+				virtual ~HttpError() throw();
+
+				std::string const& 		statusCode() const;
+				virtual const char*		what() const throw();
+		};
+
 	private:
 
 		// ::::::::::::::::::::::::::: ATTRIBUTES
@@ -51,8 +69,6 @@ class Response {
 		ServerContext	_serverContext;
 
 		// UTILS
-		StatusCodes		_statusCodes;
-		MimeTypes 		_mimeTypes;
 		std::string		_path;
 
 		// COMPONENTS

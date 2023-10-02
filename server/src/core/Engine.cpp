@@ -145,9 +145,7 @@ void	Engine::_handleBuffer(int clientFd) {
 void	Engine::_writeToClient(int clientFd) {
 
 	Response res(this->_requests[clientFd], this->_serverContexts[clientFd]);
-	if (res.request().method() == "GET") {
-		res.handleGet();
-	}
+
 	log(clientFd, "Response about to be sent!");
 	std::cout << RED << res.responseStr() << NO_COLOR << std::endl;
 
