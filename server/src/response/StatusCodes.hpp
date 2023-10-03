@@ -9,7 +9,7 @@ class StatusCodes : public AFile {
 		StatusCodes(std::string const&);
 		~StatusCodes();
 
-		std::string const& statusMessage(std::string const&) const;
+		static std::string const& statusMessage(std::string const&);
 };
 
 #endif

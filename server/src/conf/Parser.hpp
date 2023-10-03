@@ -62,8 +62,6 @@ class Parser {
 		template <typename Context>
 		void	parseAutoindex(std::string const& line, Context&);
 		template <typename Context>
-		void	parseCgi(std::string const& line, Context&);
-		template <typename Context>
 		void 	parseMaxBodySize(const std::string& line, Context&);
 		template <typename Context>
 		void	parseAlias(std::string const& line, Context& context);
@@ -88,6 +86,7 @@ class Parser {
 		void	isValidIPv6(std::string const& str) const;
 		void 	trimAndReplaceWhitespaces(std::string& input);
 		void	buildAndThrowParamError(std::string const& line) const;
+		void	searchIfCgi(LocationContext&, std::string&);
 
 	
 	public:

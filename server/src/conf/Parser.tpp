@@ -24,6 +24,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 			LocationContext	newLocationCtxt;
 			std::string path = line.substr(line.find_first_of(" ") + 1, line.find_first_of("{") - line.find_first_of(" ") - 1);
 			this->trimAndReplaceWhitespaces(path);
+			searchIfCgi(newLocationCtxt, path);
 			parseLocationContext(stream, newLocationCtxt);
 			context.addLocation(path, newLocationCtxt);
 		} 
@@ -83,18 +84,9 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 			buildAndThrowParamError(line);
 		}
 	}
-//	context.setDefaults();
 	if (not context.root().empty() and not context.alias().empty())
 		throw std::runtime_error("Alias and root cannot be set at the same time");
-	if (context.index().empty())
-		context.addIndex("index.html");
-	if (context.authorizedMethods().empty()) {
-		context.addAuthorizedMethod("GET");
-		context.addAuthorizedMethod("POST");
-		context.addAuthorizedMethod("DELETE");
-	}
-	if (context.errorPages().empty())
-		context.addErrorPage(404, "../www/html/404.html");
+	context.setDefaults();
 }
 
 template <typename Context>
@@ -113,22 +105,6 @@ void	Parser::parseAutoindex(std::string const &line, Context& context) {
 
 	onOffBool = (onOff == "on") ? true : false;
 	context.setAutoindex(onOffBool);
-}
-
-template <typename Context>
-void	Parser::parseCgi(std::string const& line, Context& context) {
-
-	std::stringstream	stream(line);
-	std::string			directive;
-	std::string			onOff;
-	bool				onOffBool;
-
-	stream >> directive >> onOff;
-	if (onOff != "on" and onOff != "off")
-		buildAndThrowParamError(line);
-	
-	onOffBool = (onOff == "on") ? true : false;
-	context.setCgi(onOffBool);
 }
 
 template <typename Context>

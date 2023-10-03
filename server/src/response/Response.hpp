@@ -16,8 +16,13 @@ extern "C" {
 
 #include "Request.hpp"
 #include "ServerContext.hpp"
+
 #include "StatusCodes.hpp"
 #include "MimeTypes.hpp"
+
+#include "StatusLine.hpp"
+#include "Headers.hpp"
+#include "Body.hpp"
 
 typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
 typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;
@@ -36,15 +41,31 @@ class Response {
 		// CONTEXT
 		Request const&		request() const;
 
-		// UTILS
-		std::string const&	responseStr() ; // TODO : vrai accesseur const
+		// COMPONENTS
+		std::string const&	statusLine() const;
+		std::string const&	headers() const;
+		std::string const&	body() const;
+		std::string const&	responseStr() const;
 
 		// :::::::::::::::::::::::::::::: METHODS
 		// GET
 		void		handleGet();
 		void		handlePost();
 		void		handleDelete();
-		
+
+		// :::::::::::::::::::::::::::: EXCEPTIONS
+		class HttpError : public std::exception {
+			private:
+				std::string _statusCode;
+
+			public:
+				HttpError(std::string const& statusCode);
+				virtual ~HttpError() throw();
+
+				std::string const& 		statusCode() const;
+				virtual const char*		what() const throw();
+		};
+
 	private:
 
 		// ::::::::::::::::::::::::::: ATTRIBUTES
@@ -53,8 +74,6 @@ class Response {
 		ServerContext	_serverContext;
 
 		// UTILS
-		StatusCodes		_statusCodes;
-		MimeTypes 		_mimeTypes;
 		std::string		_path;
 
 		// COMPONENTS
@@ -66,14 +85,18 @@ class Response {
 
 		// :::::::::::::::::::::::::::::: METHODS
 		void		_expandTarget();
+		void		_setRootOrAlias(t_locationIterator, std::string const&, std::string&);
 		// GET
+		bool		_isDirectory();
 		void		_expandDirectory();
 		void		_autoIndex();
 		void		_assignIndex(std::vector<std::string> const&);
+		bool		_isCgi();
+		void		_runCgi();
 
 
 };
 
-std::ostream& operator<<(std::ostream& o, Response const& rhs);
+std::ostream& operator<<(std::ostream&, Response const&);
 
 #endif
