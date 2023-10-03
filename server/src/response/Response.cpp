@@ -37,8 +37,8 @@ Response::Response(Request const& request, ServerContext const& serverContext) :
 	}
 	std::string ext = _path.substr(_path.find_last_of('.') + 1);
 	std::cout << "EXTENSION: " << ext << std::endl;
-	std::stringstream headers;
 	std::cout << "MIME TYPE: " << mimeTypes.getMimeType(ext) << std::endl;
+	std::stringstream headers;
 	headers << "Content-Type: " << mimeTypes.getMimeType(ext) << CRLF;
 	headers << "Content-Length: " << _body.length() << CRLF;
 	headers << CRLF;

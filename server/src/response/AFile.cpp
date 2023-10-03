@@ -84,7 +84,6 @@ t_lexicon AFile::_initFile(std::string const& filename) {
 		lexiconFile[key] = value;
 	}
 	
-	print_map(lexiconFile);
 	file.close();
 	return (lexiconFile);
 }

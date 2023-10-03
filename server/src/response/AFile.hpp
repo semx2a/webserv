@@ -30,7 +30,7 @@ class AFile {
 		t_lexicon			_lexicon;
 		std::string			_fileName;
 
-		std::string _trim(std::string const&);
+		std::string 		_trim(std::string const&);
 		virtual t_lexicon	_initFile(std::string const&);
 };
 
