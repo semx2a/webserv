@@ -77,7 +77,9 @@ void	Socket::_bindSock() {
 		
 		close(this->_fd);
 		// TODO : close general des sockets
-		throw std::runtime_error("bind(): " + (std::string)strerror(errno));
+		std::stringstream err;
+		err << "bind(): " << this->_port << " " << strerror(errno);
+		throw std::runtime_error(err.str());
 	}
 }
 
