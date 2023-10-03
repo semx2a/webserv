@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/09/28 18:59:02 by seozcan          ###   ########.fr        #
+#    Updated: 2023/10/03 16:15:09 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -117,17 +117,17 @@ INC		:= $(addprefix -I,	\
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COMPILERS::
 
-CPP		:=	c++
+CXX			:=	c++
 
-WFLAGS	:=	-Wall -Wextra -Werror -std=c++98
+CXXFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 
-WCONV	:=	-Wconversion
+CONVFLAGS	:=	-Wconversion
 
-DFLAGS	:=	-MMD
+DFLAGS		:=	-MMD
 
-GFLAG	:=	-g3
+GFLAG		:=	-g3
 
-SANFLAG	:=	-fsanitize=address
+SANFLAG		:=	-fsanitize=address
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
@@ -141,14 +141,14 @@ $(OBJ): | $(ODIR)
 
 $(ODIR)%.o: $(SDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
 -include ${DEP}
 -include ${MDEP}
 
 $(NAME): $(OBJ)	$(MOBJ)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(OBJ) $(MOBJ) -o $(NAME)
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(OBJ) $(MOBJ) -o $(NAME)
 	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
@@ -163,14 +163,14 @@ $(TOBJ): | $(TODIR)
 
 $(TODIR)%.o: $(TDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 
 -include ${DEP}
 -include ${TDEP}
 
 $(TNAME): $(OBJ) $(TOBJ)
-	@$(CPP) $(WFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
 	@echo -e "$(HIGREEN)test exe:[OK]$(NO_COLOR)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -256,7 +256,7 @@ message:
 #
 #$(TODIR)%.o: $(TSDIR)%.cpp
 #	mkdir -p $(dir $@)
-#	$(CPP) $(WFLAGS) $(INC) $(DFLAGS) $(TOBJ) -c $< -o $@ 
+#	$(CXX) $(CXXFLAGS) $(INC) $(DFLAGS) $(TOBJ) -c $< -o $@ 
 #	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
 #
 #-include ${TDEP}
@@ -264,7 +264,7 @@ message:
 #
 #debug_parsing: $(OBJ) $(TOBJ)
 #	$(info TOBJ is $(TOBJ))
-#	$(CPP) $(WFLAGS) $(OBJ) $(TOBJ) -o $(NAME)
+#	$(CXX) $(CXXFLAGS) $(OBJ) $(TOBJ) -o $(NAME)
 #	@echo -e "$(HIGREEN)debug parsing:[OK]$(NO_COLOR)" | $(INDENT)
 #
 #clean_debug_parsing:

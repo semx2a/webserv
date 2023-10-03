@@ -37,7 +37,7 @@ class Response {
 		~Response();
 		Response& operator=(Response const& rhs);
 
-		// :::::::::::::::::::::::::: ACCESSORS
+		// :::::::::::::::::::::::::::::: ACCESSORS
 		// CONTEXT
 		Request const&		request() const;
 
@@ -47,7 +47,7 @@ class Response {
 		std::string const&	body() const;
 		std::string const&	responseStr() const;
 
-		// :::::::::::::::::::::::::::::: METHODS
+		// ::::::::::::::::::::::::::::::: METHODS
 		// GET
 		void		handleGet();
 		void		handlePost();

@@ -1,13 +1,13 @@
 #include "AFile.hpp"
 
-t_lexicon 	AFile::_lexicon = AFile::_initLexicon();
+//t_lexicon 	AFile::_lexicon = AFile::_initLexicon();
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 AFile::AFile() {}
 
 AFile::AFile(const std::string &filename) {
 
-	setLexicon(filename);
+	this->setLexicon(this->_initFile(filename));
 }
 
 AFile::AFile(const AFile &rhs) {
@@ -23,19 +23,19 @@ AFile &AFile::operator=(const AFile &rhs) {
 
 	if (this != &rhs) {
 
-		_lexicon = rhs.lexicon();
-		_fileName = rhs.fileName();
+		this->_lexicon = rhs.lexicon();
+		this->_fileName = rhs.fileName();
 	}
 	return *this;
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-std::string const& 	AFile::fileName() const { return _fileName; }
-t_lexicon const& 	AFile::lexicon() { return _lexicon; }
+std::string const& 	AFile::fileName() const { return this->_fileName; }
+t_lexicon const& 	AFile::lexicon() const { return this->_lexicon; }
 
-void	AFile::setFileName(std::string const& filename) { _fileName = filename; }
-void	AFile::setLexicon(std::string const& filename) { _lexicon = _initFile(filename); }
+void	AFile::setFileName(std::string const& filename) { this->_fileName = filename; }
+void	AFile::setLexicon(t_lexicon const & lexicon) { this->_lexicon = lexicon; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
@@ -84,13 +84,14 @@ t_lexicon AFile::_initFile(std::string const& filename) {
 		lexiconFile[key] = value;
 	}
 	
+	print_map(lexiconFile);
 	file.close();
 	return (lexiconFile);
 }
 
-t_lexicon	AFile::_initLexicon() {
+/* t_lexicon	AFile::_initLexicon() {
 
 	t_lexicon	lexicon;
 	lexicon[""] = "";
 	return lexicon;
-}
+} */

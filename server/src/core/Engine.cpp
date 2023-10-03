@@ -146,7 +146,7 @@ void	Engine::_writeToClient(int clientFd) {
 
 	Response res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 	
-	if (res.request().method() == "GET")
+/* 	if (res.request().method() == "GET")
 		res.handleGet();
 //	else if (res.request().method == "POST")
 //		res.handlePost();
@@ -154,7 +154,7 @@ void	Engine::_writeToClient(int clientFd) {
 		res.handleDelete();
 //	else
 //		throw (405) // method not allowed
-
+ */
 	log(clientFd, "Response about to be sent!");
 	std::cout << RED << res.responseStr() << NO_COLOR << std::endl;
 

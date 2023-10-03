@@ -2,13 +2,13 @@
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-StatusLine::StatusLine(std::string const& status_code) : ARespComponent(),
+StatusLine::StatusLine(std::string const& status_code, StatusCodes const& sc) : ARespComponent(),
 												_statusCode(status_code), 
-												_reasonPhrase(StatusCodes::statusMessage(status_code)) {}
+												_reasonPhrase(sc.getReasonPhrase(status_code)) {}
 
 StatusLine::StatusLine(StatusLine const & rhs) : ARespComponent(rhs),
-												_statusCode(rhs._statusCode), 
-												_reasonPhrase(rhs._reasonPhrase) {
+												_statusCode(rhs.statusCode()), 
+												_reasonPhrase(rhs.reasonPhrase()) {
 	*this = rhs;
 }
 

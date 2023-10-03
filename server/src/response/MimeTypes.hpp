@@ -6,10 +6,9 @@
 class MimeTypes : public AFile {
 	public:
 		MimeTypes();
-		MimeTypes(std::string const&);
 		~MimeTypes();
 
-		static std::string const& extension(std::string const&);
+		std::string const&	getMimeType(std::string const&) const;
 };
 
 #endif

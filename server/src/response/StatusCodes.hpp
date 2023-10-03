@@ -6,10 +6,9 @@
 class StatusCodes : public AFile {
 	public:
 		StatusCodes();
-		StatusCodes(std::string const&);
 		~StatusCodes();
 
-		static std::string const& statusMessage(std::string const&);
+		std::string const&	getReasonPhrase(std::string const&) const;
 };
 
 #endif

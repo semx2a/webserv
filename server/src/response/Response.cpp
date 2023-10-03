@@ -9,6 +9,9 @@ Response::Response() {
 
 Response::Response(Request const& request, ServerContext const& serverContext) : _request(request), _serverContext(serverContext) {
 
+	StatusCodes	statusCodes;
+	MimeTypes	mimeTypes;
+
 	try {
 		_expandTarget();
 		if (_request.method() == "GET") {
@@ -18,13 +21,16 @@ Response::Response(Request const& request, ServerContext const& serverContext) :
 		}
 	}
 	catch (Response::HttpError& e) {
-  		#ifdef DEBUG_RESPONSE
+  		
+		#ifdef DEBUG_RESPONSE
 		std::cout << "HttpError: " << e.statusCode() << std::endl;
 		#endif
 
-		StatusLine	statusLine(e.statusCode());
+		StatusLine	statusLine(e.statusCode(), statusCodes);
+		
 		statusLine.build();
 		this->_statusLine = statusLine.getMessage();
+		
 		std::stringstream bodyError;
 		bodyError << "<html><body><h1>" << e.statusCode() << "</h1></body></html>";
 		_body = bodyError.str();
@@ -199,7 +205,7 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 			
 		_path = _path.substr(0, _path.size() - indexVec[i].size());
 	}
-	throw Response::HttpError("403");
+	throw Response::HttpError("404");
 }
 
 void	Response::_autoIndex() {
@@ -208,7 +214,7 @@ void	Response::_autoIndex() {
 	std::cout << "[DEBUG] Entering AutoIndex" << std::endl;
 	#endif
 	DIR*				dir;
-	struct dirent*		entry;
+	struct dirent*		entry;	
 	std::stringstream	fileTree;
 
 	dir = opendir(_path.c_str());

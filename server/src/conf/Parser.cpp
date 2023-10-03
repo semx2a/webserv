@@ -75,8 +75,8 @@ void	Parser::parse() {
 }
 
 
-typename Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirectives() {
-    typename Parser::DirectiveMap<ServerContext>::type directiveMap;
+Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirectives() {
+    Parser::DirectiveMap<ServerContext>::type directiveMap;
 
 	directiveMap["autoindex"] = &Parser::parseAutoindex<ServerContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<ServerContext>;
@@ -90,8 +90,8 @@ typename Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirec
     return directiveMap;
 }
 
-typename Parser::DirectiveMap<LocationContext>::type Parser::initializeLocationDirectives() {
-    typename Parser::DirectiveMap<LocationContext>::type directiveMap;
+Parser::DirectiveMap<LocationContext>::type Parser::initializeLocationDirectives() {
+    Parser::DirectiveMap<LocationContext>::type directiveMap;
 
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<LocationContext>;
 	directiveMap["alias"] = &Parser::parseAlias<LocationContext>;
