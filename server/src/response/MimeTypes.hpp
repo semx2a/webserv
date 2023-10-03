@@ -9,6 +9,7 @@ class MimeTypes : public AFile {
 		~MimeTypes();
 
 		std::string const&	getMimeType(std::string const&) const;
+		t_lexicon 			initFile(std::string const&);
 };
 
 #endif

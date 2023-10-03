@@ -75,6 +75,7 @@ class Response {
 
 		// UTILS
 		std::string		_path;
+		std::string		_contentType;
 
 		// COMPONENTS
 		std::string		_statusLine;
