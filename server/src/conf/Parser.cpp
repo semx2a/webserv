@@ -51,7 +51,7 @@ void	Parser::parse() {
 	while (std::getline(stream, line)) {
 
 		this->_linesRead++;
-		this->trimAndReplaceWhitespaces(line);
+		line = utl::trimAndReplaceWs(line);
 
 		#ifdef DEBUG_PARSER
 		std::cout << "[main scope] line " << _linesRead << ": " << line << std::endl;
@@ -201,22 +201,6 @@ bool	Parser::isEndOfScope(std::string const& line) const {
 
 	return line.find('}') != std::string::npos 
 		and line.find_first_not_of("} ") == std::string::npos;
-}
-
-
-
-void	Parser::trimAndReplaceWhitespaces(std::string& input) {
-
-	std::stringstream	ss(input);
-	std::string			word;
-
-	input.clear();
-	while (ss >> word) {
-		if (not input.empty()) {
-			input += " ";
-		}
-		input += word;
-	}
 }
 
 void	Parser::searchIfCgi(LocationContext& locationContext, std::string& path) {

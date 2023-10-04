@@ -6,13 +6,13 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/10/03 16:15:09 by seozcan          ###   ########.fr        #
+#    Updated: 2023/10/04 16:42:28 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::COLORS::
 
-NO_COLOR		=	\033[m
+RESET		=	\033[m
 
 BLACK			=	\033[0;30m
 RED				=	\033[0;31m
@@ -95,7 +95,8 @@ SRC		:=	$(addprefix $(CONF),		\
 				Headers.cpp				\
 				Body.cpp)				\
 			$(addprefix $(UTILS),		\
-				print.cpp)
+				utl.cpp				\
+				HttpStatus.cpp)
 
 OBJ 	:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.o,$(SRC))
 DEP		:= $(patsubst $(SDIR)%.cpp,$(ODIR)%.d,$(SRC))
@@ -135,21 +136,21 @@ all: header h2 message $(NAME)
 
 $(ODIR):
 	@mkdir -p $(dir $@)
-	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)objs folder:[OK]$(RESET)" | $(INDENT)
 
 $(OBJ): | $(ODIR)
 
 $(ODIR)%.o: $(SDIR)%.cpp
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(INC) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 
 -include ${DEP}
 -include ${MDEP}
 
 $(NAME): $(OBJ)	$(MOBJ)
 	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(MOBJ) -o $(NAME)
-	@echo -e "$(HIGREEN)mandatory exe:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)mandatory exe:[OK]$(RESET)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
 
@@ -157,21 +158,21 @@ test: header h2 message $(TNAME)
 
 $(TODIR):
 	@mkdir -p $(dir $@)
-	@echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)objs folder:[OK]$(RESET)" | $(INDENT)
 
 $(TOBJ): | $(TODIR)
 
 $(TODIR)%.o: $(TDIR)%.cpp
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
-	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 
 -include ${DEP}
 -include ${TDEP}
 
 $(TNAME): $(OBJ) $(TOBJ)
 	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
-	@echo -e "$(HIGREEN)test exe:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)test exe:[OK]$(RESET)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
 
@@ -183,41 +184,41 @@ push:		header fclean
 	@git add .
 	@git commit --quiet
 	@git push --quiet
-	@echo -e "$(HIGREEN)git push:[OK]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIGREEN)git push:[OK]$(RESET)" | $(INDENT)
 
 clean:		header
 	@rm -rf $(ODIR)
-	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIORANGE)objs folder:[RM]$(RESET)" | $(INDENT)
 
 fclean: header clean
 	@rm -f $(NAME)
-	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(RESET)" | $(INDENT)
 
 re: header fclean all
 
 cleantest:	header
 	@rm -rf $(TODIR) $(ODIR)
-	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIORANGE)objs folder:[RM]$(RESET)" | $(INDENT)
 
 fcleantest: cleantest
 	@rm -f $(TNAME)
-	@echo -e "$(HIORANGE)$(TNAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+	@echo -e "$(HIORANGE)$(TNAME) bin:[RM]$(RESET)" | $(INDENT)
 
 retest:	fcleantest test
 
 header:
 	@echo -e " ______________________________________________________"
-	@echo -e "|\     $(BHIRED)__________    ________    ___   ___    _______ $(NO_COLOR) \ "
-	@echo -e "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(NO_COLOR) \ "
-	@echo -e "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(NO_COLOR) \ "
-	@echo -e "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(NO_COLOR) \ "
-	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(NO_COLOR)  \ "
+	@echo -e "|\     $(BHIRED)__________    ________    ___   ___    _______ $(RESET) \ "
+	@echo -e "| \   $(BHIORANGE)/\         \  /\   __  \  /\  \ /\  \  /\  ____\ $(RESET) \ "
+	@echo -e "|  \  $(BHIGREEN)\ \  \ _/\  \ \ \   __  \ \ \  \ /_ /_ \ \  _\_/_ $(RESET) \ "
+	@echo -e "|   \  $(BHIBLUE)\ \__\_/ \__\ \ \__\-\__\ \ \__\  \__\ \ \______\ $(RESET) \ "
+	@echo -e "|    \  $(BHIPURPLE)\/__/  \/__/  \/__/ /__/  \/__/ \/__/  \/______/ $(RESET)  \ "
 	@echo -e "|     \_____________________________________________________\ "
-	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(NO_COLOR) / "
-	@echo -e "|    /$(BLACK)                                                   /$(NO_COLOR) / "
-	@echo -e "|   /$(BLACK)                   S E O Z C A N                   /$(NO_COLOR) / "
-	@echo -e "|  /$(BLACK)                   N F A U C O N N                 /$(NO_COLOR) / "
-	@echo -e "| /$(BLACK)___________________________________________________/$(NO_COLOR) / "
+	@echo -e "|     /$(BLACK)////////////////////////////////////////////////////$(RESET) / "
+	@echo -e "|    /$(BLACK)                                                   /$(RESET) / "
+	@echo -e "|   /$(BLACK)                   S E O Z C A N                   /$(RESET) / "
+	@echo -e "|  /$(BLACK)                   N F A U C O N N                 /$(RESET) / "
+	@echo -e "| /$(BLACK)___________________________________________________/$(RESET) / "
 	@echo -e "|/____________________________________________________\/ "
 	@echo -e "  \                \ \                 \ \            \ "
 	@echo -e "   \                \ \                 \ \            \ "
@@ -226,10 +227,10 @@ header:
 	@echo -e "                           🮡  _________/                    "
 
 h2:
-	@echo -e "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(NO_COLOR)"
+	@echo -e "\n$(BHIPURPLE):::::::::::::::::::::::::::::::::::::::::::::::::::WEBSERV::\n$(RESET)"
 
 message:
-	@make -q $(NAME) && echo -e "$(BHIGREEN)All files are already up to date$(NO_COLOR)" || true
+	@make -q $(NAME) && echo -e "$(BHIGREEN)All files are already up to date$(RESET)" || true
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::DEBUG::
 #
@@ -252,12 +253,12 @@ message:
 #
 #$(TODIR):
 #	mkdir -p $(dir $@)
-#	echo -e "$(HIGREEN)objs folder:[OK]$(NO_COLOR)" | $(INDENT)
+#	echo -e "$(HIGREEN)objs folder:[OK]$(RESET)" | $(INDENT)
 #
 #$(TODIR)%.o: $(TSDIR)%.cpp
 #	mkdir -p $(dir $@)
 #	$(CXX) $(CXXFLAGS) $(INC) $(DFLAGS) $(TOBJ) -c $< -o $@ 
-#	@echo -e "$(HIGREEN)compilation:[OK]$(NO_COLOR)" | $(INDENT)
+#	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 #
 #-include ${TDEP}
 #-include ${DEP}
@@ -265,15 +266,15 @@ message:
 #debug_parsing: $(OBJ) $(TOBJ)
 #	$(info TOBJ is $(TOBJ))
 #	$(CXX) $(CXXFLAGS) $(OBJ) $(TOBJ) -o $(NAME)
-#	@echo -e "$(HIGREEN)debug parsing:[OK]$(NO_COLOR)" | $(INDENT)
+#	@echo -e "$(HIGREEN)debug parsing:[OK]$(RESET)" | $(INDENT)
 #
 #clean_debug_parsing:
 #	@rm -rf $(TODIR) $(ODIR) 
-#	@echo -e "$(HIORANGE)objs folder:[RM]$(NO_COLOR)" | $(INDENT)
+#	@echo -e "$(HIORANGE)objs folder:[RM]$(RESET)" | $(INDENT)
 #
 #fclean_debug_parsing: clean_debug_parsing
 #	@rm -f $(NAME)
-#	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(NO_COLOR)" | $(INDENT)
+#	@echo -e "$(HIORANGE)$(NAME) bin:[RM]$(RESET)" | $(INDENT)
 #
 #re_debug_parsing: fclean_debug_parsing debug_parsing
 

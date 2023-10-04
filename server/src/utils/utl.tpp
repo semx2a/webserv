@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print.tpp                                          :+:      :+:    :+:   */
+/*   utl.tpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/09/28 12:43:33 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/10/04 13:40:27 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "print.hpp"
+#include "utl.hpp"
 
 template <typename T>
-std::string	 print_vector(std::vector<T> const& vec) {
+std::string	 utl::print_vector(std::vector<T> const& vec) {
 	
     typename std::vector<T>::const_iterator it;
 	std::stringstream 						sstream;
@@ -28,7 +28,7 @@ std::string	 print_vector(std::vector<T> const& vec) {
 }
 
 template <typename T>
-std::string	 print_classVector(std::vector<T> const& vec) {
+std::string	 utl::print_classVector(std::vector<T> const& vec) {
 	
     typename std::vector<T>::const_iterator	it;
 	std::stringstream 						sstream;
@@ -43,7 +43,7 @@ std::string	 print_classVector(std::vector<T> const& vec) {
 }
 
 template <typename KeyType, typename ValueType>
-std::string	 print_map(std::map<KeyType, ValueType> const& myMap) {
+std::string	 utl::print_map(std::map<KeyType, ValueType> const& myMap) {
 
 	typename std::map<KeyType, ValueType>::const_iterator	it;
 	std::stringstream 										sstream;
@@ -58,7 +58,7 @@ std::string	 print_map(std::map<KeyType, ValueType> const& myMap) {
 }
 
 template <typename KeyType, typename T>
-std::string	 print_map_of_vectors(std::map<KeyType, T> const& myMap) {
+std::string	 utl::print_map_of_vectors(std::map<KeyType, T> const& myMap) {
 
     typename std::map<KeyType, T>::const_iterator	it;
 	std::stringstream 								sstream;
@@ -69,7 +69,7 @@ std::string	 print_map_of_vectors(std::map<KeyType, T> const& myMap) {
         
         sstream << GREEN;
         print_vector(it->second);
-        sstream << NO_COLOR << std::endl;
+        sstream << RESET << std::endl;
     }
 	return sstream.str();
 }

@@ -89,7 +89,6 @@ class Parser {
 		bool	isEndOfScope(std::string const& line) const;
 		void	isValidIPv4(std::string const& str) const;
 		void	isValidIPv6(std::string const& str) const;
-		void 	trimAndReplaceWhitespaces(std::string& input);
 		void	buildAndThrowParamError(std::string const& line) const;
 		void	searchIfCgi(LocationContext&, std::string&);
 

@@ -51,15 +51,15 @@ void	ServerContext::setDefaults() {
 
 std::ostream &	operator<<(std::ostream & o, ServerContext const & sc) {
 
-	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.autoindex()		<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.maxBodySize()						<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.root()								<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "listen: " 			<< HIGREEN << print_map(sc.listen()) 				<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "errorPages: " 		<< HIGREEN << print_map(sc.errorPages()) 			<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "locations: " 		<< HIGREEN << print_map(sc.locations())				<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "index: " 			<< HIGREEN << print_vector(sc.index())				<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "authorizedMethods: "	<< HIGREEN << print_vector(sc.authorizedMethods()) 	<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(21) << "serverNames: " 		<< HIGREEN << print_vector(sc.serverNames())			<< NO_COLOR << std::endl;
+	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.autoindex()			<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.maxBodySize()							<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.root()									<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "listen: " 			<< HIGREEN << utl::print_map(sc.listen()) 				<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "errorPages: " 		<< HIGREEN << utl::print_map(sc.errorPages()) 			<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "locations: " 		<< HIGREEN << utl::print_map(sc.locations())			<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "index: " 			<< HIGREEN << utl::print_vector(sc.index())				<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "authorizedMethods: "	<< HIGREEN << utl::print_vector(sc.authorizedMethods()) << RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "serverNames: " 		<< HIGREEN << utl::print_vector(sc.serverNames())		<< RESET << std::endl;
 
 	return o;
 

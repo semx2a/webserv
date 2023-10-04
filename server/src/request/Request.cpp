@@ -51,57 +51,11 @@ t_headers const &		 	Request::headers(void) const { return this->_headers; }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
-int Request::_find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
-    // Convert the vector of characters to a string
-    std::string haystack_str(haystack.begin(), haystack.end());
-
-    // Use rfind to find the last occurrence of the needle
-    size_t pos = haystack_str.rfind(needle);
-
-    // If the needle is not found, return -1
-    if(pos == std::string::npos) {
-        return -1;
-    }
-
-    // Otherwise, return the position of the last character of the needle
-    return pos + needle.size() - 1;
-}
-
-
 void Request::_parseBody(std::vector<char> const& str_vec) {
 	
-	int pos = this->_find_last_occurrence(str_vec, "\r\n\r\n");
+	int pos = utl::find_last_occurrence(str_vec, "\r\n\r\n");
 	
 	this->_body.assign(str_vec.begin() + (pos + 1), str_vec.end());
-}
-
-std::string Request::_trim(const std::string& str)
-{
-    const std::string ws = " \n\r\t\f\v";
-    
-    size_t start = str.find_first_not_of(ws);
-    if (start == std::string::npos)
-        return ""; // no content except whitespace
-
-    size_t end = str.find_last_not_of(ws);
-    
-    return str.substr(start, end-start+1);
-}
-
-std::vector<std::string> Request::_tokenize(const std::string str, char sep) {
-	
-	std::vector<std::string>	token_vector;
-	std::string					token;
-	std::istringstream 			str_stream(str);
-
-	while (getline(str_stream, token, sep))
-	{
-		token_vector.push_back(token);
-		if (token.empty())
-			throw HeadersException();
-	}
-	
-	return token_vector;
 }
 
 void Request::_parseHeaders(std::istringstream &stream) {
@@ -114,7 +68,7 @@ void Request::_parseHeaders(std::istringstream &stream) {
 	
 	while (std::getline(stream, line, '\r')) {
 
-		line = this->_trim(line);
+		line = utl::trim(line);
 		if (!line.empty())
 			headers_vec.push_back(line);
 	}
@@ -131,17 +85,16 @@ void Request::_parseHeaders(std::istringstream &stream) {
 		std::getline(hd_line, hd_values);
 
 		if (hd_key.empty())
-			throw HeadersException();
+			throw HttpStatus("400");
 		if (hd_values.empty())
-			throw HeadersException();
+			hd_values = "";
 		
-		hd_values = this->_trim(hd_values);
+		hd_values = utl::trim(hd_values);
  		this->_headers[hd_key] = hd_values;
-		//this->_headers[hd_key] = this->_tokenize(hd_values, ',');
 	}
 	
 	if (this->headers().empty())
-		throw HeadersException();
+		throw HttpStatus("400");
 }
 
 void Request::_parseRequestLine(std::istringstream &stream) {
@@ -149,7 +102,7 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 	stream >> this->_method >> this->_target >> this->_version;
 
 	if (this->_method.empty() || this->_target.empty() || this->_version.empty())
-		throw RequestLineException();
+		throw HttpStatus("400");
 }
 
 void Request::parser(std::vector<char> const& str_vec) {
@@ -174,13 +127,13 @@ void Request::parser(std::vector<char> const& str_vec) {
 
 std::ostream &operator<<(std::ostream &o, Request const &r) {
 
-	o << "  " << str_of(60, ":") << std::endl << std::endl;
+	o << "  " << utl::str_of(60, ":") << std::endl << std::endl;
 	o << "method: " 	<< r.method() << std::endl;
 	o << "target: "		<< r.target() << std::endl;
 	o << "version: "	<< r.version() << std::endl;
 	o << "query: "		<< r.query() << std::endl;
-	o << "headers: "	<< print_map(r.headers()) << std::endl;
-	o << "body: " 		<< print_vector(r.body()) << std::endl;
+	o << "headers: "	<< utl::print_map(r.headers()) << std::endl;
+	o << "body: " 		<< utl::print_vector(r.body()) << std::endl;
 
 	return o;
 }

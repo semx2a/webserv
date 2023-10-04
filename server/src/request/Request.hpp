@@ -11,8 +11,9 @@
 # include <algorithm>
 
 # include "Epoll.hpp"
-# include "print.hpp"
+# include "utl.hpp"
 # include "macros.hpp"
+# include "HttpStatus.hpp"
 
 typedef std::map<std::string, std::string>	t_headers;
 
@@ -45,18 +46,6 @@ class Request {
 		//METHODS
 		void	parser(std::vector<char> const& raw);
 		
-		//ERRORS
-		class RequestLineException : public std::exception { 
-			virtual const char* what() const throw() 
-			{ return "Bad Request Line"; }};
-		class HeadersException : public std::exception { 
-			virtual const char* what() const throw() 
-			{ return "Bad headers"; }};
-		
-		class BodyException : public std::exception { 
-			virtual const char* what() const throw() 
-			{ return "Bad body"; }};
-	
 	private:
 
 		//VARIABLES	
@@ -73,7 +62,6 @@ class Request {
 		void						_parseBody(std::vector<char> const&);
 
 		std::vector<std::string>	_tokenize(const std::string, char);
-		std::string 				_trim(const std::string&);
 		int 						_find_last_occurrence(const std::vector<char>& haystack, const std::string& needle);
 };
 

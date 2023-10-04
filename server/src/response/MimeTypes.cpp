@@ -50,7 +50,6 @@ t_lexicon	MimeTypes::initFile(std::string const& fileName) {
 			mimeMap[key] = value;
 		}
     }
-	print_map(mimeMap);
 	file.close();
 	return mimeMap;
 }

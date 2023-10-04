@@ -9,7 +9,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 	while (std::getline(stream, line)) {
 
 		this->_linesRead++;
-		this->trimAndReplaceWhitespaces(line);
+		line = utl::trimAndReplaceWs(line);
 		#ifdef DEBUG_PARSER
 			std::cout << "[server scope] line " << _linesRead << ": " << line << std::endl;
 		#endif
@@ -23,7 +23,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 
 			LocationContext	newLocationCtxt;
 			std::string path = line.substr(line.find_first_of(" ") + 1, line.find_first_of("{") - line.find_first_of(" ") - 1);
-			this->trimAndReplaceWhitespaces(path);
+			path = utl::trimAndReplaceWs(path);
 			searchIfCgi(newLocationCtxt, path);
 			parseLocationContext(stream, newLocationCtxt);
 			context.addLocation(path, newLocationCtxt);
@@ -57,7 +57,7 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 	while (std::getline(stream, line)) {
 
 		this->_linesRead++;
-		this->trimAndReplaceWhitespaces(line);
+		line = utl::trimAndReplaceWs(line);
 		#ifdef DEBUG_PARSER
 		std::cout << "[Location scope] line " << _linesRead << ": " << line << std::endl;
 		#endif

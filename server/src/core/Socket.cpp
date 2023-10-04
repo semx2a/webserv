@@ -52,7 +52,7 @@ void	Socket::_createSocket() {
 
 	this->_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_fd == -1)
-		throw std::runtime_error("socket(): " +(std::string) strerror(errno));
+		throw std::runtime_error("socket(): " + (std::string) strerror(errno));
 }
 
 
@@ -72,7 +72,7 @@ void	Socket::_setServerAddr() {
 
 void	Socket::_bindSock() {
 
-	std::cout << RED << "Binding listening socket " << this->_fd << " to port " << this->_port << " ..." << NO_COLOR << std::endl;
+	std::cout << RED << "Binding listening socket " << this->_fd << " to port " << this->_port << " ..." << RESET << std::endl;
 	if (bind(this->_fd, (struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) == -1) {
 		
 		close(this->_fd);

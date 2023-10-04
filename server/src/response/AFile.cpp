@@ -1,8 +1,8 @@
 #include "AFile.hpp"
 
-//t_lexicon 	AFile::_lexicon = AFile::_initLexicon();
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
+
 AFile::AFile() {}
 
 AFile::AFile(const std::string &filename) {
@@ -39,19 +39,6 @@ void	AFile::setLexicon(t_lexicon const & lexicon) { this->_lexicon = lexicon; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-std::string AFile::_trim(std::string const& str)
-{
-    const std::string ws = " \n\r\t\f\v";
-    
-    size_t start = str.find_first_not_of(ws);
-    if (start == std::string::npos)
-        return ""; // no content except whitespace
-
-    size_t end = str.find_last_not_of(ws);
-    
-    return str.substr(start, end-start+1);
-}
-
 t_lexicon AFile::_initFile(std::string const& filename) {
 
 	std::ifstream	file(filename.c_str());
@@ -80,17 +67,10 @@ t_lexicon AFile::_initFile(std::string const& filename) {
 
 		sstream >> key;
 		std::getline(sstream, value, ';');
-		value = _trim(value);
+		value = utl::trim(value);
 		lexiconFile[key] = value;
 	}
 	
 	file.close();
 	return (lexiconFile);
 }
-
-/* t_lexicon	AFile::_initLexicon() {
-
-	t_lexicon	lexicon;
-	lexicon[""] = "";
-	return lexicon;
-} */

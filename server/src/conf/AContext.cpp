@@ -55,6 +55,7 @@ void	AContext::setDefaults() {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
 		this->_authorizedMethods.push_back("DELETE");
+		this->_authorizedMethods.push_back("ERROR");
 	}
 	if (this->_errorPages.empty())
 		this->_errorPages[404] = "../www/html/404.html";

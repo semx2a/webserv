@@ -2,6 +2,7 @@
 # define LOCATION_CONTEXT_HPP
 
 #include "AContext.hpp"
+
 class LocationContext : public AContext {
 
 	public:

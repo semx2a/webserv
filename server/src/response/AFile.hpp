@@ -7,7 +7,7 @@
 # include <sstream>
 # include <map>
 
-# include "print.hpp"
+# include "utl.hpp"
 
 typedef std::map<std::string, std::string> t_lexicon;
 
@@ -30,7 +30,6 @@ class AFile {
 		t_lexicon			_lexicon;
 		std::string			_fileName;
 
-		std::string 		_trim(std::string const&);
 		virtual t_lexicon	_initFile(std::string const&);
 };
 

@@ -38,13 +38,13 @@ void	LocationContext::setDefaults() {
 
 std::ostream &	operator<<(std::ostream & o, LocationContext const & sc) {
 
-	o << HIPURPLE << "------ LocationContext ------"	<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(52) << "maxBodySize : " 		<< HIGREEN << sc.maxBodySize() 						<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(52) << "alias : " 			<< HIGREEN << sc.alias() 							<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(52) << "root : " 			<< HIGREEN << sc.root() 							<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(52) << "errorPages : " 		<< HIGREEN << print_map(sc.errorPages()) 			<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(52) << "authorizedMethods : "<< HIGREEN << print_vector(sc.authorizedMethods())	<< NO_COLOR << std::endl;
-	o << HIPURPLE << std::setw(62) << "-----------------------------"	<< NO_COLOR << std::endl;
+	o << HIPURPLE << "------ LocationContext ------"	<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "maxBodySize : " 		<< HIGREEN << sc.maxBodySize() 							<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "alias : " 			<< HIGREEN << sc.alias() 								<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "root : " 			<< HIGREEN << sc.root() 								<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "errorPages : " 		<< HIGREEN << utl::print_map(sc.errorPages()) 			<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "authorizedMethods : "<< HIGREEN << utl::print_vector(sc.authorizedMethods())	<< RESET << std::endl;
+	o << HIPURPLE << std::setw(62) << "-----------------------------"	<< RESET << std::endl;
 
 	return o;
 }

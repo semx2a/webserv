@@ -6,7 +6,7 @@ Engine::Engine() {}
 
 Engine::Engine(std::vector<ServerContext> const& serversContexts) : _epoll(serversContexts) {
 
-	std::cout	<< BCYAN << "\n~~~Server ready~~~\n" << NO_COLOR << std::endl;
+	std::cout	<< BCYAN << "\n~~~Server ready~~~\n" << RESET << std::endl;
 }
 
 Engine::Engine(Engine const& rhs) : _epoll(rhs.epoll()) {
@@ -61,11 +61,11 @@ void	Engine::connect() {
 				event = this->_epoll.readyEvent(i);
 				event_fd = event.data.fd;
 				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
-					log(event_fd, "Epoll error");
+					utl::log(event_fd, "Epoll error");
 					_closeSocket(event_fd);
 				}
 				else if (event.events & EPOLLRDHUP) {
-					log(event_fd, "Closed connexion");
+					utl::log(event_fd, "Closed connexion");
 					_closeSocket(event_fd);
 				}
 				else if (this->_epoll.isNewClient(event_fd)) {
@@ -102,7 +102,7 @@ void	Engine::_addNewClient(int serverFd) {
 	_epoll.addSocketToEpoll(clientSocket);
 	_serverContexts[clientSocket] = _epoll.servers().find(serverFd)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
-	log(clientSocket, "New client added");
+	utl::log(clientSocket, "New client added");
 	// TODO : set reusable ?	
 }
 
@@ -116,7 +116,7 @@ void	Engine::_readFromClient(int clientFd) {
 		throw std::runtime_error(RECVERR);
 	}
 	else if (bytesRead == 0) { 
-		log(clientFd, "End of connexion");
+		utl::log(clientFd, "End of connexion");
 		_closeSocket(clientFd);
 	}
 	else {
@@ -132,8 +132,9 @@ void	Engine::_readFromClient(int clientFd) {
 
 void	Engine::_handleBuffer(int clientFd) {
 
-	log(clientFd, "Buffer received");
-	std::cout << RED << std::string(_buffers[clientFd].raw().begin(), _buffers[clientFd].raw().end()) << NO_COLOR << std::endl;
+	utl::log(clientFd, "Buffer received");
+	std::cout << RED << std::string(_buffers[clientFd].raw().begin(), _buffers[clientFd].raw().end()) << RESET << std::endl;
+	std::cout << "nom nom" << std::endl;
 
 	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
@@ -146,17 +147,8 @@ void	Engine::_writeToClient(int clientFd) {
 
 	Response res(this->_requests[clientFd], this->_serverContexts[clientFd]);
 	
-/* 	if (res.request().method() == "GET")
-		res.handleGet();
-//	else if (res.request().method == "POST")
-//		res.handlePost();
-	else if (res.request().method() == "DELETE")
-		res.handleDelete();
-//	else
-//		throw (405) // method not allowed
- */
-	log(clientFd, "Response about to be sent!");
-	std::cout << RED << res.responseStr() << NO_COLOR << std::endl;
+	utl::log(clientFd, "Response about to be sent!");
+	std::cout << RED << res.responseStr() << RESET << std::endl;
 
 	if ((send(clientFd, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw std::runtime_error(SENDERR);

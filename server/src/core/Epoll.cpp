@@ -109,7 +109,7 @@ int		Epoll::waitForConnexions() {
 	if (numEvents < 0) {
 		throw std::runtime_error(EWAITERR);
 	}
-	print_wait();
+	utl::print_wait();
 	return numEvents;
 }
 
