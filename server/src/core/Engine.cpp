@@ -133,7 +133,7 @@ void	Engine::_readFromClient(int clientFd) {
 void	Engine::_handleBuffer(int clientFd) {
 
 	log(clientFd, "Buffer received");
-//	std::cout << RED << &this->_buffers[clientFd].raw()[0] << NO_COLOR << std::endl;
+	std::cout << RED << std::string(_buffers[clientFd].raw().begin(), _buffers[clientFd].raw().end()) << NO_COLOR << std::endl;
 
 	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
