@@ -32,10 +32,11 @@ def test_delete(endpoint):
 if __name__ == "__main__":
 	# Test d'une requête GET sur l'endpoint "/"
 	test_get("/")
+	test_get("/")
 
 	# Test d'une requête GET sur l'endpoint "/data"
-	test_get_with_params("/nyah", {"key": "value"})
-	test_get_with_params("/", {"key": "value"})
+#	test_get_with_params("/nyah", {"key": "value"})
+	#test_get_with_params("/", {"key": "value"})
 
 	# Test d'une requête POST sur l'endpoint "/data" avec un objet JSON comme donnée
 #	test_post("/data", {"key": "value"})

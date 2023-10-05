@@ -74,6 +74,11 @@ class Response {
 		void		handlePost();
 		void		handleDelete();
 
+		struct MethodsMap {
+			typedef std::map<std::string, void(Response::*)()> type;
+		};
+		
+
 	private:
 
 		// ::::::::::::::::::::::::::: ATTRIBUTES
@@ -94,19 +99,20 @@ class Response {
 		std::string		_responseStr;
 
 		// :::::::::::::::::::::::::::::: METHODS
-		void		_checkAllowedMethods();
-		void		_expandTarget();
-		void		_setRootOrAlias(t_locationIterator, std::string const&, std::string&);
+		MethodsMap::type 	_initMethods();
+		void				_checkAllowedMethods();
+		void				_expandTarget();
+		void				_setRootOrAlias(t_locationIterator, std::string const&, std::string&);
 		// GET
-		void		_expandDirectory();
-		void		_autoIndex();
-		void		_assignIndex(std::vector<std::string> const&);
-		void		_runCgi();
+		void				_expandDirectory();
+		void				_autoIndex();
+		void				_assignIndex(std::vector<std::string> const&);
+		void				_runCgi();
 
 		// ::::::::::::::::::::::::::::::: UTILS
-		std::string	_get_link(std::string const &, std::string const &);
-		bool		_isDirectory();
-		bool		_isCgi();
+		std::string			_get_link(std::string const &, std::string const &);
+		bool				_isDirectory();
+		bool				_isCgi();
 
 
 };

@@ -11,6 +11,7 @@ Response::Response(Request const& request, ServerContext const& serverContext, H
 
 	StatusCodes	statusCodes;
 	MimeTypes	mimeTypes;
+	Response::MethodsMap::type	methodsMap = _initMethods();
 
 	try {
 		
@@ -18,47 +19,36 @@ Response::Response(Request const& request, ServerContext const& serverContext, H
 			
 			_checkAllowedMethods();
 			_expandTarget();
-			std::cout << GREEN << "PATH: " << _path << RESET << std::endl;
-			if (_request.method() == "GET")
-				handleGet();
-			else if (_request.method() == "POST")
-				handlePost();
-			else if (_request.method() == "DELETE")
-				handleDelete();
-			else
-				throw HttpStatus("405"); // method not allowed
-
-			//_statusLine = "HTTP/1.1 200 OK";
-			_statusLine = "HTTP/1.1 " + _status.statusCode() + " " + statusCodes.getReasonPhrase(_status.statusCode());
-			_statusLine += CRLF;
+			methodsMap[_request.method()];
 		}
 		else
 			throw HttpStatus(_status.statusCode());
 	}
 	catch (HttpStatus& e) {
-  		
-		#ifdef DEBUG_RESPONSE
-		std::cout << "HttpStatus: " << e.statusCode() << std::endl;
-		#endif
 
-		StatusLine	statusLine(e.statusCode(), statusCodes);
-		
-		statusLine.build();
-		this->_statusLine = statusLine.getMessage();
+		_status.setStatusCode(e.statusCode());
+	}
+
+ 	StatusLine	statusLine(_status.statusCode(), statusCodes);
+	
+	statusLine.build();
+	this->_statusLine = statusLine.getMessage();
+	
+	if (_status.statusCode() != "200" || _status.statusCode() != "202") {
 		
 		std::stringstream bodyError;
-		bodyError << "<html><body><h1>" << e.statusCode() << "</h1></body></html>";
+		bodyError << "<html><body><h1>" << _status.statusCode() << "</h1></body></html>";
 		_body = bodyError.str();
 	}
 	std::string ext = _path.substr(_path.find_last_of('.') + 1);
-	std::cout << "PATH: " << _path << std::endl;
-	std::cout << "EXTENSION: " << ext << std::endl;
-	std::cout << "MIME TYPE: " << mimeTypes.getMimeType(ext) << std::endl;
 	std::stringstream headers;
+
 	headers << "Content-Type: " << mimeTypes.getMimeType(ext) << CRLF;
 	headers << "Content-Length: " << _body.length() << CRLF;
 	headers << CRLF;
+
 	_headers = headers.str();
+	
 	_responseStr = _statusLine + _headers + _body;
 }
 
@@ -111,6 +101,17 @@ void	Response::setResponseStr(std::string const& responseStr) { _responseStr = r
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: COMMON::
 
+Response::MethodsMap::type	Response::_initMethods() {
+	
+	Response::MethodsMap::type	methodsMap;
+
+	methodsMap["GET"] = &Response::handleGet;
+	methodsMap["POST"] = &Response::handlePost;
+	methodsMap["DELETE"] = &Response::handleDelete;
+	
+	return methodsMap;
+}
+
 void	Response::_expandTarget() {
 
 	std::string target = _request.target();
@@ -126,10 +127,6 @@ void	Response::_expandTarget() {
 		path = _serverContext.root() + target;
 	}
 	_path = path;
-
-	#ifdef DEBUG_RESPONSE
-	std::cout << "[DEBUG] Expanded path: " << _path << std::endl;
-	#endif
 }
 
 void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target, std::string& path) {
@@ -152,14 +149,11 @@ void	Response::_checkAllowedMethods() {
 	if (it != itEnd) {
 		std::vector<std::string> const& authorizedMethods = it->second.authorizedMethods();
 		if (std::find(authorizedMethods.begin(), authorizedMethods.end(), _request.method()) == authorizedMethods.end()) {
-			std::cout << "meow" << std::endl;
-			throw HttpStatus("404");
+			throw HttpStatus("405");
 		}
 	}
 	else if (std::find(_serverContext.authorizedMethods().begin(), _serverContext.authorizedMethods().end(), _request.method()) == _serverContext.authorizedMethods().end()) {
-		std::cout << "METHOD: " << _request.method() << std::endl;
-			std::cout << "nyah" << std::endl;
-		throw HttpStatus("404");
+		throw HttpStatus("405");
 	}
 }
 

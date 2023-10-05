@@ -153,8 +153,10 @@ void	Engine::_handleBuffer(int clientFd) {
 	catch (HttpStatus& e) {
 		this->_status[clientFd].setStatusCode(e.statusCode());
 	}
-	
-	this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
+	if (this->_buffers[clientFd].isRequestEnded()	|| this->_status[clientFd].statusCode() != "202"
+													|| this->_status[clientFd].statusCode() != "200") {
+		this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
+	}
 }
 
 void	Engine::_writeToClient(int clientFd) {
@@ -168,11 +170,11 @@ void	Engine::_writeToClient(int clientFd) {
 		throw std::runtime_error(SENDERR);
 	}
 	//TODO: dont close if header keep-alive
-	if (this->_requests[clientFd].header("Connection") == "close")
+	if (this->_requests[clientFd].header("Connection") == "close") {
 		_closeSocket(clientFd);
-	else
-	{
-		_buffers.erase(clientFd);
+	}
+	else {
+		this->_buffers.erase(clientFd);
 		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
 	}
 	_status[clientFd].setStatusCode("200");

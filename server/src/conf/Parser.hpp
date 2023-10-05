@@ -43,22 +43,11 @@ class Parser {
 		
 		template <typename Context>
 		void	parseLocationContext(std::stringstream& stream, Context& context);
-
-	  	template <typename Context>
-		struct ParserFunctionWrapper {
-			typedef void (Parser::*ParserFunction)(std::string const&, Context&);
-		};
-	  	
-		template <typename Context>
-		struct DirectivePair {
-			typedef std::pair<std::string, void(Parser::*)(std::string const&, Context&)> type;
-		};
 		
 		template <typename Context>
 		struct DirectiveMap {
 			typedef std::map<std::string, void(Parser::*)(std::string const&, Context&)> type;
 		};
-
 		
 		DirectiveMap<ServerContext>::type initializeServerDirectives();
 		DirectiveMap<LocationContext>::type initializeLocationDirectives();
