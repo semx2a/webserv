@@ -98,6 +98,7 @@ void	Epoll::editSocketInEpoll(int fd, int eventToWatch) {
 	std::memset((char *)&this->_toPoll, 0, sizeof(this->_toPoll));
 	this->_toPoll.events = eventToWatch; 
 	this->_toPoll.data.fd = fd;  
+	std::cout << "fd: " << fd << std::endl;
 	if (epoll_ctl(this->_listener, EPOLL_CTL_MOD, fd, &this->_toPoll) < 0) {
 		throw std::runtime_error(ECTLERR);
 	}

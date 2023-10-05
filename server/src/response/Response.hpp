@@ -33,10 +33,10 @@ class Response {
 	public:
 
 		Response();
-		Response(Request const& request, ServerContext const& serverContext);
-		Response(Response const& rhs);
+		Response(Request const&, ServerContext const&t, HttpStatus const&);
+		Response(Response const&);
 		~Response();
-		Response& operator=(Response const& rhs);
+		Response& operator=(Response const&);
 
 		// :::::::::::::::::::::::::::: ACCESSORS
 		// CONTEXT
@@ -56,18 +56,18 @@ class Response {
 		// ::::::::::::::::::::::::::::::: MUTATORS
 
 		// CONTEXT
-		void		setRequest(Request const& request);
-		void		setServerContext(ServerContext const& serverContext);
+		void		setRequest(Request const&);
+		void		setServerContext(ServerContext const&);
 
 		// UTILS
-		void		setPath(std::string const& path);
-		void		setContentType(std::string const& contentType);
+		void		setPath(std::string const&);
+		void		setContentType(std::string const&);
 
 		// COMPONENTS
-		void		setStatusLine(std::string const& statusLine);
-		void		setHeaders(std::string const& headers);
-		void		setBody(std::string const& body);
-		void		setResponseStr(std::string const& responseStr);
+		void		setStatusLine(std::string const&);
+		void		setHeaders(std::string const&);
+		void		setBody(std::string const&);
+		void		setResponseStr(std::string const&);
 
 		// :::::::::::::::::::::::::: HTPP METHODS
 		void		handleGet();
@@ -80,6 +80,7 @@ class Response {
 		// CONTEXT
 		Request			_request;
 		ServerContext	_serverContext;
+		HttpStatus		_status;
 
 		// UTILS
 		std::string		_path;

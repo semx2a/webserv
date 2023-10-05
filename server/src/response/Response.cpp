@@ -2,31 +2,38 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Response::Response() {
+Response::Response() : _status("200") {
 
 	//TODO
 }
 
-Response::Response(Request const& request, ServerContext const& serverContext) : _request(request), _serverContext(serverContext) {
+Response::Response(Request const& request, ServerContext const& serverContext, HttpStatus const& status) : _request(request), _serverContext(serverContext), _status(status) {
 
 	StatusCodes	statusCodes;
 	MimeTypes	mimeTypes;
 
 	try {
 		
-		_checkAllowedMethods();
-		_expandTarget();
-		if (_request.method() == "GET")
-			handleGet();
-		else if (_request.method() == "POST")
-			handlePost();
-		else if (_request.method() == "DELETE")
-			handleDelete();
-		else
-			throw HttpStatus("405"); // method not allowed
+		if (_status.statusCode() == "200" || _status.statusCode() == "202") {	
+			
+			_checkAllowedMethods();
+			_expandTarget();
+			std::cout << GREEN << "PATH: " << _path << RESET << std::endl;
+			if (_request.method() == "GET")
+				handleGet();
+			else if (_request.method() == "POST")
+				handlePost();
+			else if (_request.method() == "DELETE")
+				handleDelete();
+			else
+				throw HttpStatus("405"); // method not allowed
 
-		_statusLine = "HTTP/1.1 200 OK";
-		_statusLine += CRLF;
+			//_statusLine = "HTTP/1.1 200 OK";
+			_statusLine = "HTTP/1.1 " + _status.statusCode() + " " + statusCodes.getReasonPhrase(_status.statusCode());
+			_statusLine += CRLF;
+		}
+		else
+			throw HttpStatus(_status.statusCode());
 	}
 	catch (HttpStatus& e) {
   		
@@ -55,7 +62,7 @@ Response::Response(Request const& request, ServerContext const& serverContext) :
 	_responseStr = _statusLine + _headers + _body;
 }
 
-Response::Response(Response const& rhs) {
+Response::Response(Response const& rhs) : _status("200") {
 
 	if (this != &rhs)
 		*this = rhs;
@@ -197,7 +204,6 @@ void	Response::handleDelete(void) {
 		throw HttpStatus("403");
 	if (std::remove(this->_path.c_str()) != 0)
 		throw HttpStatus("204");
-	throw HttpStatus("200");	
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXPANSION::
