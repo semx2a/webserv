@@ -13,6 +13,7 @@
 
 #include "Request.hpp"
 #include "ServerContext.hpp"
+#include "HttpStatus.hpp"
 
 typedef unsigned long long t_ull;
 
@@ -30,6 +31,7 @@ class Buffer {
 		bool						hasBody() const;
 		bool						hasContentLength() const;
 		size_t						contentLength() const;
+		t_ull						remainingContentLength() const;
 		size_t						headerSize() const;
 		bool						isTransferEncoding() const;
 		bool						isRequestEnded() const;
@@ -39,6 +41,7 @@ class Buffer {
 		void						setMaxBodySize(size_t maxBodySize);
 		void						setHasBody(bool hasBody);
 		void						setHasContentLength(bool hasContentLength);
+		void						setRemainingContentLength(t_ull remainingContentLength);
 		void						setHeaderSize(size_t headerSize);
 		void						setIsTransferEncoding(bool isTransferEncoding);
 		void						setIsEnded(bool isEnded);
@@ -55,6 +58,7 @@ class Buffer {
 		bool					_hasBody;
 		bool					_hasContentLength;
 		t_ull					_contentLength;
+		t_ull					_remainingContentLength;
 		size_t					_headerSize;
 		bool					_isTransferEncoding;
 		bool					_isEnded;

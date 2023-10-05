@@ -102,6 +102,7 @@ void	Engine::_addNewClient(int serverFd) {
 	_epoll.addSocketToEpoll(clientSocket);
 	_serverContexts[clientSocket] = _epoll.servers().find(serverFd)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
+	_status[clientSocket].setStatusCode("200");
 	utl::log(clientSocket, "New client added");
 	// TODO : set reusable ?	
 }
@@ -109,7 +110,11 @@ void	Engine::_addNewClient(int serverFd) {
 
 void	Engine::_readFromClient(int clientFd) {
 
-	std::vector<char>	buffer(BUFFER_SIZE, '\0');
+	size_t buffersize = (this->_buffers[clientFd].hasBody() 
+						and this->_buffers[clientFd].remainingContentLength() < BUFFER_SIZE) 
+						? this->_buffers[clientFd].remainingContentLength() : BUFFER_SIZE;
+
+	std::vector<char>	buffer(buffersize, '\0');
 
 	int	bytesRead = recv(clientFd, &buffer[0], buffer.size(), 0);
 	if (bytesRead < 0) {
@@ -122,30 +127,39 @@ void	Engine::_readFromClient(int clientFd) {
 	else {
 		buffer.resize(bytesRead);
 	}
-	this->_buffers[clientFd].add(buffer);
-	// TODO: catch RequestError 
-	// atoi du e.what()
-	// case switch sur le code d'erreur
-	this->_buffers[clientFd].checkEnd();
-	_handleBuffer(clientFd);
+	try {
+		this->_buffers[clientFd].add(buffer);
+		this->_buffers[clientFd].checkEnd();
+		this->_buffers[clientFd].setRemainingContentLength(this->_buffers[clientFd].remainingContentLength() - bytesRead);
+		_handleBuffer(clientFd);
+	}
+	catch (HttpStatus& e) {
+		this->_status[clientFd].setStatusCode(e.statusCode());
+	}
 }
 
 void	Engine::_handleBuffer(int clientFd) {
 
 	utl::log(clientFd, "Buffer received");
 	std::cout << RED << std::string(_buffers[clientFd].raw().begin(), _buffers[clientFd].raw().end()) << RESET << std::endl;
-	std::cout << "nom nom" << std::endl;
 
 	if (!this->_buffers[clientFd].isRequestEnded())
 		return ;
-
-	this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
+	
+	try {
+		this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
+		this->_status[clientFd].setStatusCode("202");
+	}
+	catch (HttpStatus& e) {
+		this->_status[clientFd].setStatusCode(e.statusCode());
+	}
+	
 	this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
 }
 
 void	Engine::_writeToClient(int clientFd) {
 
-	Response res(this->_requests[clientFd], this->_serverContexts[clientFd]);
+	Response res(this->_requests[clientFd], this->_serverContexts[clientFd], this->_status[clientFd]);
 	
 	utl::log(clientFd, "Response about to be sent!");
 	std::cout << RED << res.responseStr() << RESET << std::endl;
@@ -161,6 +175,7 @@ void	Engine::_writeToClient(int clientFd) {
 		_buffers.erase(clientFd);
 		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
 	}
+	_status[clientFd].setStatusCode("200");
 }
 
 void	Engine::_closeSocket(int fd) {

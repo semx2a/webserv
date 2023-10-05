@@ -42,6 +42,7 @@ std::vector<char> const&	Buffer::raw() const { return _raw; }
 size_t						Buffer::maxBodySize() const { return _maxBodySize; }
 bool						Buffer::hasBody() const { return _hasBody; }
 bool						Buffer::hasContentLength() const { return _hasContentLength; }
+t_ull						Buffer::remainingContentLength() const { return _contentLength - (_raw.size() - _headerSize); }
 size_t						Buffer::contentLength() const { return _contentLength; }
 size_t						Buffer::headerSize() const { return _headerSize; }
 bool						Buffer::isTransferEncoding() const { return _isTransferEncoding; }
@@ -55,6 +56,7 @@ void		Buffer::setMaxBodySize(size_t maxBodySize) { _maxBodySize = maxBodySize; }
 void		Buffer::setStr(std::string requestStr) { _str = requestStr; }
 void		Buffer::setHasBody(bool hasBody) { _hasBody = hasBody; }
 void		Buffer::setHasContentLength(bool hasContentLength) { _hasContentLength = hasContentLength; }
+void		Buffer::setRemainingContentLength(t_ull remainingContentLength) { _remainingContentLength = remainingContentLength; }
 void		Buffer::setHeaderSize(size_t headerSize) { _headerSize = headerSize; }
 void		Buffer::setIsTransferEncoding(bool isTransferEncoding) { _isTransferEncoding = isTransferEncoding; }
 void		Buffer::setIsEnded(bool isEnded) { _isEnded = isEnded; }
@@ -106,12 +108,13 @@ void		Buffer::checkEnd() {
 void	Buffer::_searchContentLength() {
 
 	size_t content_length_pos = _str.find("Content-Length: ");
+	
 	if (content_length_pos != std::string::npos) {
-		std::cout << "Content-Length found: " << this->_contentLength << std::endl;
+
 		this->setContentLength (std::atoll(_str.substr(content_length_pos + 16).c_str()));
+		this->setRemainingContentLength (this->_contentLength);
 		if (this->_contentLength > this->_maxBodySize) {
-			// TODO throw RequestError413("413");
-			throw std::runtime_error("Content-Length too big"); // TODO: build response
+			throw HttpStatus("413");
 		}
 		this->_hasBody = true;
 		this->_headerSize = this->_raw.size();
