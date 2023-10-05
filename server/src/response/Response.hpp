@@ -86,6 +86,7 @@ class Response {
 
 		// ::::::::::::::::::::::::::::::: UTILS
 		std::string			_get_link(std::string const &, std::string const &);
+		void				_findExtension();
 		bool				_isDirectory();
 		bool				_isCgi();
 

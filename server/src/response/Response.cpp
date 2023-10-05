@@ -68,6 +68,7 @@ void	Response::buildResponse() {
 		
 		Response::MethodsMap::type	methodsMap = _initMethods();
 		(this->*methodsMap[_request.method()])();
+		_status.setStatusCode("200");
 	}
 	catch (HttpStatus& e) {
 
@@ -112,7 +113,6 @@ void	Response::_handleGet () {
 	
 	if (!file.is_open()) {
 		throw HttpStatus("404");
-		return ;
 	}
 
 	std::stringstream	bodyContent;
@@ -124,7 +124,7 @@ void	Response::_handleGet () {
 	}
 	
 	file.close();
-	
+	this->_findExtension();
 	this->_body.build(bodyContent.str());
 }
 
@@ -170,7 +170,6 @@ void	Response::_expandTarget() {
 		path = _serverContext.root() + target;
 	}
 	_path = path;
-	_extension = _path.substr(_path.find_last_of('.') + 1);
 }
 
 void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target, std::string& path) {
@@ -317,6 +316,14 @@ std::string		Response::_get_link(std::string const &dir_entry, std::string const
 bool	Response::_isDirectory() {
 
 	return _path.find_last_of('/') == _path.size() - 1;
+}
+
+void	Response::_findExtension() {
+
+	std::cout << "path: " << _path << std::endl;
+	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
+
+	std::cout << "extension: " << _extension << std::endl;
 }
 
 bool	Response::_isCgi() {

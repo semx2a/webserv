@@ -120,6 +120,8 @@ void	Engine::_readFromClient(int clientFd) {
 
 	int	bytesRead = recv(clientFd, &buffer[0], buffer.size(), 0);
 	if (bytesRead < 0) {
+				std::cout << "ERROR: " << strerror(errno) << std::endl;
+
 		throw HttpStatus("500");
 	}
 	else if (bytesRead == 0) { 
@@ -150,13 +152,8 @@ void	Engine::_handleBuffer(int clientFd) {
 		return ;
 	}
 	
-	try {
-		this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
-		this->_status[clientFd].setStatusCode("");
-	}
-	catch (HttpStatus& e) {
-		this->_status[clientFd].setStatusCode(e.statusCode());
-	}
+	this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
+	//this->_status[clientFd].setStatusCode("");
 	if (this->_buffers[clientFd].isRequestEnded()	|| this->_status[clientFd].statusCode() != "202"
 													|| this->_status[clientFd].statusCode() != "200") {
 		this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
