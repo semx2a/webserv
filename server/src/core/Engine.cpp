@@ -62,11 +62,11 @@ void	Engine::connect() {
 				event_fd = event.data.fd;
 				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
 					utl::log(event_fd, "Epoll error");
-					_closeSocket(event_fd);
+					_endConnexion(event_fd);
 				}
 				else if (event.events & EPOLLRDHUP) {
 					utl::log(event_fd, "Closed connexion");
-					_closeSocket(event_fd);
+					_endConnexion(event_fd);
 				}
 				else if (this->_epoll.isNewClient(event_fd)) {
 					_addNewClient(event_fd);
@@ -89,7 +89,6 @@ void	Engine::connect() {
 void	Engine::_addNewClient(int serverFd) {
 
 	int	clientSocket;
-
 	try {
 		clientSocket = accept(serverFd, NULL, NULL);
 		if (clientSocket < 0) {
@@ -102,27 +101,30 @@ void	Engine::_addNewClient(int serverFd) {
 	_epoll.addSocketToEpoll(clientSocket);
 	_serverContexts[clientSocket] = _epoll.servers().find(serverFd)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
-	_status[clientSocket].setStatusCode("200");
+	_status[clientSocket].setStatusCode("");
 	utl::log(clientSocket, "New client added");
-	// TODO : set reusable ?	
+	
+	int on = 1;
+	setsockopt(clientSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &on, sizeof(int));
 }
 
 
 void	Engine::_readFromClient(int clientFd) {
 
-	size_t buffersize = (this->_buffers[clientFd].hasBody() 
-						and this->_buffers[clientFd].remainingContentLength() < BUFFER_SIZE) 
-						? this->_buffers[clientFd].remainingContentLength() : BUFFER_SIZE;
-
+//	size_t buffersize = (this->_buffers[clientFd].hasBody() 
+//						and this->_buffers[clientFd].remainingContentLength() < BUFFER_SIZE) 
+//						? this->_buffers[clientFd].remainingContentLength() : BUFFER_SIZE;
+//
+	size_t buffersize = BUFFER_SIZE;
 	std::vector<char>	buffer(buffersize, '\0');
 
 	int	bytesRead = recv(clientFd, &buffer[0], buffer.size(), 0);
 	if (bytesRead < 0) {
-		throw std::runtime_error(RECVERR);
+		throw HttpStatus("500");
 	}
 	else if (bytesRead == 0) { 
 		utl::log(clientFd, "End of connexion");
-		_closeSocket(clientFd);
+		_endConnexion(clientFd);
 	}
 	else {
 		buffer.resize(bytesRead);
@@ -143,12 +145,14 @@ void	Engine::_handleBuffer(int clientFd) {
 	utl::log(clientFd, "Buffer received");
 	std::cout << RED << std::string(_buffers[clientFd].raw().begin(), _buffers[clientFd].raw().end()) << RESET << std::endl;
 
-	if (!this->_buffers[clientFd].isRequestEnded())
+	if (not this->_buffers[clientFd].isRequestEnded()) {
+		std::cout << "Request not ended" << std::endl;
 		return ;
+	}
 	
 	try {
 		this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
-		this->_status[clientFd].setStatusCode("202");
+		this->_status[clientFd].setStatusCode("");
 	}
 	catch (HttpStatus& e) {
 		this->_status[clientFd].setStatusCode(e.statusCode());
@@ -164,23 +168,24 @@ void	Engine::_writeToClient(int clientFd) {
 	Response res(this->_requests[clientFd], this->_serverContexts[clientFd], this->_status[clientFd]);
 	
 	utl::log(clientFd, "Response about to be sent!");
-	std::cout << RED << res.responseStr() << RESET << std::endl;
+	std::cout << GREEN << res.responseStr() << RESET << std::endl;
 
 	if ((send(clientFd, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
-		throw std::runtime_error(SENDERR);
+		throw HttpStatus("500");
 	}
-	//TODO: dont close if header keep-alive
 	if (this->_requests[clientFd].header("Connection") == "close") {
-		_closeSocket(clientFd);
+		_endConnexion(clientFd);
 	}
 	else {
-		this->_buffers.erase(clientFd);
+		//#ifdef DEBUG_ENGINE
+		//std::cout << "[DEBUG] Keep-alive" << std::endl;
+		//#endif
+		this->_buffers[clientFd].clear();
 		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
 	}
-	_status[clientFd].setStatusCode("200");
 }
 
-void	Engine::_closeSocket(int fd) {
+void	Engine::_endConnexion(int fd) {
 
 	this->_buffers.erase(fd);
 	close(fd);

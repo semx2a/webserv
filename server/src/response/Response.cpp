@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Response::Response() : _status("200") {
+Response::Response() : _status("") {
 
 	//TODO
 }
@@ -15,11 +15,12 @@ Response::Response(Request const& request, ServerContext const& serverContext, H
 
 	try {
 		
-		if (_status.statusCode() == "200" || _status.statusCode() == "202") {	
-			
-			_checkAllowedMethods();
+		if (_status.statusCode().empty()) {	
+
+//			_checkAllowedMethods();
 			_expandTarget();
-			methodsMap[_request.method()];
+			(this->*methodsMap[_request.method()])();
+			_status.setStatusCode("200");
 		}
 		else
 			throw HttpStatus(_status.statusCode());
@@ -27,6 +28,8 @@ Response::Response(Request const& request, ServerContext const& serverContext, H
 	catch (HttpStatus& e) {
 
 		_status.setStatusCode(e.statusCode());
+	std::cout << "[DEBUG] Status code: " << _status.statusCode() << std::endl;
+	std::cout << "[DEBUG] e.statusCode(): " << e.statusCode() << std::endl;
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes);
@@ -34,7 +37,7 @@ Response::Response(Request const& request, ServerContext const& serverContext, H
 	statusLine.build();
 	this->_statusLine = statusLine.getMessage();
 	
-	if (_status.statusCode() != "200" || _status.statusCode() != "202") {
+	if (_status.statusCode() != "200" && _status.statusCode() != "202") {
 		
 		std::stringstream bodyError;
 		bodyError << "<html><body><h1>" << _status.statusCode() << "</h1></body></html>";
@@ -52,7 +55,7 @@ Response::Response(Request const& request, ServerContext const& serverContext, H
 	_responseStr = _statusLine + _headers + _body;
 }
 
-Response::Response(Response const& rhs) : _status("200") {
+Response::Response(Response const& rhs) : _status(rhs.status()) {
 
 	if (this != &rhs)
 		*this = rhs;
@@ -77,6 +80,7 @@ Response& Response::operator=(Response const& rhs)
 
 Request const&			Response::request() const { return _request; }
 ServerContext const&	Response::serverContext() const { return _serverContext; }
+HttpStatus const&		Response::status() const { return _status; }
 
 std::string const&		Response::path() const { return _path; }
 std::string const&		Response::contentType() const { return _contentType; }
@@ -90,6 +94,7 @@ std::string const&		Response::responseStr() const { return _responseStr; }
 
 void	Response::setRequest(Request const& request) { _request = request; }
 void	Response::setServerContext(ServerContext const& serverContext) { _serverContext = serverContext; }
+void	Response::setStatus(HttpStatus const& status) { _status = status; }
 
 void	Response::setPath(std::string const& path) { _path = path; }
 void	Response::setContentType(std::string const& contentType) { _contentType = contentType; }
@@ -187,10 +192,17 @@ void	Response::handleGet () {
 
 void	Response::handlePost() {
 
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering handlePost" << std::endl;
+	#endif
 	
 }
 
 void	Response::handleDelete(void) {
+
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering handleDelete" << std::endl;
+	#endif
 
 	if (access(this->_path.c_str(), F_OK) == -1)
 		throw HttpStatus("404");

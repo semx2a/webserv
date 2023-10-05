@@ -1,7 +1,7 @@
 #ifndef ENGINE_HPP
 # define ENGINE_HPP
 
-//# define DEBUG_ENGINE
+# define DEBUG_ENGINE
 
 #include <exception>
 #include <iostream>
@@ -48,7 +48,7 @@ class Engine {
 		void				_readFromClient(int);
 		void				_writeToClient(int);
 		void				_handleBuffer(int);
-		void				_closeSocket(int);
+		void				_endConnexion(int);
 
 };
 

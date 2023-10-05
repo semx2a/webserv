@@ -49,6 +49,7 @@ class Buffer {
 		void						add(std::vector<char> raw);
 		void						checkEnd();
 		void						setContentLength(size_t contentLength);
+		void						clear();
 
 
 	private:

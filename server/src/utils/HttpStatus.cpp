@@ -2,7 +2,7 @@
 
 HttpStatus::HttpStatus() {
 
-	this->_statusCode = "200";
+	this->_statusCode = "";
 }
 
 HttpStatus::HttpStatus(HttpStatus const& src) {
@@ -30,4 +30,4 @@ void 				HttpStatus::setStatusCode(std::string const& statusCode) { _statusCode 
 
 const char*			HttpStatus::what() const throw() { return this->_statusCode.c_str(); }
 
-std::string HttpStatus::_statusCode = "200";
+std::string HttpStatus::_statusCode = "";

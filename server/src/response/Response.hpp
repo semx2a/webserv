@@ -42,6 +42,7 @@ class Response {
 		// CONTEXT
 		Request const&			request() const;
 		ServerContext const&	serverContext() const;
+		HttpStatus const&		status() const;
 
 		// UTILS
 		std::string const&		path() const;
@@ -58,6 +59,7 @@ class Response {
 		// CONTEXT
 		void		setRequest(Request const&);
 		void		setServerContext(ServerContext const&);
+		void		setStatus(HttpStatus const&);
 
 		// UTILS
 		void		setPath(std::string const&);

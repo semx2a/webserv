@@ -142,3 +142,16 @@ void	Buffer::_checkEndTransferEncoding() {
 	if (_str.find("0\r\n\r\n"))
 		_isEnded = true;
 }
+
+void	Buffer::clear() {
+	
+	_raw.clear();
+	_str.clear();
+	_hasBody = false;
+	_hasContentLength = false;
+	_contentLength = 0;
+	_remainingContentLength = 0;
+	_headerSize = 0;
+	_isTransferEncoding = false;
+	_isEnded = false;
+}
