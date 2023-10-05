@@ -71,6 +71,7 @@ class Response {
 
 		// UTILS
 		std::string			_path;
+		std::string			_extension;
 		std::string			_contentType;
 		std::string			_responseStr;
 

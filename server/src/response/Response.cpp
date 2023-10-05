@@ -75,11 +75,10 @@ void	Response::buildResponse() {
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	
-	std::string extension = _path.substr(_path.find_last_of('.') + 1);
-	Headers	headers(mimeTypes.getMimeType(extension), this->_body.getContentLength(), _serverContext);
+	Body		body(_body.getMessage());
+	Headers		headers(mimeTypes.getMimeType(_extension), body.getContentLength(), _serverContext);
 
-	_responseStr = statusLine.getMessage() + headers.getMessage() + this->_body.getMessage();
+	_responseStr = statusLine.getMessage() + headers.getMessage() + body.getMessage();
 }
 
 
@@ -171,6 +170,7 @@ void	Response::_expandTarget() {
 		path = _serverContext.root() + target;
 	}
 	_path = path;
+	_extension = _path.substr(_path.find_last_of('.') + 1);
 }
 
 void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target, std::string& path) {
