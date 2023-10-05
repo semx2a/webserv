@@ -4,6 +4,10 @@
 
 Body::Body() : ARespComponent() {}
 
+Body::Body(std::string const & message) : ARespComponent(message) {}
+
+Body::Body(std::vector<char> const & message) : ARespComponent(message) {}
+
 Body::Body(Body const & rhs) : ARespComponent(rhs) {
 	
 	*this = rhs;
@@ -13,7 +17,7 @@ Body::~Body() {}
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATORS::
 
-Body &		Body::operator=(Body const & rhs) {
+Body &	Body::operator=(Body const & rhs) {
 
 	if (this != &rhs) {
 		_message = rhs._message;
@@ -23,22 +27,20 @@ Body &		Body::operator=(Body const & rhs) {
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void		Body::build() {
-	
-	std::stringstream 	body;
-	
-	body	<< "<!DOCTYPE html>\n"
-			<< "<html>\n"
-			<< "<head>\n"
-			<< "<title>Page Title</title>\n"
-			<< "</head>\n"
-			<< "<body>\n"
-			<< "\n"
-			<< "<h1>This is a Heading</h1>\n"
-			<< "<p>This is a paragraph.</p>\n"
-			<< "\n"
-			<< "</body>\n"
-			<< "</html>\n";
+void	Body::build(std::string const & message) {
 
-	this->setMessage(body.str());
+	this->setMessage(message);
+	this->setContentLength(message.length());
+
+}
+
+void	Body::build(std::vector<char> const & message) {
+
+	this->setMessage(message);
+	this->setContentLength(message.size());
+}
+
+void	Body::build() {
+
+	this->setContentLength(this->getMessage().length());
 }

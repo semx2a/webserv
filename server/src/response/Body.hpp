@@ -8,12 +8,16 @@ class Body : public ARespComponent {
 	public:
 		Body();
 		Body(std::string const &);
+		Body(std::vector<char> const &);
 		Body(Body const & src);
 		~Body();
 	
 		Body &		operator=(Body const & rhs);
 
 		void		build();
+		void		build(std::string const &);
+		void		build(std::vector<char> const &);
+	
 };
 
 #endif

@@ -2,24 +2,23 @@
 # define HEADERS_HPP
 
 # include "ARespComponent.hpp"
+# include "ServerContext.hpp"
 
 class Headers : public ARespComponent {
 	
 	public:
-		Headers();
-		Headers(std::string const &);
-		Headers(Headers const & src);
+		Headers(size_t const&);
+		Headers(std::string const&, size_t const&, ServerContext const&);
+		Headers(Headers const&);
 		~Headers();
 	
-		Headers &		operator=(Headers const & rhs);
+		Headers &	operator=(Headers const&);
 
-		void		setContentLength(size_t const & contentLength);
-		size_t		getContentLength() const;
-
-		void		build();
+		void		build(std::string const&, size_t const&, ServerContext const&);
 
 	private:
-		size_t	_contentLength;	
+		Headers();
+		void		build();
 };
 
 #endif
