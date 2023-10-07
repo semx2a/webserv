@@ -20,10 +20,12 @@ extern "C" {
 #include "StatusCodes.hpp"
 #include "MimeTypes.hpp"
 
+#include "CGI.hpp"
+
+#include "HttpStatus.hpp"
 #include "StatusLine.hpp"
 #include "Headers.hpp"
 #include "Body.hpp"
-#include "HttpStatus.hpp"
 
 typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
 typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;

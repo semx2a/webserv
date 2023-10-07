@@ -18,7 +18,12 @@ def test_get_with_params(endpoint, params):
 	response = requests.get(f"{BASE_URL}{endpoint}", params=params)
 	print(colored(f"GET {endpoint}:", 'cyan'), colored(f"{response.status_code}, {response.text}", 'green' if response.status_code == 200 else 'red'))
 
-## Test POST
+# Test POST
+def test_post(endpoint, data):
+	headers = {'Content-type': 'application/python'}
+	response = requests.post(f"{BASE_URL}{endpoint}", python=data, headers=headers)
+	print(colored(f"POST {endpoint}:", 'cyan'), colored(f"{response.status_code}, {response.text}", 'green' if response.status_code == 200 else 'red'))
+
 #def test_post(endpoint, data):
 #	headers = {'Content-type': 'application/json'}
 #	response = requests.post(f"{BASE_URL}{endpoint}", json=data, headers=headers)

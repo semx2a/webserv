@@ -130,6 +130,34 @@ void	Response::_handleGet () {
 
 void	Response::_handlePost() {
 
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering handlePost" << std::endl;
+	#endif
+	
+/* 	// Check if the request's Content-Type is something we can handle (e.g., application/x-www-form-urlencoded)
+	if (_request.getContentType() == "application/x-www-form-urlencoded") {
+		// Get POST data (assumes _request.body() returns the request body)
+		std::string postData = _request.body();
+
+		// TODO: Process postData, save to a database or perform other actions
+
+		// After successfully handling, set response details
+		_status.setCode(200);  // OK
+		_status.setMessage("OK");
+		_contentType = "text/html";  // Assuming you'll return HTML
+		_body.setContent("<html><body>Post data successfully processed.</body></html>");
+	} else {
+		// Unsupported Media Type
+		_status.setCode(415);
+		_status.setMessage("Unsupported Media Type");
+		_contentType = "text/html";
+		_body.setContent("<html><body>Unsupported Media Type.</body></html>");
+	}
+
+	// Update _responseStr with the full HTTP response (status line, headers, and body)
+	// TODO: Create a function to build the complete HTTP response string
+	buildResponse();
+ */
 	
 }
 
@@ -297,7 +325,8 @@ void	Response::_runCgi() {
 	std::cout << "[DEBUG] Entering runCgi" << std::endl;
 	#endif
 
-	
+	CGI	cgi(_path);
+	cgi.execute();
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
