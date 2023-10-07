@@ -89,6 +89,7 @@ SRC		:=	$(addprefix $(CONF),		\
 			   	AFile.cpp				\
 			  	MimeTypes.cpp			\
 				StatusCodes.cpp			\
+				ResponseContext.cpp		\
 				Response.cpp			\
 				CGI.cpp					\
 				ARespComponent.cpp		\

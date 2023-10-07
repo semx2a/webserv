@@ -15,14 +15,14 @@ class AContext {
 		AContext& operator=(AContext const& rhs);
 		virtual ~AContext();
 
-		bool										autoindex() const;
+		std::string const&							autoindex() const;
 		size_t										maxBodySize() const;
 		std::string const&							root() const;
 		std::map<int, std::string> const&			errorPages() const;
 		std::vector<std::string> const&				index() const;
 		std::vector<std::string> const&				authorizedMethods() const;
 
-		void	setAutoindex(bool autoindex);
+		void	setAutoindex(std::string const& autoindex);
 		void 	setMaxBodySize(size_t size);
 		void	setRoot(std::string const& root);
 		void	addErrorPage(int code, std::string const& path);
@@ -35,7 +35,7 @@ class AContext {
 		virtual void	setDefaults(void);
 
 	protected:
-		bool								_autoindex;
+		std::string							_autoindex;
 		size_t								_maxBodySize;
 		std::string							_root;
 		std::map<int, std::string>			_errorPages;		

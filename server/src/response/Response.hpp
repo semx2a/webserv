@@ -14,8 +14,7 @@ extern "C" {
 	#include <dirent.h> //opendir closedir readdir
 }
 
-#include "Request.hpp"
-#include "ServerContext.hpp"
+#include "ResponseContext.hpp"
 
 #include "StatusCodes.hpp"
 #include "MimeTypes.hpp"
@@ -27,15 +26,12 @@ extern "C" {
 #include "Headers.hpp"
 #include "Body.hpp"
 
-typedef std::map<std::string, LocationContext>::const_iterator	t_locationIterator;
-typedef std::map<std::string, ServerContext>::const_iterator	t_serverIterator;
-
 class Response {
 
 	public:
 
 		Response();
-		Response(Request const&, ServerContext const&t, HttpStatus const&);
+		Response(Request const&, ServerContext const&, HttpStatus const&);
 		Response(Response const&);
 		~Response();
 		Response& operator=(Response const&);

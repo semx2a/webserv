@@ -9,8 +9,6 @@ Response::Response() : _status("") {
 
 Response::Response(Request const& request, ServerContext const& serverContext, HttpStatus const& status) : _request(request), _serverContext(serverContext), _status(status) {
 
-	_location = _serverContext.locations().find(_request.target());
-	_isInLocation = _location != _serverContext.locations().end();
 	this->buildResponse();
 }
 
@@ -253,13 +251,12 @@ void	Response::_expandDirectory() {
 	std::cout << "[DEBUG] Target is a directory" << std::endl;
 	#endif
 
-	if (_serverContext.autoindex() == true) {
+	if (_serverContext.autoindex() == "true") {
 		_autoIndex();
 		return ;
 	}
 	else {
 		std::string index;
-		_path = _path.substr(0, _path.size());
 		if (_isInLocation) {
 			_assignIndex(_location->second.index());
 		}

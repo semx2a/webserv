@@ -2,7 +2,7 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-AContext::AContext() : _autoindex(false), _maxBodySize(1048576) {}
+AContext::AContext() : _autoindex("none"), _maxBodySize(1048576) {}
 
 AContext::AContext(AContext const& rhs) { *this = rhs; }
 
@@ -24,7 +24,7 @@ AContext::~AContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-bool											AContext::autoindex(void) const { return this->_autoindex; }
+std::string const&								AContext::autoindex(void) const { return this->_autoindex; }
 size_t											AContext::maxBodySize(void) const { return this->_maxBodySize; }
 std::string const &								AContext::root(void) const { return this->_root; }
 std::map<int, std::string> const &				AContext::errorPages(void) const { return this->_errorPages; }
@@ -33,7 +33,7 @@ std::vector<std::string> const &				AContext::authorizedMethods(void) const { re
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
-void	AContext::setAutoindex(bool autoindex) { this->_autoindex = autoindex; }
+void	AContext::setAutoindex(std::string const& autoindex) { this->_autoindex = autoindex; }
 void	AContext::setMaxBodySize(size_t size) { this->_maxBodySize = size; }
 void	AContext::setRoot(std::string const& root) { this->_root = root; }
 void	AContext::addErrorPage(int code, std::string const& path) { this->_errorPages[code] = path; }
@@ -47,10 +47,7 @@ void	AContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMe
 
 void	AContext::setDefaults() {
 	
-	if (this->_root.empty())
-		this->_root = "../www/";
-	else 
-		this->_root = "../www/" + this->_root;
+	this->_root = "../www/" + this->_root;
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
@@ -58,5 +55,5 @@ void	AContext::setDefaults() {
 		this->_authorizedMethods.push_back("ERROR");
 	}
 	if (this->_errorPages.empty())
-		this->_errorPages[404] = "../www/html/404.html";
+		this->_errorPages[404] = "html/404.html";
 }

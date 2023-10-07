@@ -1,6 +1,7 @@
 
 #**********a faire avant de lancer le script
 #pip install requests
+#pip install termcolor
 #*******************************************
 
 from termcolor import colored

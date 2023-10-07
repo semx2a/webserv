@@ -86,7 +86,6 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 	}
 	if (not context.root().empty() and not context.alias().empty())
 		throw std::runtime_error("Alias and root cannot be set at the same time");
-	context.setDefaults();
 }
 
 template <typename Context>
@@ -95,16 +94,12 @@ void	Parser::parseAutoindex(std::string const &line, Context& context) {
 	std::stringstream	stream(line);
 	std::string			directive;
 	std::string			onOff;
-	bool				onOffBool;
 
-//	if (typeid(Context) != typeid(LocationContext)) // can be found both in server and location context	
-//		return ;
 	stream >> directive >> onOff;
 	if (onOff != "on" && onOff != "off")
 		buildAndThrowParamError(line);
 
-	onOffBool = (onOff == "on") ? true : false;
-	context.setAutoindex(onOffBool);
+	context.setAutoindex(onOff);
 }
 
 template <typename Context>
