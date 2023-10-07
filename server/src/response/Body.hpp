@@ -14,10 +14,16 @@ class Body : public ARespComponent {
 	
 		Body &		operator=(Body const & rhs);
 
+		size_t		getContentLength() const;
+
+		void		setContentLength(size_t contentLength);
+
 		void		build();
 		void		build(std::string const &);
 		void		build(std::vector<char> const &);
 	
+	private:
+		size_t		_contentLength;
 };
 
 #endif

@@ -29,7 +29,11 @@ ________________________________________________________________________________
 - [x] mimetypes dans l'autre sens 
 - [ ] POST
 - [ ] content-type fix
-- [ ] CGI
+- [ ] CGI : 
+      - [ ] sstream that sets headers
+      - [ ] expand target for 
+- [ ] error page in conf
+- [ ] curl localhost:8000 segfault (connection keep-alive)
 
 ________________________________________________________________________________________________________________________
 # WHEN EVERYTHING FINISHED

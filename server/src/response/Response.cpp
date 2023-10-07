@@ -9,6 +9,8 @@ Response::Response() : _status("") {
 
 Response::Response(Request const& request, ServerContext const& serverContext, HttpStatus const& status) : _request(request), _serverContext(serverContext), _status(status) {
 
+	_location = _serverContext.locations().find(_request.target());
+	_isInLocation = _location != _serverContext.locations().end();
 	this->buildResponse();
 }
 
@@ -59,27 +61,34 @@ void	Response::setResponseStr(std::string const& responseStr) { _responseStr = r
 
 void	Response::buildResponse() {
 
-	StatusCodes	statusCodes;
-	MimeTypes	mimeTypes;
-
+	StatusCodes					statusCodes;
+	MimeTypes					mimeTypes;
+	Response::MethodsMap::type	methodsMap = _initMethods();
+ 
 	try {
+        if (_status.statusCode().find_first_of("45") == 0) {
+            
+            (this->*(&Response::_handleError))();
+            throw HttpStatus(_status.statusCode());
+        }
+
 		_checkAllowedMethods();
 		_expandTarget();
 		
-		Response::MethodsMap::type	methodsMap = _initMethods();
 		(this->*methodsMap[_request.method()])();
 		_status.setStatusCode("200");
 	}
 	catch (HttpStatus& e) {
 
 		_status.setStatusCode(e.statusCode());
+		_handleError();
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	Body		body(_body.getMessage());
+	Body		body(_body.getContent());
 	Headers		headers(mimeTypes.getMimeType(_extension), body.getContentLength(), _serverContext);
 
-	_responseStr = statusLine.getMessage() + headers.getMessage() + body.getMessage();
+	_responseStr = statusLine.getContent() + headers.getContent() + body.getContent();
 }
 
 
@@ -108,18 +117,22 @@ void	Response::_handleGet () {
 	}
 	else if (_isCgi()) {
 		_runCgi();
+		return ;
 	}
 	std::ifstream	file(_path.c_str());
 	
 	if (!file.is_open()) {
 		throw HttpStatus("404");
 	}
+	_fillBodyWithFileContent(file);
+}
+
+void	Response::_fillBodyWithFileContent(std::ifstream& file) {
 
 	std::stringstream	bodyContent;
 	std::string			line;
 	
 	while (std::getline(file, line) && !file.eof()) {
-		
 		bodyContent << line << std::endl;
 	}
 	
@@ -133,32 +146,6 @@ void	Response::_handlePost() {
 	#ifdef DEBUG_RESPONSE
 	std::cout << "[DEBUG] Entering handlePost" << std::endl;
 	#endif
-	
-/* 	// Check if the request's Content-Type is something we can handle (e.g., application/x-www-form-urlencoded)
-	if (_request.getContentType() == "application/x-www-form-urlencoded") {
-		// Get POST data (assumes _request.body() returns the request body)
-		std::string postData = _request.body();
-
-		// TODO: Process postData, save to a database or perform other actions
-
-		// After successfully handling, set response details
-		_status.setCode(200);  // OK
-		_status.setMessage("OK");
-		_contentType = "text/html";  // Assuming you'll return HTML
-		_body.setContent("<html><body>Post data successfully processed.</body></html>");
-	} else {
-		// Unsupported Media Type
-		_status.setCode(415);
-		_status.setMessage("Unsupported Media Type");
-		_contentType = "text/html";
-		_body.setContent("<html><body>Unsupported Media Type.</body></html>");
-	}
-
-	// Update _responseStr with the full HTTP response (status line, headers, and body)
-	// TODO: Create a function to build the complete HTTP response string
-	buildResponse();
- */
-	
 }
 
 void	Response::_handleDelete() {
@@ -173,14 +160,49 @@ void	Response::_handleDelete() {
 
 void	Response::_handleError() {
 
-	std::stringstream bodyError;
-	
-	bodyError	<< "<html><body><h1>" 
-				<< _status.statusCode() 
-				<< "</h1></body></html>";
-	
-	this->_body.build(bodyError.str());
+	bool isErrorPage = false;
+	this->_path = "";
+	int statusCode = std::atoi(_status.statusCode().c_str());
+	if (_isInLocation)
+	{
+		for (std::map<int, std::string>::const_iterator it = _location->second.errorPages().begin(); it != _location->second.errorPages().end(); it++) {
+			if (it->first == statusCode) {
+				_path = it->second;
+				_setRootOrAlias(_location, _path, _path);
+				isErrorPage = true;
+			}
+		}
+	}
+	if (isErrorPage == false) {
+		for (std::map<int, std::string>::const_iterator it = _serverContext.errorPages().begin(); it != _serverContext.errorPages().end(); it++) {
+			if (it->first == statusCode) {
+				_path = _serverContext.root() + it->second;
+				isErrorPage = true;
+			}
+		}
+	}
+	if (isErrorPage == true) {
+		std::cout << "[DEBUG ERROR] path: " << _path << std::endl;
+		std::ifstream	file(_path.c_str());
+		
+		if (!file.is_open()) {
+			isErrorPage = false;
+		}
+		else {
+			_fillBodyWithFileContent(file);
+		}
+	}
+	if (isErrorPage == false) {
+		std::stringstream bodyContent;
+		
+		bodyContent	<< "<html><body><h1>" 
+					<< _status.statusCode() 
+					<< "</h1></body></html>";
+		
+		this->_body.build(bodyContent.str());
+	}
 }
+
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXPANSION::
 
 void	Response::_expandTarget() {
@@ -188,16 +210,16 @@ void	Response::_expandTarget() {
 	std::string target = _request.target();
 	std::string path;
 
-	t_locationIterator it = _serverContext.locations().find(target);
-	t_locationIterator itEnd = _serverContext.locations().end();
-
-	if (it != itEnd) {
-		_setRootOrAlias(it, target, path);
+	std::cout << "[DEBUG] target: " << target << std::endl;
+	if (target == "/")
+		target = "";
+	if (_isInLocation) {
+		_setRootOrAlias(_location, target, path);
 	}
 	if (path.empty()) { // if no root or alias in location or no location at all
 		path = _serverContext.root() + target;
 	}
-	_path = path;
+	std::cout << "[DEBUG] path: " << path << std::endl;
 }
 
 void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target, std::string& path) {
@@ -214,11 +236,8 @@ void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target,
 
 void	Response::_checkAllowedMethods() {
 
-	t_locationIterator it = _serverContext.locations().find(_request.target());
-	t_locationIterator itEnd = _serverContext.locations().end();
-
-	if (it != itEnd) {
-		std::vector<std::string> const& authorizedMethods = it->second.authorizedMethods();
+	if (_isInLocation) {
+		std::vector<std::string> const& authorizedMethods = _location->second.authorizedMethods();
 		if (std::find(authorizedMethods.begin(), authorizedMethods.end(), _request.method()) == authorizedMethods.end()) {
 			this->_status.setStatusCode("405");
 		}
@@ -239,12 +258,10 @@ void	Response::_expandDirectory() {
 		return ;
 	}
 	else {
-		t_locationIterator it = _serverContext.locations().find(_request.target());
-		t_locationIterator itEnd = _serverContext.locations().end();
-
 		std::string index;
-		if (it != itEnd) {
-			_assignIndex(it->second.index());
+		_path = _path.substr(0, _path.size());
+		if (_isInLocation) {
+			_assignIndex(_location->second.index());
 		}
 		else if (not _serverContext.index().empty()) {
 			_assignIndex(_serverContext.index());
@@ -325,8 +342,10 @@ void	Response::_runCgi() {
 	std::cout << "[DEBUG] Entering runCgi" << std::endl;
 	#endif
 
-	CGI	cgi(_path);
+	CGI	cgi(_path, _request, _serverContext);
 	cgi.execute();
+	_extension = "py";
+	_body.build(cgi.output());
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
@@ -357,7 +376,15 @@ void	Response::_findExtension() {
 
 bool	Response::_isCgi() {
 
-	return _path.find(".py") != std::string::npos;
+	if (_path.find(".py") != std::string::npos) {
+		std::cout << "Found .py in path" << std::endl;
+ 		t_locationIterator it = _serverContext.locations().find(".py");
+		if (it != _serverContext.locations().end()) {
+			std::cout << "Found .py in locations" << std::endl;
+			return true;
+		}
+	}
+	return false;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::

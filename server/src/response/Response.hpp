@@ -73,9 +73,13 @@ class Response {
 
 		// UTILS
 		std::string			_path;
+		bool				_isInLocation;
+		t_locationIterator	_location;
+		std::string			_errorPage;
 		std::string			_extension;
 		std::string			_contentType;
 		std::string			_responseStr;
+
 
 		void				_checkAllowedMethods();
 		void				_expandTarget();
@@ -92,13 +96,14 @@ class Response {
 		bool				_isDirectory();
 		bool				_isCgi();
 
-		// :::::::::::::::::::::::::: HTPP METHODS
+		// :::::::::::::::::::::::::: HTTP METHODS
 		struct MethodsMap {
 			typedef std::map<std::string, void(Response::*)()> type;
 		};
 
 		MethodsMap::type	_initMethods();
 		void				_handleGet();
+		void				_fillBodyWithFileContent(std::ifstream&);
 		void				_handlePost();
 		void				_handleDelete();
 		void				_handleError();

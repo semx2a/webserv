@@ -197,7 +197,7 @@ template <typename Context>
 void	Parser::parseIndex(std::string const &line, Context& context) {
 
     std::stringstream            stream(line);
-    std::string                    index;
+    std::string                  index;
     std::vector<std::string>     indexVec;
 
     stream >> index;

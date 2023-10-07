@@ -21,6 +21,9 @@ StatusLine::~StatusLine() {}
 StatusLine &		StatusLine::operator=(StatusLine const & rhs) {
 
 	if (this != &rhs) {
+		ARespComponent::operator=(rhs);
+		_statusCode = rhs.statusCode();
+		_reasonPhrase = rhs.reasonPhrase();
 	}
 	return *this;
 }
@@ -51,5 +54,5 @@ void				StatusLine::build() {
 	statusLine << _reasonPhrase;
 	statusLine << CRLF;
 
-	this->setMessage(statusLine.str());
+	this->setContent(statusLine.str());
 }

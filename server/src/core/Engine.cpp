@@ -177,7 +177,7 @@ void	Engine::_writeToClient(int clientFd) {
 		//#ifdef DEBUG_ENGINE
 		//std::cout << "[DEBUG] Keep-alive" << std::endl;
 		//#endif
-		this->_buffers[clientFd].clear();
+		_buffers[clientFd].clear();
 		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
 	}
 }

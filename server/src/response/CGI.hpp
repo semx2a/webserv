@@ -4,8 +4,8 @@
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
+#include <map>
 #include <string>
-#include <vector>
 #include <iostream>
 
 extern "C" {
@@ -15,32 +15,34 @@ extern "C" {
 	#include <fcntl.h>
 }
 
+#include "Request.hpp"
+#include "ServerContext.hpp"
+
 #include "HttpStatus.hpp"
 
 class CGI {
 
 	public:
-		CGI();
-		CGI(std::string const& scriptPath);
-		CGI(CGI const& rhs);
-		CGI& operator=(CGI const& rhs);
+		CGI(std::string const&, Request const&, ServerContext const&);
+		CGI(CGI const&);
+		CGI& operator=(CGI const&);
 		~CGI();
 
-		std::string const&				scriptPath() const;
-		std::vector<std::string> const&	envp() const;
-		std::vector<std::string> const&	argv() const;
+		std::string const&		scriptPath() const;
+		std::string const&		output() const;
 
-		void	setScriptPath(std::string const& scriptPath);
-		void	setEnvp(std::vector<std::string> const& envp);
-		void	setArgv(std::vector<std::string> const& argv);
+		void	setScriptPath(std::string const&);
+		void	setOutput(std::string const&);
 
 		void	execute();
 
 	private:
-		std::string					_scriptPath;
-		std::vector<std::string>	_envp;
-		std::vector<std::string>	_argv;
-	
+		CGI();
+
+		Request				_request;
+		ServerContext		_serverContext;
+		std::string			_scriptPath;
+		std::string			_output;
 };
 
 #endif

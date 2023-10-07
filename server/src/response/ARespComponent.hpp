@@ -19,18 +19,15 @@ class ARespComponent {
 
 		ARespComponent &		operator=(ARespComponent const &);
 		
-		virtual void					setMessage(std::string const &);
-		virtual void					setMessage(std::vector<char> const &);
-		virtual void					setContentLength(size_t const &);
+		virtual void					setContent(std::string const &);
+		virtual void					setContent(std::vector<char> const &);
 		
-		virtual std::string const &		getMessage() const;
-		virtual size_t					getContentLength() const;
+		virtual std::string const &		getContent() const;
 
 		virtual void	build() = 0;
 	
 	protected:
-		std::string _message;
-		size_t		_contentLength;
+		std::string _content;
 	
 	private:
 };

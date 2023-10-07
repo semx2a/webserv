@@ -14,11 +14,15 @@ class Headers : public ARespComponent {
 	
 		Headers &	operator=(Headers const&);
 
+		void				setContentLength(size_t);
+		size_t				contentLength() const;
+
 		void		build(std::string const&, size_t const&, ServerContext const&);
 
 	private:
 		Headers();
 		void		build();
+		size_t		_contentLength;
 };
 
 #endif

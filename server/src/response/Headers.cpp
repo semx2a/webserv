@@ -21,10 +21,16 @@ Headers::~Headers() {}
 Headers &		Headers::operator=(Headers const & rhs) {
 
 	if (this != &rhs) {
-		_message = rhs._message;
+		ARespComponent::operator=(rhs);
 	}
 	return *this;
 }
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
+
+size_t				Headers::contentLength() const { return _contentLength; }
+
+void				Headers::setContentLength(size_t contentLength) { _contentLength = contentLength; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
@@ -37,7 +43,7 @@ void			Headers::build(std::string const& contentType, size_t const & contentLeng
 	headers << "Content-Length: " << contentLength << CRLF;
 	headers << CRLF;
 
-	this->setMessage(headers.str());
+	this->setContent(headers.str());
 }
 
 /* Sets default headers if constructor called with size_t contentLength */
@@ -46,8 +52,8 @@ void	Headers::build() {
 	std::stringstream headers;
 
 	headers << "Content-Type: text/html" << CRLF;
-	headers << "Content-Length: " << this->getContentLength() << CRLF;
+	headers << "Content-Length: " << this->contentLength() << CRLF;
 	headers << CRLF;
 
-	this->setMessage(headers.str());
+	this->setContent(headers.str());
 }

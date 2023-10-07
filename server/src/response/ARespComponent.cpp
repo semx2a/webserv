@@ -2,11 +2,13 @@
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-ARespComponent::ARespComponent() : _message("") {}
+ARespComponent::ARespComponent() : _content("") {}
 
-ARespComponent::ARespComponent(std::string const & message) : _message(message) {}
+ARespComponent::ARespComponent(std::string const & content) : _content(content) {}
 
-ARespComponent::ARespComponent(std::vector<char> const & message) : _message(std::string(message.begin(), message.end())) {}
+ARespComponent::ARespComponent(std::vector<char> const & content) : _content(std::string(content.begin(), content.end())) {
+
+}
 
 ARespComponent::ARespComponent(ARespComponent const & src) {
 	
@@ -20,19 +22,15 @@ ARespComponent::~ARespComponent() {}
 ARespComponent &		ARespComponent::operator=(ARespComponent const & rhs) {
 
 	if (this != &rhs) {
-		_message = rhs._message;
+		_content = rhs.getContent();
 	}
 	return *this;
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-void					ARespComponent::setMessage(std::string const & message) { _message = message; }
+void					ARespComponent::setContent(std::string const & content) { _content = content; }
 
-void					ARespComponent::setMessage(std::vector<char> const & message) { _message = std::string(message.begin(), message.end()); }
+void					ARespComponent::setContent(std::vector<char> const & content) { _content = std::string(content.begin(), content.end()); }
 
-void					ARespComponent::setContentLength(size_t const & contentLength) { _contentLength = contentLength; }
-
-std::string const &		ARespComponent::getMessage() const { return _message; }
-
-size_t					ARespComponent::getContentLength() const { return _contentLength; }
+std::string const &		ARespComponent::getContent() const { return _content; }

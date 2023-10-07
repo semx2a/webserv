@@ -2,11 +2,18 @@
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Body::Body() : ARespComponent() {}
+Body::Body() : ARespComponent(), _contentLength(0) {}
 
-Body::Body(std::string const & message) : ARespComponent(message) {}
+Body::Body(std::string const & content) : ARespComponent(content), _contentLength(content.length()) {}
 
-Body::Body(std::vector<char> const & message) : ARespComponent(message) {}
+Body::Body(std::vector<char> const & content) : ARespComponent(content) {
+
+	_contentLength = 0;
+	std::vector<char>::const_iterator it = content.begin();
+	while (it++ != content.end()) {
+		_contentLength++;
+	}
+}
 
 Body::Body(Body const & rhs) : ARespComponent(rhs) {
 	
@@ -20,27 +27,35 @@ Body::~Body() {}
 Body &	Body::operator=(Body const & rhs) {
 
 	if (this != &rhs) {
-		_message = rhs._message;
+		ARespComponent::operator=(rhs);
+		_contentLength = rhs.getContentLength();
 	}
 	return *this;
 }
 
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
+
+size_t	Body::getContentLength() const { return _contentLength; }
+
+void	Body::setContentLength(size_t contentLength) { _contentLength = contentLength; }
+
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void	Body::build(std::string const & message) {
+void	Body::build(std::string const & content) {
 
-	this->setMessage(message);
-	this->setContentLength(message.length());
-
+	this->setContent(content);
+	this->setContentLength(_content.length());
 }
 
-void	Body::build(std::vector<char> const & message) {
+void	Body::build(std::vector<char> const & content) {
 
-	this->setMessage(message);
-	this->setContentLength(message.size());
+	this->setContent(content);
+
+	_contentLength = 0;
+	std::vector<char>::const_iterator it = content.begin();
+	while (it++ != content.end()) {
+		_contentLength++;
+	}
 }
 
-void	Body::build() {
-
-	this->setContentLength(this->getMessage().length());
-}
+void	Body::build() {}

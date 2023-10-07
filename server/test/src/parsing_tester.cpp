@@ -1,6 +1,5 @@
 #include <iostream>
 #include "ServerContext.hpp"
-#include "Config.hpp"
 #include "Parser.hpp"
 #include "utl.hpp"
 
@@ -14,8 +13,7 @@ void	DisplayParserContents(Parser const& parser) {
 
 int	main() {
 
-	Config 							config;
-	Parser const &					parser = config.parser();
+	Parser const &	parser(std::string("../neoserv/conf/default.conf"));
 
 	DisplayParserContents(parser);
 

@@ -2,7 +2,11 @@
 
 CGI::CGI() {}
 
-CGI::CGI(std::string const& scriptPath) : _scriptPath(scriptPath) {}
+CGI::CGI(std::string const& scriptPath, Request const& req, ServerContext const& sc) :
+																				_request(req),
+																				_serverContext(sc),
+																				_scriptPath(scriptPath),
+																				_output("") {}
 
 CGI::CGI(CGI const& rhs) {
 	*this = rhs;
@@ -10,9 +14,8 @@ CGI::CGI(CGI const& rhs) {
 
 CGI& CGI::operator=(CGI const& rhs) {
 	if (this != &rhs) {
-		this->_scriptPath = rhs.scriptPath();
-		this->_envp = rhs.envp();
-		this->_argv = rhs.argv();
+
+		//TODO
 	}
 	return *this;
 }
@@ -21,19 +24,26 @@ CGI::~CGI() {}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-std::string const& 				CGI::scriptPath() const { return this->_scriptPath; }
-std::vector<std::string> const&	CGI::envp() const { return this->_envp; }
-std::vector<std::string> const&	CGI::argv() const { return this->_argv; }
+std::string const& 								CGI::scriptPath() const { return this->_scriptPath; }
+std::string const& 								CGI::output() const { return this->_output; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void	CGI::setScriptPath(std::string const& scriptPath) { this->_scriptPath = scriptPath; }
-void	CGI::setEnvp(std::vector<std::string> const& envp) { this->_envp = envp; }
-void	CGI::setArgv(std::vector<std::string> const& argv) { this->_argv = argv; }
+void	CGI::setOutput(std::string const& output) { this->_output = output; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
 void CGI::execute() {
+
+	char** argv = new char*[2];
+	argv[0] = strdup(_scriptPath.c_str());
+	argv[1] = NULL;
+
+	std::string query = "QUERY_STRING=" + _scriptPath;
+	char** envp = new char*[2];
+	envp[0] = strdup(query.c_str());
+	envp[1] = NULL;
 
 	int p[2];
 	if (pipe(p) == -1) {
@@ -52,12 +62,11 @@ void CGI::execute() {
 		close(p[0]);
 		dup2(p[1], STDOUT_FILENO);
 
-		char* argv[] = {(char*)_scriptPath.c_str(), NULL};
-		char* envp[] = {const_cast<char*>("QUERY_STRING=value"), NULL};
-
 		if (execve(_scriptPath.c_str(), argv, envp) == -1) {
 			perror("execve");
 		}
+		delete[] argv;
+		delete[] envp;
 		throw HttpStatus("500");
 	}
 	else
@@ -72,6 +81,7 @@ void CGI::execute() {
 		while ((bytesRead = read(p[0], buffer, sizeof(buffer) - 1)) > 0) {
 			buffer[bytesRead] = '\0';
 			std::cout << "CGI Output: " << buffer << std::endl;
+			_output += buffer;
 		}
 	}
 }
