@@ -72,6 +72,9 @@ void	Response::buildResponse() {
             throw HttpStatus(_status.statusCode());
         }
 		_checkAuthorizedMethod();
+		if (methodsMap.find(_request.method()) == methodsMap.end()) {
+			throw HttpStatus("501");
+		}
 		(this->*methodsMap[_request.method()])();
 		_status.setStatusCode("200");
 	}
