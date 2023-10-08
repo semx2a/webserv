@@ -321,10 +321,7 @@ bool	Response::_isDirectory() {
 
 void	Response::_findExtension() {
 
-	std::cout << "path: " << _path << std::endl;
 	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
-
-	std::cout << "extension: " << _extension << std::endl;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
