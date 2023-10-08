@@ -1,23 +1,37 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Replace these variables with your actual user data retrieval logic.
-    $currentUsername = "user123"; // Replace with the currently logged-in user's username.
-    $currentPassword = "oldPassword"; // Replace with the currently logged-in user's current password.
-
-    $current_password = $_POST["current_password"];
-    $new_password = $_POST["new_password"];
-
-    // Check if the provided current password matches the user's actual current password.
-    if ($current_password === $currentPassword) {
-        // In a real-world scenario, you should perform password hashing and update the user's password securely.
-        // For demonstration, we'll simply replace the current password with the new one.
-        $currentPassword = $new_password;
-        
-        // Replace this with your actual password update logic (e.g., update the database).
-        
-        echo "Password changed successfully!";
+    // Get user input (username, current_password, new_password)
+    $username = $_POST["username"];
+    $currentPassword = $_POST["current_password"];
+    $newPassword = $_POST["new_password"];
+    
+    // Path to user data file
+    $userDataFilePath = "/var/www/testwebsite.com/data/users/$username.txt";
+    
+    // Check if the user data file exists
+    if (file_exists($userDataFilePath)) {
+        // Read user data from the file
+        $userData = json_decode(file_get_contents($userDataFilePath), true);
+    
+        // Check if the provided current password matches the stored hashed password
+        if (password_verify($currentPassword, $userData["password"])) {
+            // Hash the new password securely before updating it
+            $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+    
+            // Update the password in the user data
+            $userData["password"] = $hashedNewPassword;
+    
+            // Save the updated user data to the file
+            file_put_contents($userDataFilePath, json_encode($userData));
+    
+            echo "Password changed successfully!";
+        } else {
+            // Incorrect current password
+            echo "Incorrect current password. Password not changed.";
+        }
     } else {
-        echo "Incorrect current password. Password not changed.";
+        // User does not exist
+        echo "User not found. Please check your username.";
     }
 }
 ?>
