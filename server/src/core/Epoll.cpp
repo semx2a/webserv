@@ -80,30 +80,30 @@ void	Epoll::_createEpollEvent() {
 int		Epoll::_pollPort(std::string const& ip, int port) {
 
 	Socket newSocket(ip, port);
-	int fd = newSocket.fd();
-	addSocketToEpoll(fd);
+	int socket = newSocket.fd();
+	addSocketToEpoll(socket);
 
-	return fd;
+	return socket;
 }
 
-void	Epoll::addSocketToEpoll(int fd) {
+void	Epoll::addSocketToEpoll(int socket) {
 
 	std::memset((char *)&this->_toPoll, 0, sizeof(this->_toPoll));
 	this->_toPoll.events = EPOLLIN; 
-	this->_toPoll.data.fd = fd;  
-	if (epoll_ctl(this->_listener, EPOLL_CTL_ADD, fd, &this->_toPoll) < 0) {
+	this->_toPoll.data.fd = socket;  
+	if (epoll_ctl(this->_listener, EPOLL_CTL_ADD, socket, &this->_toPoll) < 0) {
 		throw std::runtime_error(ECTLERR);
 	}
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MODIFICATION
 
-void	Epoll::editSocketInEpoll(int fd, int eventToWatch) {
+void	Epoll::editSocketInEpoll(int socket, int eventToWatch) {
 
 	std::memset((char *)&this->_toPoll, 0, sizeof(this->_toPoll));
 	this->_toPoll.events = eventToWatch; 
-	this->_toPoll.data.fd = fd;  
-	if (epoll_ctl(this->_listener, EPOLL_CTL_MOD, fd, &this->_toPoll) < 0) {
+	this->_toPoll.data.fd = socket;  
+	if (epoll_ctl(this->_listener, EPOLL_CTL_MOD, socket, &this->_toPoll) < 0) {
 		throw std::runtime_error(ECTLERR);
 	}
 }
@@ -118,7 +118,7 @@ int		Epoll::waitForConnexions() {
 	return numEvents;
 }
 
-bool	Epoll::isNewClient(int fd) const {
+bool	Epoll::isNewClient(int socket) const {
 
-	return (this->_servers.find(fd) != this->_servers.end());
+	return (this->_servers.find(socket) != this->_servers.end());
 }

@@ -49,7 +49,7 @@ void	Engine::connect() {
 
 	struct epoll_event	event;
 	int					nb_events;
-	int					event_fd;
+	int					socket;
 
 	try {
 
@@ -59,23 +59,23 @@ void	Engine::connect() {
 			for (int i = 0; i < nb_events; ++i) {
 
 				event = this->_epoll.readyEvent(i);
-				event_fd = event.data.fd;
-				if ((event.events & EPOLLERR) ||(event.events & EPOLLHUP)) {
-					utl::log(event_fd, "Epoll error");
-					_endConnexion(event_fd);
+				socket = event.data.fd;
+				if ((event.events & EPOLLERR) or (event.events & EPOLLHUP)) {
+					utl::log(socket, "Epoll error");
+					_endConnexion(socket);
 				}
 				else if (event.events & EPOLLRDHUP) {
-					utl::log(event_fd, "Closed connexion");
-					_endConnexion(event_fd);
+					utl::log(socket, "Closed connexion");
+					_endConnexion(socket);
 				}
-				else if (this->_epoll.isNewClient(event_fd)) {
-					_addNewClient(event_fd);
+				else if (this->_epoll.isNewClient(socket)) {
+					_addNewClient(socket);
 				}
 				else if (event.events & EPOLLIN) {
-					_readFromClient(event_fd);
+					_readFromClient(socket);
 				}
 				else if (event.events & EPOLLOUT) {
-					_writeToClient(event_fd);
+					_writeToClient(socket);
 				}
 			}
 		}
@@ -86,11 +86,11 @@ void	Engine::connect() {
 	}
 }
 
-void	Engine::_addNewClient(int serverFd) {
+void	Engine::_addNewClient(int serverSocket) {
 
 	int	clientSocket;
 	try {
-		clientSocket = accept(serverFd, NULL, NULL);
+		clientSocket = accept(serverSocket, NULL, NULL);
 		if (clientSocket < 0) {
 			throw std::runtime_error(ACCEPTERR);
 		}
@@ -99,93 +99,86 @@ void	Engine::_addNewClient(int serverFd) {
 		std::cerr << "ERROR: " << e.what() << std::endl;
 	}
 	_epoll.addSocketToEpoll(clientSocket);
-	_serverContexts[clientSocket] = _epoll.servers().find(serverFd)->second;
+	_serverContexts[clientSocket] = _epoll.servers().find(serverSocket)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
 	_status[clientSocket].setStatusCode("");
-	utl::log(clientSocket, "New client added");
+//	utl::log(clientSocket, "New client added");
 	
 	int on = 1;
 	setsockopt(clientSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &on, sizeof(int));
 }
 
 
-void	Engine::_readFromClient(int clientFd) {
+void	Engine::_readFromClient(int clientSocket) {
 
-//	size_t buffersize = (this->_buffers[clientFd].hasBody() 
-//						and this->_buffers[clientFd].remainingContentLength() < BUFFER_SIZE) 
-//						? this->_buffers[clientFd].remainingContentLength() : BUFFER_SIZE;
-//
-	size_t buffersize = BUFFER_SIZE;
-	std::vector<char>	buffer(buffersize, '\0');
+	std::vector<char>	buffer(BUFFER_SIZE, '\0');
 
-	int	bytesRead = recv(clientFd, &buffer[0], buffer.size(), 0);
+	int	bytesRead = recv(clientSocket, &buffer[0], buffer.size(), 0);
 	if (bytesRead < 0) {
-				std::cout << "ERROR: " << strerror(errno) << std::endl;
-
 		throw HttpStatus("500");
 	}
 	else if (bytesRead == 0) { 
-		utl::log(clientFd, "End of connexion");
-		_endConnexion(clientFd);
+		utl::log(clientSocket, "End of connexion");
+		_endConnexion(clientSocket);
 	}
 	else {
 		buffer.resize(bytesRead);
 	}
 	try {
-		this->_buffers[clientFd].add(buffer);
-		this->_buffers[clientFd].checkEnd();
-		this->_buffers[clientFd].setRemainingContentLength(this->_buffers[clientFd].remainingContentLength() - bytesRead);
-		_handleBuffer(clientFd);
+		this->_buffers[clientSocket].add(buffer);
+		this->_buffers[clientSocket].checkEnd();
+		this->_buffers[clientSocket].setRemainingContentLength(this->_buffers[clientSocket].remainingContentLength() - bytesRead);
+		_handleBuffer(clientSocket);
 	}
 	catch (HttpStatus& e) {
-		this->_status[clientFd].setStatusCode(e.statusCode());
+		this->_status[clientSocket].setStatusCode(e.statusCode());
 	}
 }
 
-void	Engine::_handleBuffer(int clientFd) {
+void	Engine::_handleBuffer(int clientSocket) {
 
-	utl::log(clientFd, "Buffer received");
-	std::cout << RED << std::string(_buffers[clientFd].raw().begin(), _buffers[clientFd].raw().end()) << RESET << std::endl;
+	utl::log(clientSocket, "Buffer received");
+	std::cout << RED << std::string(_buffers[clientSocket].raw().begin(), _buffers[clientSocket].raw().end()) << RESET << std::endl;
 
-	if (not this->_buffers[clientFd].isRequestEnded()) {
+	if (not this->_buffers[clientSocket].isRequestEnded()) {
 		std::cout << "Request not ended" << std::endl;
 		return ;
 	}
 	
-	this->_requests[clientFd].parser(this->_buffers[clientFd].raw());
-	//this->_status[clientFd].setStatusCode("");
-	if (this->_buffers[clientFd].isRequestEnded()	|| this->_status[clientFd].statusCode() != "202"
-													|| this->_status[clientFd].statusCode() != "200") {
-		this->_epoll.editSocketInEpoll(clientFd, EPOLLOUT);
+	this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw());
+	if (this->_buffers[clientSocket].isRequestEnded()	|| this->_status[clientSocket].statusCode() != "202"
+													|| this->_status[clientSocket].statusCode() != "200") {
+		this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 	}
 }
 
-void	Engine::_writeToClient(int clientFd) {
+void	Engine::_writeToClient(int clientSocket) {
 
-	ResponseContext rc(this->_requests[clientFd], this->_serverContexts[clientFd]);
-	Response res(this->_requests[clientFd], rc, this->_status[clientFd]);
+	ResponseContext rc(this->_requests[clientSocket], this->_serverContexts[clientSocket]);
+	Response res(this->_requests[clientSocket], rc, this->_status[clientSocket]);
 	
-	utl::log(clientFd, "Response about to be sent!");
+	utl::log(clientSocket, "Response about to be sent!");
 	std::cout << GREEN << res.responseStr() << RESET << std::endl;
 
-	if ((send(clientFd, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
+	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");
 	}
-	if (this->_requests[clientFd].header("Connection") == "close") {
-		_endConnexion(clientFd);
-	}
-	else {
-		#ifdef DEBUG_ENGINE
-		std::cout << "[DEBUG] Keep-alive" << std::endl;
-		#endif
-		_buffers[clientFd].clear();
-		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
-	}
+//	if (this->_requests[clientSocket].header("Connection") == "close") {
+		_endConnexion(clientSocket);
+//	}
+//	else {
+//		#ifdef DEBUG_ENGINE
+//		std::cout << "[DEBUG] Keep-alive" << std::endl;
+//		#endif
+//		_buffers[clientSocket].clear();
+//		_epoll.editSocketInEpoll(clientSocket, EPOLLIN);
+//	}
+	this->_status[clientSocket].setStatusCode("");
 }
 
-void	Engine::_endConnexion(int fd) {
+void	Engine::_endConnexion(int socket) {
 
-	this->_buffers.erase(fd);
-	close(fd);
+	this->_buffers.erase(socket);
+	close(socket);
 }
 
