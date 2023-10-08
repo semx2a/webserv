@@ -116,6 +116,7 @@ void	Buffer::_searchContentLength() {
 		if (this->_contentLength > this->_maxBodySize) {
 			throw HttpStatus("413");
 		}
+		this->_hasContentLength = true;
 		this->_hasBody = true;
 		this->_headerSize = this->_raw.size();
 	}
@@ -132,6 +133,10 @@ void	Buffer::_searchTransferEncoding() {
 
 void	Buffer::_checkEndContentLength() {
 
+	//std::cout << "Raw size: " << this->_raw.size() << std::endl;
+	//std::cout << "Header size: " << this->_headerSize << std::endl;
+	//std::cout << "Content length: " << this->_contentLength << std::endl;
+	
 	if (this->_raw.size() - this->_headerSize >= this->_contentLength) {
 		this->_isEnded = true;
 	}

@@ -66,15 +66,13 @@ void	Response::buildResponse() {
 	Response::MethodsMap::type	methodsMap = _initMethods();
  
 	try {
-        if (_status.statusCode().find_first_of("45") == 0) {
-            
-            (this->*(&Response::_handleError))();
+        if (_status.statusCode().find_first_of("45") == 0)
             throw HttpStatus(_status.statusCode());
-        }
+
 		_checkAuthorizedMethod();
-		if (methodsMap.find(_request.method()) == methodsMap.end()) {
+		if (methodsMap.find(_request.method()) == methodsMap.end())
 			throw HttpStatus("501");
-		}
+
 		(this->*methodsMap[_request.method()])();
 		_status.setStatusCode("200");
 	}
@@ -159,7 +157,7 @@ void	Response::_handlePost() {
 	else if (access(this->_path.c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 
-	if (this->_isCgi()) {
+	if (not _responseContext.cgi().empty()) {
 		this->_runCgi();
 		return ;
 	}
@@ -173,7 +171,6 @@ void	Response::_handlePost() {
 	file.close();
 	
 	this->_status.setStatusCode("201");
-	
 }
 
 void	Response::_handleDelete() {
@@ -216,7 +213,7 @@ void	Response::_checkAuthorizedMethod() {
 
 	std::vector<std::string>::const_iterator it = std::find(_responseContext.authorizedMethods().begin(), _responseContext.authorizedMethods().end(), _request.method());
 	if (it == _responseContext.authorizedMethods().end()) {
-		this->_status.setStatusCode("405");
+		throw HttpStatus("405");
 	}
 }
 
