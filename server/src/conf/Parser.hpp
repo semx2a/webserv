@@ -77,9 +77,9 @@ class Parser {
 		bool	isCommentOrEmptyLine(std::string const& line) const;
 		bool	isEndOfScope(std::string const& line) const;
 		void	isValidIPv4(std::string const& str) const;
-//		void	isValidIPv6(std::string const& str) const;
 		void	buildAndThrowParamError(std::string const& line) const;
 		void	searchIfCgi(LocationContext&, std::string&);
+		void	checkIfPortDoublons();
 
 	
 	public:

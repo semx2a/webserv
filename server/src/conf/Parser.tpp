@@ -156,9 +156,7 @@ void	Parser::parseListen(std::string const& line, Context& context) {
 	std::stringstream	stream(line);
 	std::string			listen;
 	std::string			ip;
-	int					port(80); //If only address is given, the port 80 is used.
-
-//	TODO : check with defaut & possible values
+	int					port(80);
 
 	stream >> listen;
 	if (stream.str().find(':') != std::string::npos)

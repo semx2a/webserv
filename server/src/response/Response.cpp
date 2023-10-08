@@ -298,7 +298,7 @@ void	Response::_runCgi() {
 
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
-	_extension = "py";
+	_extension = _responseContext.cgi().substr(1, 2);
 	_body.build(cgi.output());
 }
 

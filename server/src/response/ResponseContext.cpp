@@ -9,16 +9,31 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 	this->_target = this->_request.target();
 	this->_path = this->_target;
 
-	t_locationIterator it = this->_serverContext.locations().begin();
-	t_locationIterator ite = this->_serverContext.locations().end();
-	for (; it != ite; ++it) {
-		if (this->_target.find(it->first) != std::string::npos) {
-			this->_location = it;
-			break;
+	std::string cgi[2] = {".py", ".php"};
+	for (int i = 0; i < 2; i++) {
+		if (_path.find(cgi[i]) != std::string::npos) {
+			t_locationIterator cgiLocIt = this->_serverContext.locations().find(cgi[i]);
+			t_locationIterator endIt = this->_serverContext.locations().end();
+			if (cgiLocIt != endIt) {
+				this->_cgi = cgi[i];
+				this->_location = cgiLocIt;
+				_locationDirectives();
+				break;
+			}
 		}
 	}
-	if (it != ite) {
-		_locationDirectives();
+	if (this->_cgi.empty()) {
+		t_locationIterator it = this->_serverContext.locations().begin();
+		t_locationIterator ite = this->_serverContext.locations().end();
+		for (; it != ite; ++it) {
+			if (this->_target.find(it->first) != std::string::npos) {
+				this->_location = it;
+				break;
+			}
+		}
+		if (it != ite) {
+			_locationDirectives();
+		}
 	}
 	_serverDirectives();
 
@@ -96,9 +111,6 @@ void	ResponseContext::_locationDirectives() {
 	this->_maxBodySize = this->_location->second.maxBodySize();
 	this->_authorizedMethods = this->_location->second.authorizedMethods();
 
-	if ((_path.find(".py") != std::string::npos) and (this->_location->first == ".py")) {
-		this->_cgi = ".py";
-	}
 }
 
 void	ResponseContext::_serverDirectives() {

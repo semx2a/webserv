@@ -3,7 +3,7 @@
 LocationContext::LocationContext() : 
 AContext(), 
 								_alias(""), 
-								_isPyCgi(false) {}
+								_isCgi(false) {}
 
 LocationContext::LocationContext(LocationContext const& rhs) : AContext() { *this = rhs; }
 
@@ -13,7 +13,7 @@ LocationContext& LocationContext::operator=(LocationContext const& rhs) {
 		
 		AContext::operator=(rhs);
 		this->_alias = rhs.alias();
-		this->_isPyCgi = rhs.isPyCgi();
+		this->_isCgi = rhs.isCgi();
 	}
 	return *this;
 }
@@ -23,12 +23,12 @@ LocationContext::~LocationContext() {}
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
 std::string const&		LocationContext::alias(void) const { return this->_alias; }
-bool					LocationContext::isPyCgi(void) const { return this->_isPyCgi; }
+bool					LocationContext::isCgi(void) const { return this->_isCgi; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void	LocationContext::setAlias(std::string const& alias) { this->_alias = alias; }
-void	LocationContext::setIsPyCgi(bool isPyCgi) { this->_isPyCgi = isPyCgi; }
+void	LocationContext::setIsCgi(bool isCgi) { this->_isCgi = isCgi; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 

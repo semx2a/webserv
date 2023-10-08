@@ -1,16 +1,16 @@
 
 ### Global
 
-- [ ] siege
-- [ ] explain basics of HTTP server
-- [ ] explain why epoll 
-- [ ] explain how epoll is working
-- [ ] explain how managed the server accept and the client read/write
-- [ ] check for read and write at the same time in main loop
-- [ ] only one read or one write per client per epoll. Show the code that goes from the epoll to the read and write of a client
-- [ ] search for all read/recv/write/send on a socket and check that if an error returned, the client is removed
-- [ ] search for all read/recv/write/send and check if the returned value is well checked (checking only -1 or 0 is not good you should check both)
-- [ ] if a check or errno is done after read/recv/write/send -> 0
+- [ ] **siege**
+- [x] explain basics of HTTP server
+- [x] explain why epoll 
+- [x] explain how epoll is working
+- [x] explain how managed the server accept and the client read/write
+- [x] check for read and write at the same time in main loop
+- [x] only one read or one write per client per epoll. Show the code that goes from the epoll to the read and write of a client
+- [x] search for all read/recv/write/send on a socket and check that if an error returned, the client is removed
+- [x] search for all read/recv/write/send and check if the returned value is well checked (checking only -1 or 0 is not good you should check both)
+- [x] if a check or errno is done after read/recv/write/send -> 0
 
 
 - [ ] no wrong HTTP response status code (checked during all evaluation)

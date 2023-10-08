@@ -118,69 +118,20 @@ void Parser::isValidIPv4(const std::string& ip) const {
 		if (count > 4) {
 			throw Parser::InvalidParam(err, *this);
 		}
-
 		for (std::string::const_iterator it = octet.begin(); it != octet.end(); ++it) {
 			if (!std::isdigit(*it)) {
 				throw Parser::InvalidParam(err, *this);
 			}
 		}
-
 		int num = std::atoi(octet.c_str());
 		if (num < 0 || num > 255) {
 			throw Parser::InvalidParam(err, *this);
 		}
 	}
-
 	if (count != 4) {
 		throw Parser::InvalidParam(err, *this);
 	}
 }
-
-/* void Parser::isValidIPv6(const std::string& ip) const {
-	
-	std::istringstream iss(ip);
-	std::string block;
-	std::string err("Invalid IP address " + ip);
-	int count = 0;
-	int doubleColonCount = 0;
-
-	for (std::string::const_iterator it = ip.begin(); it != ip.end(); ++it) {
-		if (*it == ':') {
-			if (it + 1 != ip.end() && *(it + 1) == ':') {
-				++doubleColonCount;
-			}
-		}
-	}
-
-	if (doubleColonCount > 1) {
-		throw Parser::InvalidParam(err, *this);
-	}
-	while (std::getline(iss, block, ':')) {
-		
-		++count;
-
-		if (count > 8) {
-			throw Parser::InvalidParam(err, *this);
-		}
-		if (block.empty()) {
-			continue;
-		}
-		if (block.length() > 4) {
-			throw Parser::InvalidParam(err, *this);
-		}
-
-		for (std::string::const_iterator it = block.begin(); it != block.end(); ++it) {
-			char c = std::tolower(*it);
-			if (!std::isdigit(c) && (c < 'a' || c > 'f')) {
-				throw Parser::InvalidParam(err, *this);
-			}
-		}
-	}
-
-	if (count < 8 && doubleColonCount == 0) {
-		throw Parser::InvalidParam(err, *this);
-	}
-} */
 
 bool	Parser::isCommentOrEmptyLine(std::string const& line) const {
 
@@ -205,9 +156,9 @@ bool	Parser::isEndOfScope(std::string const& line) const {
 
 void	Parser::searchIfCgi(LocationContext& locationContext, std::string& path) {
 
-	if (path != "*.py")
+	if (path != "*.py" || path != "*.php")
 		return;
-	locationContext.setIsPyCgi(true);
+	locationContext.setIsCgi(true);
 	path = path.substr(path.find_first_of("*") + 1, path.size() - path.find_first_of("*") - 1);
 }
 
@@ -217,6 +168,17 @@ void	Parser::buildAndThrowParamError(std::string const& line) const {
 	param.substr(0, param.find_first_of(";"));
 	std::string err = "Invalid parameter '" + param + "'";
 	throw Parser::InvalidParam(err, *this);
+}
+
+void	Parser::checkIfPortDoublons() {
+
+//	std::set
+//	for (std::vector<ServerContext>::const_iterator serversIt = _serversContexts.begin(); serversIt != _serversContexts.end(); serversIt++) {
+//		for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->listen().begin(); ipPortIt != serversIt->listen().end(); ipPortIt++) {
+//
+//			
+//		}
+//	}
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
