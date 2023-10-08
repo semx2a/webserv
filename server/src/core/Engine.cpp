@@ -175,9 +175,9 @@ void	Engine::_writeToClient(int clientFd) {
 		_endConnexion(clientFd);
 	}
 	else {
-		//#ifdef DEBUG_ENGINE
-		//std::cout << "[DEBUG] Keep-alive" << std::endl;
-		//#endif
+		#ifdef DEBUG_ENGINE
+		std::cout << "[DEBUG] Keep-alive" << std::endl;
+		#endif
 		_buffers[clientFd].clear();
 		_epoll.editSocketInEpoll(clientFd, EPOLLIN);
 	}
