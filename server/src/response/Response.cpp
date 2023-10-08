@@ -204,6 +204,7 @@ void	Response::_handleError() {
 	bodyContent	<< "<html><body><h1>" 
 				<< _status.statusCode() 
 				<< "</h1></body></html>";
+	this->_extension = "html";
 	this->_body.build(bodyContent.str());
 }
 
