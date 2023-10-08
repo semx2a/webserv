@@ -128,9 +128,7 @@ CONVFLAGS	:=	-Wconversion
 
 DFLAGS		:=	-MMD
 
-GFLAG		:=	-g3
-
-SANFLAG		:=	-fsanitize=address
+DEBUGFLAG	:=	-g3 #-fsanitize=address
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MANDATORY::
 
@@ -144,14 +142,14 @@ $(OBJ): | $(ODIR)
 
 $(ODIR)%.o: $(SDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(INC) -c $< -o $@ 
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(INC) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 
 -include ${DEP}
 -include ${MDEP}
 
 $(NAME): $(OBJ)	$(MOBJ)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(MOBJ) -o $(NAME)
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(OBJ) $(MOBJ) -o $(NAME)
 	@echo -e "$(HIGREEN)mandatory exe:[OK]$(RESET)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
@@ -166,14 +164,14 @@ $(TOBJ): | $(TODIR)
 
 $(TODIR)%.o: $(TDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(INC) -c $< -o $@ 
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(INC) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 
 -include ${DEP}
 -include ${TDEP}
 
 $(TNAME): $(OBJ) $(TOBJ)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(GFLAG) $(SANFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
 	@echo -e "$(HIGREEN)test exe:[OK]$(RESET)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
