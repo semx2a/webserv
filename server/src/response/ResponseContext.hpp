@@ -34,6 +34,7 @@ class ResponseContext {
 		std::string const&					autoindex() const;
 		size_t 								maxBodySize() const;
 		std::vector<std::string> const&		authorizedMethods() const;
+		std::string const&					cgi() const;
 
 	private:
 	 	Request const&						_request;
@@ -49,6 +50,10 @@ class ResponseContext {
 		std::string							_autoindex;
 		size_t								_maxBodySize;
 		std::vector<std::string>			_authorizedMethods;
+		std::string							_cgi;
+
+		void		_locationDirectives();
+		void		_serverDirectives();
 };
 
 std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs);

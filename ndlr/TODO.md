@@ -34,6 +34,7 @@ ________________________________________________________________________________
       - [ ] expand target for 
 - [ ] error page in conf
 - [ ] curl localhost:8000 segfault (connection keep-alive)
+- [ ] longer path for server context loc
 
 ________________________________________________________________________________________________________________________
 # WHEN EVERYTHING FINISHED

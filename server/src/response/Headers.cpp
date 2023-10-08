@@ -4,7 +4,7 @@
 
 Headers::Headers() : ARespComponent() {}
 
-Headers::Headers(std::string const& contentType, size_t const & contentLength, ServerContext const& sc) {
+Headers::Headers(std::string const& contentType, size_t const & contentLength, ResponseContext const& sc) {
 
 	this->build(contentType, contentLength, sc);
 }
@@ -34,7 +34,7 @@ void				Headers::setContentLength(size_t contentLength) { _contentLength = conte
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void			Headers::build(std::string const& contentType, size_t const & contentLength, ServerContext const& sc) {
+void			Headers::build(std::string const& contentType, size_t const & contentLength, ResponseContext const& sc) {
 
 	(void)sc;
 	std::stringstream headers;

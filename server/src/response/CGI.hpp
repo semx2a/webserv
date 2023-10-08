@@ -16,18 +16,20 @@ extern "C" {
 }
 
 #include "Request.hpp"
-#include "ServerContext.hpp"
+#include "ResponseContext.hpp"
 
 #include "HttpStatus.hpp"
 
 class CGI {
 
 	public:
-		CGI(std::string const&, Request const&, ServerContext const&);
+		CGI(std::string const&, Request const&, ResponseContext const&);
 		CGI(CGI const&);
 		CGI& operator=(CGI const&);
 		~CGI();
 
+		Request const&			request() const;
+		ResponseContext const&	responseContext() const;
 		std::string const&		scriptPath() const;
 		std::string const&		output() const;
 
@@ -40,7 +42,7 @@ class CGI {
 		CGI();
 
 		Request				_request;
-		ServerContext		_serverContext;
+		ResponseContext		_responseContext;
 		std::string			_scriptPath;
 		std::string			_output;
 };

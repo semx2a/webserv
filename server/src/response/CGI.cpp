@@ -1,18 +1,20 @@
 #include "CGI.hpp"
 
-CGI::CGI() {}
-
-CGI::CGI(std::string const& scriptPath, Request const& req, ServerContext const& sc) :
+CGI::CGI(std::string const& scriptPath, Request const& req, ResponseContext const& sc) :
 																				_request(req),
-																				_serverContext(sc),
+																				_responseContext(sc),
 																				_scriptPath(scriptPath),
 																				_output("") {}
 
-CGI::CGI(CGI const& rhs) {
+CGI::CGI(CGI const& rhs) :
+						_request(rhs.request()),
+						_responseContext(rhs.responseContext()),
+						_scriptPath(rhs.scriptPath()),
+						_output(rhs.output()) {
 	*this = rhs;
 }
 
-CGI& CGI::operator=(CGI const& rhs) {
+CGI& CGI::operator=(CGI const& rhs){
 	if (this != &rhs) {
 
 		//TODO
@@ -24,8 +26,10 @@ CGI::~CGI() {}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-std::string const& 								CGI::scriptPath() const { return this->_scriptPath; }
-std::string const& 								CGI::output() const { return this->_output; }
+Request const& 			CGI::request() const { return this->_request; }
+ResponseContext const& 	CGI::responseContext() const { return this->_responseContext; }
+std::string const& 		CGI::scriptPath() const { return this->_scriptPath; }
+std::string const& 		CGI::output() const { return this->_output; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 

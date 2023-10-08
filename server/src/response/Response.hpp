@@ -30,15 +30,14 @@ class Response {
 
 	public:
 
-		Response();
-		Response(Request const&, ServerContext const&, HttpStatus const&);
+		Response(Request const&, ResponseContext const&, HttpStatus const&);
 		Response(Response const&);
 		~Response();
 		Response& operator=(Response const&);
 
 		// :::::::::::::::::::::::::::: ACCESSORS
 		Request const&			request() const;
-		ServerContext const&	serverContext() const;
+		ResponseContext const&	responseContext() const;
 		Body const&				body() const;
 		HttpStatus const&		status() const;
 
@@ -48,7 +47,7 @@ class Response {
 
 		// ::::::::::::::::::::::::::::::: MUTATORS
 		void		setRequest(Request const&);
-		void		setServerContext(ServerContext const&);
+		void		setResponseContext(ResponseContext const&);
 		void		setBody(Body const&);
 		void		setStatus(HttpStatus const&);
 
@@ -60,48 +59,46 @@ class Response {
 
 	private:
 
+		Response();
+
 		// ::::::::::::::::::::::::::: ATTRIBUTES
 		// CONTEXT
 		Request				_request;
-		ServerContext		_serverContext;
+		ResponseContext		_responseContext;
 		HttpStatus			_status;
 		Body				_body;
 
 		// UTILS
 		std::string			_path;
-		bool				_isInLocation;
-		t_locationIterator	_location;
-		std::string			_errorPage;
 		std::string			_extension;
-		std::string			_contentType;
 		std::string			_responseStr;
-
-
-		void				_checkAllowedMethods();
-		void				_expandTarget();
-		void				_setRootOrAlias(t_locationIterator, std::string const&, std::string&);
-
-		void				_expandDirectory();
-		void				_autoIndex();
-		void				_assignIndex(std::vector<std::string> const&);
-		void				_runCgi();
 
 		// ::::::::::::::::::::::::::::::: UTILS
 		std::string			_get_link(std::string const &, std::string const &);
 		void				_findExtension();
 		bool				_isDirectory();
-		bool				_isCgi();
 
 		// :::::::::::::::::::::::::: HTTP METHODS
 		struct MethodsMap {
 			typedef std::map<std::string, void(Response::*)()> type;
 		};
-
+		void				_checkAuthorizedMethod();
 		MethodsMap::type	_initMethods();
+
+		// GET
 		void				_handleGet();
 		void				_fillBodyWithFileContent(std::ifstream&);
+		void				_expandDirectory();
+		void				_autoIndex();
+		void				_runCgi();
+
+		// POST
 		void				_handlePost();
+
+		// DELETE
 		void				_handleDelete();
+
+		// ERROR
 		void				_handleError();
 
 };

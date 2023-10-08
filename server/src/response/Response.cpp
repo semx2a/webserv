@@ -2,17 +2,19 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Response::Response() : _status("") {
-
-	//TODO
-}
-
-Response::Response(Request const& request, ServerContext const& serverContext, HttpStatus const& status) : _request(request), _serverContext(serverContext), _status(status) {
+Response::Response(Request const& request, ResponseContext const& responseContext, HttpStatus const& status) : 
+														_request(request), 
+														_responseContext(responseContext), 
+														_status(status),
+														_path(responseContext.path()) {
 
 	this->buildResponse();
 }
 
-Response::Response(Response const& rhs) : _status(rhs.status()) {
+Response::Response(Response const& rhs) : 
+								_request(rhs.request()), 
+								_responseContext(rhs.responseContext()),
+								_status(rhs.status()) {
 
 	if (this != &rhs)
 		*this = rhs;
@@ -36,23 +38,23 @@ Response& Response::operator=(Response const& rhs)
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GETTERS::
 
 Request const&			Response::request() const { return _request; }
-ServerContext const&	Response::serverContext() const { return _serverContext; }
+ResponseContext const&	Response::responseContext() const { return _responseContext; }
 Body const&				Response::body() const { return _body; }
 HttpStatus const&		Response::status() const { return _status; }
 
 std::string const&		Response::path() const { return _path; }
-std::string const&		Response::contentType() const { return _contentType; }
+//std::string const&		Response::contentType() const { return _contentType; }
 std::string const&		Response::responseStr() const { return _responseStr; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: SETTERS::
 
 void	Response::setRequest(Request const& request) { _request = request; }
-void	Response::setServerContext(ServerContext const& serverContext) { _serverContext = serverContext; }
+void	Response::setResponseContext(ResponseContext const& responseContext) { _responseContext = responseContext; }
 void	Response::setBody(Body const& body) { _body = body; }
 void	Response::setStatus(HttpStatus const& status) { _status = status; }
 
 void	Response::setPath(std::string const& path) { _path = path; }
-void	Response::setContentType(std::string const& contentType) { _contentType = contentType; }
+//void	Response::setContentType(std::string const& contentType) { _contentType = contentType; }
 void	Response::setResponseStr(std::string const& responseStr) { _responseStr = responseStr; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ENTRYPOINT::
@@ -69,22 +71,18 @@ void	Response::buildResponse() {
             (this->*(&Response::_handleError))();
             throw HttpStatus(_status.statusCode());
         }
-
-		_checkAllowedMethods();
-		_expandTarget();
-		
+		_checkAuthorizedMethod();
 		(this->*methodsMap[_request.method()])();
 		_status.setStatusCode("200");
 	}
 	catch (HttpStatus& e) {
-
 		_status.setStatusCode(e.statusCode());
 		_handleError();
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
 	Body		body(_body.getContent());
-	Headers		headers(mimeTypes.getMimeType(_extension), body.getContentLength(), _serverContext);
+	Headers		headers(mimeTypes.getMimeType(_extension), body.getContentLength(), _responseContext);
 
 	_responseStr = statusLine.getContent() + headers.getContent() + body.getContent();
 }
@@ -113,12 +111,11 @@ void	Response::_handleGet () {
 	if (_isDirectory()) {
 		_expandDirectory();
 	}
-	else if (_isCgi()) {
+	if (not _responseContext.cgi().empty()) {
 		_runCgi();
 		return ;
 	}
 	std::ifstream	file(_path.c_str());
-	
 	if (!file.is_open()) {
 		throw HttpStatus("404");
 	}
@@ -133,7 +130,6 @@ void	Response::_fillBodyWithFileContent(std::ifstream& file) {
 	while (std::getline(file, line) && !file.eof()) {
 		bodyContent << line << std::endl;
 	}
-	
 	file.close();
 	this->_findExtension();
 	this->_body.build(bodyContent.str());
@@ -158,89 +154,34 @@ void	Response::_handleDelete() {
 
 void	Response::_handleError() {
 
-	bool isErrorPage = false;
-	this->_path = "";
 	int statusCode = std::atoi(_status.statusCode().c_str());
-	if (_isInLocation)
-	{
-		for (std::map<int, std::string>::const_iterator it = _location->second.errorPages().begin(); it != _location->second.errorPages().end(); it++) {
-			if (it->first == statusCode) {
-				_path = it->second;
-				_setRootOrAlias(_location, _path, _path);
-				isErrorPage = true;
-			}
-		}
-	}
-	if (isErrorPage == false) {
-		for (std::map<int, std::string>::const_iterator it = _serverContext.errorPages().begin(); it != _serverContext.errorPages().end(); it++) {
-			if (it->first == statusCode) {
-				_path = _serverContext.root() + it->second;
-				isErrorPage = true;
-			}
-		}
-	}
-	if (isErrorPage == true) {
+	if (_responseContext.errorPages().find(statusCode) != _responseContext.errorPages().end()) {
+
+		_path = _responseContext.root() + _responseContext.errorPages().find(statusCode)->second;
+
+		#ifdef DEBUG_RESPONSE
 		std::cout << "[DEBUG ERROR] path: " << _path << std::endl;
+		#endif
+
 		std::ifstream	file(_path.c_str());
-		
-		if (!file.is_open()) {
-			isErrorPage = false;
-		}
-		else {
+		if (file.is_open()) {
 			_fillBodyWithFileContent(file);
+			return ;
 		}
 	}
-	if (isErrorPage == false) {
-		std::stringstream bodyContent;
-		
-		bodyContent	<< "<html><body><h1>" 
-					<< _status.statusCode() 
-					<< "</h1></body></html>";
-		
-		this->_body.build(bodyContent.str());
-	}
+	std::stringstream bodyContent;
+	bodyContent	<< "<html><body><h1>" 
+				<< _status.statusCode() 
+				<< "</h1></body></html>";
+	this->_body.build(bodyContent.str());
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXPANSION::
 
-void	Response::_expandTarget() {
+void	Response::_checkAuthorizedMethod() {
 
-	std::string target = _request.target();
-	std::string path;
-
-	std::cout << "[DEBUG] target: " << target << std::endl;
-	if (target == "/")
-		target = "";
-	if (_isInLocation) {
-		_setRootOrAlias(_location, target, path);
-	}
-	if (path.empty()) { // if no root or alias in location or no location at all
-		path = _serverContext.root() + target;
-	}
-	std::cout << "[DEBUG] path: " << path << std::endl;
-}
-
-void	Response::_setRootOrAlias(t_locationIterator it, std::string const& target, std::string& path) {
-
-	std::string root = it->second.root();
-	std::string alias = it->second.alias();
-	if (!root.empty()) {
-		path = root + target;
-	}
-	else if (!alias.empty()) {
-		path = alias;
-	}
-}
-
-void	Response::_checkAllowedMethods() {
-
-	if (_isInLocation) {
-		std::vector<std::string> const& authorizedMethods = _location->second.authorizedMethods();
-		if (std::find(authorizedMethods.begin(), authorizedMethods.end(), _request.method()) == authorizedMethods.end()) {
-			this->_status.setStatusCode("405");
-		}
-	}
-	else if (std::find(_serverContext.authorizedMethods().begin(), _serverContext.authorizedMethods().end(), _request.method()) == _serverContext.authorizedMethods().end()) {
+	std::vector<std::string>::const_iterator it = std::find(_responseContext.authorizedMethods().begin(), _responseContext.authorizedMethods().end(), _request.method());
+	if (it == _responseContext.authorizedMethods().end()) {
 		this->_status.setStatusCode("405");
 	}
 }
@@ -251,29 +192,13 @@ void	Response::_expandDirectory() {
 	std::cout << "[DEBUG] Target is a directory" << std::endl;
 	#endif
 
-	if (_serverContext.autoindex() == "true") {
+	if (_responseContext.autoindex() == "true") {
 		_autoIndex();
 		return ;
 	}
-	else {
-		std::string index;
-		if (_isInLocation) {
-			_assignIndex(_location->second.index());
-		}
-		else if (not _serverContext.index().empty()) {
-			_assignIndex(_serverContext.index());
-		}
-		else {
-			throw HttpStatus("404");
-		}
-	}
-}
-
-void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
-
-	for (size_t i = 0; i < indexVec.size(); i++) {
-		
-		_path += indexVec[i];
+	for (size_t i = 0; i < _responseContext.index().size(); i++) {
+			
+		_path += _responseContext.index()[i];
 		
 		#ifdef DEBUG_RESPONSE
 		std::cout << "[DEBUG] Trying to open " << _path << std::endl;
@@ -283,7 +208,7 @@ void	Response::_assignIndex(std::vector<std::string> const& indexVec) {
 		if (file.is_open())
 			return;
 			
-		_path = _path.substr(0, _path.size() - indexVec[i].size());
+		_path = _path.substr(0, _path.size() - _responseContext.index()[i].size());
 	}
 	throw HttpStatus("404");
 }
@@ -339,7 +264,7 @@ void	Response::_runCgi() {
 	std::cout << "[DEBUG] Entering runCgi" << std::endl;
 	#endif
 
-	CGI	cgi(_path, _request, _serverContext);
+	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
 	_extension = "py";
 	_body.build(cgi.output());
@@ -369,19 +294,6 @@ void	Response::_findExtension() {
 	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
 
 	std::cout << "extension: " << _extension << std::endl;
-}
-
-bool	Response::_isCgi() {
-
-	if (_path.find(".py") != std::string::npos) {
-		std::cout << "Found .py in path" << std::endl;
- 		t_locationIterator it = _serverContext.locations().find(".py");
-		if (it != _serverContext.locations().end()) {
-			std::cout << "Found .py in locations" << std::endl;
-			return true;
-		}
-	}
-	return false;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
