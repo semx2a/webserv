@@ -33,7 +33,7 @@ MÉTHODE POST
 │
 └── 5. Envoi de la réponse
     ├── a. Utiliser poll() ou l'équivalent pour s'assurer que le socket est prêt à envoyer des données
-    ├── b. Envoyer la réponse en morceaux (si nécessaire) sans bloquer
+    ├── b. Envoyer la réponse en morceaux (si  nécessaire) sans bloquer
     └── c. Fermer la connexion si nécessaire (par ex. si l'en-tête `Connection: close` est présent)
 
 

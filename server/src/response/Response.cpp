@@ -143,6 +143,37 @@ void	Response::_handlePost() {
 	#ifdef DEBUG_RESPONSE
 	std::cout << "[DEBUG] Entering handlePost" << std::endl;
 	#endif
+	
+	if (this->_request.body().empty())
+		throw HttpStatus("400");
+
+	std::vector<char> postData = _request.body();
+	if (postData.empty())
+		throw HttpStatus("400");
+
+	if (this->_isDirectory())
+		this->_expandDirectory();
+
+	if (access(this->_path.c_str(), F_OK) == -1)
+		throw HttpStatus("404");
+	else if (access(this->_path.c_str(), W_OK) == -1)
+		throw HttpStatus("403");
+
+	if (this->_isCgi()) {
+		this->_runCgi();
+		return ;
+	}
+
+	std::ofstream	file(this->_path.c_str(), std::ios::app);
+
+	if (!file.is_open())
+		throw HttpStatus("500");
+
+	file.write(&postData[0], postData.size());
+	file.close();
+	
+	this->_status.setStatusCode("201");
+	
 }
 
 void	Response::_handleDelete() {

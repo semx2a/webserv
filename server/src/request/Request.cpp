@@ -103,6 +103,8 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 
 	if (this->_method.empty() || this->_target.empty() || this->_version.empty())
 		throw HttpStatus("400");
+	if (this->_version != "HTTP/1.1")
+		throw HttpStatus("505");
 }
 
 void Request::parser(std::vector<char> const& str_vec) {
