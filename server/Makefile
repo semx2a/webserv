@@ -79,11 +79,11 @@ SRC		:=	$(addprefix $(CONF),		\
 				Parser.cpp				\
 				AContext.cpp)			\
 			$(addprefix $(CORE),		\
-				Buffer.cpp				\
 				Epoll.cpp 				\
 				Engine.cpp 				\
 				Socket.cpp) 			\
 			$(addprefix $(REQ), 		\
+				Buffer.cpp				\
 				Request.cpp)			\
 			$(addprefix $(REP),			\
 			   	AFile.cpp				\
