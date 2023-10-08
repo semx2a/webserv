@@ -157,7 +157,7 @@ void	Engine::_writeToClient(int clientSocket) {
 	ResponseContext rc(this->_requests[clientSocket], this->_serverContexts[clientSocket]);
 	Response res(this->_requests[clientSocket], rc, this->_status[clientSocket]);
 	
-	utl::log(clientSocket, "Response about to be sent!");
+	utl::log(clientSocket, "Response about to be sent");
 	std::cout << GREEN << res.responseStr() << RESET << std::endl;
 
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
