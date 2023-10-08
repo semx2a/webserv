@@ -53,16 +53,16 @@ class Buffer {
 
 
 	private:
-		std::vector<char>		_raw;
-		std::string				_str;
-		size_t					_maxBodySize;
-		bool					_hasBody;
-		bool					_hasContentLength;
-		t_ull					_contentLength;
-		t_ull					_remainingContentLength;
-		size_t					_headerSize;
-		bool					_isTransferEncoding;
-		bool					_isEnded;
+		std::vector<char>	_raw;
+		std::string			_str;
+		size_t				_maxBodySize;
+		bool				_hasBody;
+		bool				_hasContentLength;
+		t_ull				_contentLength;
+		t_ull				_remainingContentLength;
+		size_t				_headerSize;
+		bool				_isTransferEncoding;
+		bool				_isEnded;
 		
 		void				_searchContentLength();
 		void				_searchTransferEncoding();
