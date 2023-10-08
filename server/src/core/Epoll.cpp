@@ -46,7 +46,12 @@ Epoll& Epoll::operator=(Epoll const& rhs) {
 	return *this;
 }
 
-Epoll::~Epoll() {}
+Epoll::~Epoll() {
+
+	for (std::map<int, ServerContext>::iterator it = this->_servers.begin(); it != this->_servers.end(); it++) {
+		close(it->first);
+	}
+}
 
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS / SETTERS
