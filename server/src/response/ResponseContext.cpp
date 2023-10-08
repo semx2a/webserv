@@ -10,11 +10,16 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 	this->_path = this->_target;
 
 	std::string cgi[2] = {".py", ".php"};
+
 	for (int i = 0; i < 2; i++) {
+
 		if (_path.find(cgi[i]) != std::string::npos) {
-			t_locationIterator cgiLocIt = this->_serverContext.locations().find(cgi[i]);
+
+			std::string ext = cgi[i].substr(1, cgi[i].size() - 1);
+			t_locationIterator cgiLocIt = this->_serverContext.locations().find(ext);
 			t_locationIterator endIt = this->_serverContext.locations().end();
 			if (cgiLocIt != endIt) {
+				std::cout << "[DEBUG] Is Cgi : " << cgi[i] << std::endl;
 				this->_cgi = cgi[i];
 				this->_location = cgiLocIt;
 				_locationDirectives();
@@ -23,6 +28,7 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 		}
 	}
 	if (this->_cgi.empty()) {
+
 		t_locationIterator it = this->_serverContext.locations().begin();
 		t_locationIterator ite = this->_serverContext.locations().end();
 		for (; it != ite; ++it) {

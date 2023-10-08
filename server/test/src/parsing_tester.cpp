@@ -11,9 +11,14 @@ void	DisplayParserContents(Parser const& parser) {
 	std::cout << HIPURPLE << std::setw(21) << "confFilename: " << HIGREEN << parser.confFileName() << RESET << std::endl;
 }
 
-int	main() {
+int	main(int ac, char **av) {
 
-	Parser const &	parser(std::string("../neoserv/conf/default.conf"));
+	if (ac > 2)
+		return 0;
+	std::string confFile = (ac == 2) 
+								? av[1]
+								: "../neoserv/conf/default.conf";
+	Parser const &	parser(confFile);
 
 	DisplayParserContents(parser);
 

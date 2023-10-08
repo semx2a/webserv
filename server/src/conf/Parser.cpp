@@ -156,7 +156,7 @@ bool	Parser::isEndOfScope(std::string const& line) const {
 
 void	Parser::searchIfCgi(LocationContext& locationContext, std::string& path) {
 
-	if (path != "*.py" || path != "*.php")
+	if (path != "*.py" || path != ".php")
 		return;
 	locationContext.setIsCgi(true);
 	path = path.substr(path.find_first_of("*") + 1, path.size() - path.find_first_of("*") - 1);
