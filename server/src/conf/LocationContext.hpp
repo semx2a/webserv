@@ -27,15 +27,3 @@ class LocationContext : public AContext {
 std::ostream &	operator<<(std::ostream & o, LocationContext const & cc);
 
 #endif
-
-//RAJOUTER ALIAS
-
-/*IDEA : make templates func parser for common variables :
-									- cgi
-									- maxBodySize
-									- root
-									- errorPages
-									- authorizedMethods
-									- index
-that would take an unknown class (ServerContext or LocationContext, parse, and call the setter)
-*/

@@ -1,6 +1,9 @@
 #include "LocationContext.hpp"
 
-LocationContext::LocationContext() : AContext(), _alias(""), _isPyCgi(false) {}
+LocationContext::LocationContext() : 
+AContext(), 
+								_alias(""), 
+								_isPyCgi(false) {}
 
 LocationContext::LocationContext(LocationContext const& rhs) : AContext() { *this = rhs; }
 

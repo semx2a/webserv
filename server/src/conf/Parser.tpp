@@ -118,7 +118,7 @@ void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
 		buildAndThrowParamError(line);
 	}
 
-	int size = std::atoll(sizeStr.substr(0, mPos).c_str());
+	size_t size = std::atoll(sizeStr.substr(0, mPos).c_str());
 	size *= 1e6;
 	context.setMaxBodySize(size);
 }

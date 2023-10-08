@@ -136,7 +136,7 @@ void Parser::isValidIPv4(const std::string& ip) const {
 	}
 }
 
-void Parser::isValidIPv6(const std::string& ip) const {
+/* void Parser::isValidIPv6(const std::string& ip) const {
 	
 	std::istringstream iss(ip);
 	std::string block;
@@ -180,7 +180,7 @@ void Parser::isValidIPv6(const std::string& ip) const {
 	if (count < 8 && doubleColonCount == 0) {
 		throw Parser::InvalidParam(err, *this);
 	}
-}
+} */
 
 bool	Parser::isCommentOrEmptyLine(std::string const& line) const {
 
