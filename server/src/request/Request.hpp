@@ -60,9 +60,6 @@ class Request {
 		void						_parseRequestLine(std::istringstream&);
 		void						_parseHeaders(std::istringstream&);
 		void						_parseBody(std::vector<char> const&);
-
-		std::vector<std::string>	_tokenize(const std::string, char);
-		int 						_find_last_occurrence(const std::vector<char>& haystack, const std::string& needle);
 };
 
 std::ostream &	operator<<(std::ostream & o, Request const & r);

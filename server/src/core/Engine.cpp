@@ -102,7 +102,7 @@ void	Engine::_addNewClient(int serverSocket) {
 	_serverContexts[clientSocket] = _epoll.servers().find(serverSocket)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
 	_status[clientSocket].setStatusCode("");
-//	utl::log(clientSocket, "New client added");
+	utl::log(clientSocket, "New client added");
 	
 	int on = 1;
 	setsockopt(clientSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &on, sizeof(int));
@@ -113,18 +113,19 @@ void	Engine::_readFromClient(int clientSocket) {
 
 	std::vector<char>	buffer(BUFFER_SIZE, '\0');
 
-	int	bytesRead = recv(clientSocket, &buffer[0], buffer.size(), 0);
-	if (bytesRead < 0) {
-		throw HttpStatus("500");
-	}
-	else if (bytesRead == 0) { 
-		utl::log(clientSocket, "End of connexion");
-		_endConnexion(clientSocket);
-	}
-	else {
-		buffer.resize(bytesRead);
-	}
 	try {
+		int	bytesRead = recv(clientSocket, &buffer[0], buffer.size(), 0);
+		if (bytesRead < 0) {
+			throw HttpStatus("500");
+		}
+		else if (bytesRead == 0) { 
+			utl::log(clientSocket, "End of connexion");
+			_endConnexion(clientSocket);
+			return ;
+		}
+		else {
+			buffer.resize(bytesRead);
+		}
 		this->_buffers[clientSocket].add(buffer);
 		this->_buffers[clientSocket].checkEnd();
 		this->_buffers[clientSocket].setRemainingContentLength(this->_buffers[clientSocket].remainingContentLength() - bytesRead);
@@ -163,13 +164,19 @@ void	Engine::_writeToClient(int clientSocket) {
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");
 	}
-	_endConnexion(clientSocket);
+	if (this->_requests[clientSocket].header("Connection") == "close") {
+		_endConnexion(clientSocket);
+	}
+	else {
+		_buffers[clientSocket].clear();
+		_epoll.editSocketInEpoll(clientSocket, EPOLLIN);
+	}
 	this->_status[clientSocket].setStatusCode("");
 }
 
-void	Engine::_endConnexion(int socket) {
+void	Engine::_endConnexion(int clientSocket) {
 
-	this->_buffers.erase(socket);
-	close(socket);
+	this->_buffers.erase(clientSocket);
+	close(clientSocket);
 }
 
