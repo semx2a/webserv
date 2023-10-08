@@ -132,6 +132,7 @@ void	ResponseContext::_serverDirectives() {
 
 std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 
+	o << "\t" << ORANGE << "Method: " << PURPLE << rhs.request().method() << std::endl;
 	o << "\t" << ORANGE << "Target: " << PURPLE << rhs.target() << std::endl;
 	o << "\t" << ORANGE << "Root: " << PURPLE << rhs.root() << std::endl;
 	o << "\t" << ORANGE << "Alias: " << PURPLE << rhs.alias() << std::endl;
