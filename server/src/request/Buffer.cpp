@@ -118,7 +118,7 @@ void	Buffer::_searchContentLength() {
 		}
 		this->_hasContentLength = true;
 		this->_hasBody = true;
-		this->_headerSize = this->_raw.size();
+		this->_headerSize = _str.size() - _str.find(DB_CRLF) + 4;
 	}
 }
 
@@ -137,6 +137,13 @@ void	Buffer::_checkEndContentLength() {
 	//std::cout << "Header size: " << this->_headerSize << std::endl;
 	//std::cout << "Content length: " << this->_contentLength << std::endl;
 	
+	#ifdef DEBUG_BUFFER
+	std::cout << BORANGE << "checkEndContentLength" << std::endl;
+	std::cout << ORANGE << "this->raw().size() = " << this->raw().size() << std::endl;
+	std::cout << "this->_headerSize = " << this->_headerSize << std::endl;
+	std::cout << "this->_contentLength = " << this->_contentLength << std::endl;
+	std::cout << RESET << std::endl;
+	#endif
 	if (this->_raw.size() - this->_headerSize >= this->_contentLength) {
 		this->_isEnded = true;
 	}
