@@ -133,10 +133,6 @@ void	Buffer::_searchTransferEncoding() {
 
 void	Buffer::_checkEndContentLength() {
 
-	//std::cout << "Raw size: " << this->_raw.size() << std::endl;
-	//std::cout << "Header size: " << this->_headerSize << std::endl;
-	//std::cout << "Content length: " << this->_contentLength << std::endl;
-	
 	#ifdef DEBUG_BUFFER
 	std::cout << BORANGE << "checkEndContentLength" << std::endl;
 	std::cout << ORANGE << "this->raw().size() = " << this->raw().size() << std::endl;
