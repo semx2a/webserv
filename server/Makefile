@@ -126,7 +126,7 @@ CXXFLAGS	:=	-Wall -Wextra -Werror -std=c++98
 
 CONVFLAGS	:=	-Wconversion
 
-DFLAGS		:=	-MMD
+DEPFLAG		:=	-MMD
 
 DEBUGFLAG	:=	-g3 #-fsanitize=address
 
@@ -142,14 +142,14 @@ $(OBJ): | $(ODIR)
 
 $(ODIR)%.o: $(SDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(INC) -c $< -o $@ 
+	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(INC) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 
 -include ${DEP}
 -include ${MDEP}
 
 $(NAME): $(OBJ)	$(MOBJ)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(OBJ) $(MOBJ) -o $(NAME)
+	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(OBJ) $(MOBJ) -o $(NAME)
 	@echo -e "$(HIGREEN)mandatory exe:[OK]$(RESET)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
@@ -164,14 +164,14 @@ $(TOBJ): | $(TODIR)
 
 $(TODIR)%.o: $(TDIR)%.cpp
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(INC) -c $< -o $@ 
+	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(INC) -c $< -o $@ 
 	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 
 -include ${DEP}
 -include ${TDEP}
 
 $(TNAME): $(OBJ) $(TOBJ)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) $(DEBUGFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
+	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
 	@echo -e "$(HIGREEN)test exe:[OK]$(RESET)" | $(INDENT)
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
@@ -257,7 +257,7 @@ message:
 #
 #$(TODIR)%.o: $(TSDIR)%.cpp
 #	mkdir -p $(dir $@)
-#	$(CXX) $(CXXFLAGS) $(INC) $(DFLAGS) $(TOBJ) -c $< -o $@ 
+#	$(CXX) $(CXXFLAGS) $(INC) $(DEPFLAG) $(TOBJ) -c $< -o $@ 
 #	@echo -e "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
 #
 #-include ${TDEP}
