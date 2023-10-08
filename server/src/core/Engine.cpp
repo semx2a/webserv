@@ -163,16 +163,7 @@ void	Engine::_writeToClient(int clientSocket) {
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");
 	}
-//	if (this->_requests[clientSocket].header("Connection") == "close") {
-		_endConnexion(clientSocket);
-//	}
-//	else {
-//		#ifdef DEBUG_ENGINE
-//		std::cout << "[DEBUG] Keep-alive" << std::endl;
-//		#endif
-//		_buffers[clientSocket].clear();
-//		_epoll.editSocketInEpoll(clientSocket, EPOLLIN);
-//	}
+	_endConnexion(clientSocket);
 	this->_status[clientSocket].setStatusCode("");
 }
 
