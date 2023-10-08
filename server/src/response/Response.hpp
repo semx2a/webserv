@@ -42,7 +42,6 @@ class Response {
 		HttpStatus const&		status() const;
 
 		std::string const&		path() const;
-		std::string const&		contentType() const;
 		std::string const&		responseStr() const;
 
 		// ::::::::::::::::::::::::::::::: MUTATORS
@@ -52,7 +51,6 @@ class Response {
 		void		setStatus(HttpStatus const&);
 
 		void		setPath(std::string const&);
-		void		setContentType(std::string const&);
 		void		setResponseStr(std::string const&);
 
 		void		buildResponse();
