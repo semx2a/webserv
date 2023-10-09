@@ -72,6 +72,7 @@ void	Parser::parse() {
 			this->buildAndThrowParamError(line);
 		}
 	}
+	checkIfPortDoublons();
 }
 
 
@@ -172,13 +173,18 @@ void	Parser::buildAndThrowParamError(std::string const& line) const {
 
 void	Parser::checkIfPortDoublons() {
 
-//	std::set
-//	for (std::vector<ServerContext>::const_iterator serversIt = _serversContexts.begin(); serversIt != _serversContexts.end(); serversIt++) {
-//		for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->listen().begin(); ipPortIt != serversIt->listen().end(); ipPortIt++) {
-//
-//			
-//		}
-//	}
+	std::set <int> setPorts;
+	for (std::vector<ServerContext>::const_iterator serversIt = _serversContexts.begin(); serversIt != _serversContexts.end(); serversIt++) {
+		for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->listen().begin(); ipPortIt != serversIt->listen().end(); ipPortIt++) {
+			
+			if (setPorts.find(ipPortIt->second) != setPorts.end()) {
+				std::stringstream stream;
+				stream << "neoserv: port " << ipPortIt->second << " already in use" << std::endl;
+				throw Parser::Error(stream.str());
+			}
+			setPorts.insert(ipPortIt->second);
+		}
+	}
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXCEPTIONS::
