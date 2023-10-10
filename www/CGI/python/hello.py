@@ -3,9 +3,9 @@
 import os
 from datetime import date
 
-#protocol = os.environ.get('SERVER_PROTOCOL')
-#status = os.environ.get('REDIRECT_STATUS')
-#print (protocol + ' ' + status + ' OK')
+protocol = os.environ.get('SERVER_PROTOCOL')
+status = os.environ.get('REDIRECT_STATUS')
+print (protocol + ' ' + status + ' OK')
 print ('Content-Type: ' + 'text/html')
 print ('')
 
