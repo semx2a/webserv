@@ -43,6 +43,8 @@ class CGI {
 
 		void	setScriptPath(std::string const&);
 		void	setOutput(std::string const&);
+		void	setEnvpMap(envp_t const&);
+		void	setEnvp(char**);
 
 		void	execute();
 
@@ -51,6 +53,7 @@ class CGI {
 
 		Request			_request;
 		ResponseContext	_responseContext;
+		
 		std::string		_scriptPath;
 		std::string		_output;
 		envp_t		 	_envpMap;
@@ -60,5 +63,7 @@ class CGI {
 		void	_generateEnvpMap();
 		void	_mapToEnvp();
 };
+
+std::ostream&	operator<<(std::ostream& o, CGI const& rhs);
 
 #endif

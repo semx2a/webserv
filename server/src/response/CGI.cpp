@@ -1,23 +1,25 @@
 #include "CGI.hpp"
 
-CGI::CGI(std::string const& scriptPath, Request const& req, ResponseContext const& sc) :
-																				_request(req),
-																				_responseContext(sc),
-																				_scriptPath(scriptPath),
-																				_output("") {}
+CGI::CGI(std::string const& scriptPath, Request const& req, ResponseContext const& sc) :	_request(req),
+																							_responseContext(sc),
+																							_scriptPath(scriptPath),
+																							_output("") {}
 
-CGI::CGI(CGI const& rhs) :
-						_request(rhs.request()),
-						_responseContext(rhs.responseContext()),
-						_scriptPath(rhs.scriptPath()),
-						_output(rhs.output()) {
+CGI::CGI(CGI const& rhs) :	_request(rhs.request()),
+							_responseContext(rhs.responseContext()),
+							_scriptPath(rhs.scriptPath()),
+							_output(rhs.output()) {
 	*this = rhs;
 }
 
 CGI& CGI::operator=(CGI const& rhs){
+	
 	if (this != &rhs) {
 
-		//TODO
+		this->_request = rhs.request();
+		this->_responseContext = rhs.responseContext();
+		this->_scriptPath = rhs.scriptPath();
+		this->_output = rhs.output();
 	}
 	return *this;
 }
@@ -31,11 +33,15 @@ ServerContext const& 	CGI::serverContext() const { return this->_responseContext
 ResponseContext const& 	CGI::responseContext() const { return this->_responseContext; }
 std::string const& 		CGI::scriptPath() const { return this->_scriptPath; }
 std::string const& 		CGI::output() const { return this->_output; }
+envp_t const&			CGI::envpMap() const { return this->_envpMap; }
+char**					CGI::envp() const { return this->_envp; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void	CGI::setScriptPath(std::string const& scriptPath) { this->_scriptPath = scriptPath; }
 void	CGI::setOutput(std::string const& output) { this->_output = output; }
+void	CGI::setEnvpMap(envp_t const& envpMap) { this->_envpMap = envpMap; }
+void	CGI::setEnvp(char** envp) { this->_envp = envp; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
@@ -120,6 +126,7 @@ void CGI::execute() {
 	argv[2] = NULL;
 
 	_generateEnvpMap();
+	std::cout << "[DEBUG]: " << *this << std::endl;
 	
 	int p[2];
 	if (pipe(p) == -1) {
@@ -161,7 +168,16 @@ void CGI::execute() {
 			_output += buffer;
 		}
 	}
-	delete[] argv;
-	delete[] this->_envp;
+}
 
+// ::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATTOR OVERLOAD::
+
+std::ostream& operator<<(std::ostream& o, CGI const& rhs) {
+
+	o << "CGI: " << std::endl;
+	o << "\t" << "Script path: " 	<< rhs.scriptPath()		<< std::endl;
+	o << "\t" << "Output: " 		<< rhs.output()			<< std::endl;
+	o << "\t" << "Envp: " 			<< utl::print_map(rhs.envpMap()) << std::endl;
+
+	return o;
 }
