@@ -2,7 +2,7 @@ ________________________________________________________________________________
 # CONF
 
 ## parser
-- [?] upload_folder directive
+- [ ] upload_folder directive
 
 ________________________________________________________________________________________________________________________
 # CORE
@@ -16,11 +16,11 @@ ________________________________________________________________________________
 - [x] find a way to keep track of status codes to handle response's first line
 - [ ] deep dive content negociation
 
-- [ ] retour recv 0 : ?
+- [x] retour recv 0 : ?
 - [ ] timeout
 - [x] check max body size
 - [x] connection header : close after ended or not
-- [ ] quid en cas de ports identiques pour 2 servers
+- [x] quid en cas de ports identiques pour 2 servers
 
 ________________________________________________________________________________________________________________________
 # RESPONSE
@@ -28,12 +28,12 @@ ________________________________________________________________________________
 - [x] classes for body and headers
 - [x] mimetypes dans l'autre sens 
 - [ ] POST
-- [ ] content-type fix
+- [x] content-type fix
 - [ ] CGI : 
       - [ ] sstream that sets headers
       - [ ] expand target for 
-- [ ] error page in conf
-- [ ] curl localhost:8000 segfault (connection keep-alive)
+- [x] error page in conf
+- [x] curl localhost:8000 segfault (connection keep-alive)
 - [ ] longer path for server context loc
 - [ ] pb of GET and POST not considered as in ma
 
@@ -43,4 +43,4 @@ ________________________________________________________________________________
 - [ ] find remaining "//TODO"s
 
 ## Tests
-- [ ] content-length > max body size
+- [x] content-length > max body size
