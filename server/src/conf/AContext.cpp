@@ -12,10 +12,11 @@ AContext& AContext::operator=(AContext const& rhs) {
 
 		this->_autoindex = rhs.autoindex();
 		this->_maxBodySize = rhs.maxBodySize();
+		this->_root = rhs.root();
 		this->_errorPages = rhs.errorPages();
 		this->_index = rhs.index();
-		this->_root = rhs.root();
 		this->_authorizedMethods = rhs.authorizedMethods();
+		this->_uploadFolder = rhs.uploadFolder();
 	}
 	return *this;
 }
@@ -30,6 +31,7 @@ std::string const &								AContext::root(void) const { return this->_root; }
 std::map<int, std::string> const &				AContext::errorPages(void) const { return this->_errorPages; }
 std::vector<std::string> const & 				AContext::index(void) const { return this->_index; }
 std::vector<std::string> const &				AContext::authorizedMethods(void) const { return this->_authorizedMethods; }
+std::string const&								AContext::uploadFolder(void) const { return this->_uploadFolder; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
@@ -42,18 +44,27 @@ void	AContext::addIndex(std::string const& index) { this->_index.push_back(index
 void	AContext::setIndex(std::vector<std::string> const& index) { this->_index = index; }
 void	AContext::addAuthorizedMethod(std::string const& method) { this->_authorizedMethods.push_back(method); }
 void	AContext::setAuthorizedMethods(std::vector<std::string> const& authorizedMethods) { this->_authorizedMethods = authorizedMethods; }
+void	AContext::setUploadFolder(std::string const& uploadFolder) { this->_uploadFolder = uploadFolder; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
 void	AContext::setDefaults() {
 	
+	if (this->_root.empty())
+		this->_root = "html";
 	this->_root = "../www/" + this->_root;
+
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
 		this->_authorizedMethods.push_back("DELETE");
 		this->_authorizedMethods.push_back("ERROR");
 	}
+
 	if (this->_errorPages.empty())
-		this->_errorPages[404] = "html/404.html";
+		this->_errorPages[404] = "error_page.html";
+	for (std::map<int, std::string>::iterator it = this->_errorPages.begin(); it != this->_errorPages.end(); it++)
+		it->second = this->_root + it->second;
+
+	this->_uploadFolder = "../www/" + this->_uploadFolder;
 }
