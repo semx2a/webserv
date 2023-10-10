@@ -164,7 +164,8 @@ void	Engine::_writeToClient(int clientSocket) {
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");
 	}
-	if (this->_requests[clientSocket].header("Connection") == "close") {
+	std::map<std::string, std::string>::const_iterator it = this->_requests[clientSocket].headers().find("Connexion");
+	if (it != this->_requests[clientSocket].headers().end() && it->second == "close") {
 		_endConnexion(clientSocket);
 	}
 	else {
