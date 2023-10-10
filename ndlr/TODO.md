@@ -28,6 +28,8 @@ ________________________________________________________________________________
 - [x] classes for body and headers
 - [x] mimetypes dans l'autre sens 
 - [ ] POST
+      - [ ] verifier comment un script php change le contenu d'une page html et l'envoie dans la réponse
+      - [ ] envoyer le resultat du runCGI au body de la réponse SI et seulement SI le script renvoie un output
 - [x] content-type fix
 - [ ] CGI : 
       - [ ] sstream that sets headers
