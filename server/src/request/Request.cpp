@@ -107,6 +107,14 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 		throw HttpStatus("400");
 	if (this->_version != "HTTP/1.1")
 		throw HttpStatus("505");
+	if (this->_target.find('?', 0) != std::string::npos) {
+
+		std::string newTarget;
+
+		newTarget = std::string(this->_target.begin(), this->_target.begin() + this->_target.find('?', 0));
+		this->setQuery(std::string(this->_target.begin() + this->_target.find('?', 0) + 1, this->_target.end()));
+		this->setTarget(newTarget);
+	}
 }
 
 void Request::parser(std::vector<char> const& str_vec) {

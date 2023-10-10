@@ -26,7 +26,8 @@ CGI::~CGI() {}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-Request const& 			CGI::request() const { return this->_request; }
+Request const& 			CGI::request() const { return this->_responseContext.request(); }
+ServerContext const& 	CGI::serverContext() const { return this->_responseContext.serverContext(); }
 ResponseContext const& 	CGI::responseContext() const { return this->_responseContext; }
 std::string const& 		CGI::scriptPath() const { return this->_scriptPath; }
 std::string const& 		CGI::output() const { return this->_output; }
@@ -38,8 +39,66 @@ void	CGI::setOutput(std::string const& output) { this->_output = output; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
-void	CGI::generateEnvp() {
+void CGI::_mapToEnvp() {
 
+	std::vector<std::string> v;
+	for (std::map<std::string, std::string>::const_iterator it = this->_envpMap.begin() ; it != this->_envpMap.end() ; it++)
+		v.push_back(it->first + "=" + it->second);
+	
+	char **arr = new char*[v.size() + 1];
+	if (arr == NULL)
+		throw HttpStatus("500");
+	
+	std::vector<std::string>::size_type index = 0;
+	for (std::vector<std::string>::iterator it = v.begin() ; it != v.end() ; it++)
+	{
+		std::strcpy(arr[index], it->c_str());
+		if (arr[index] == NULL)
+			throw HttpStatus("500");
+		index++;
+	}
+	
+	arr[index] = NULL;
+	this->_envp = arr;
+}
+
+void	CGI::_generateEnvpMap() {
+	
+	// SERVER VARIABLES
+	this->_envpMap["SERVER_SOFTWARE"] = "neoserv/1.0";
+	this->_envpMap["SERVER_NAME"] = this->serverContext().serverNames()[0];
+	this->_envpMap["GATEWAY_INTERFACE"] = "CGI/1.1";
+
+	// REQUEST DEFINED VARIABLES
+	this->_envpMap["SERVER_PROTOCOL"] = "HTTP/1.1";
+	this->_envpMap["SERVER_PORT"] = this->serverContext().port();
+	this->_envpMap["REQUEST_METHOD"] = this->request().method();
+	this->_envpMap["REDIRECT_STATUS"] = "200";
+	this->_envpMap["PATH_INFO"] = this->scriptPath();
+	this->_envpMap["PATH_TRANSLATED"] = this->scriptPath();
+	this->_envpMap["SCRIPT_NAME"] = this->scriptPath();
+	this->_envpMap["SCRIPT_FILENAME"] = this->scriptPath();
+	this->_envpMap["QUERY_STRING"] = this->request().query();
+	this->_envpMap["REMOTE_HOST"] = "";
+	this->_envpMap["REMOTE_ADDR"] = "";
+	this->_envpMap["AUTH_TYPE"] = "";
+	this->_envpMap["REMOTE_USER"] = "";
+
+	if (this->request().headers().find("content-type") != this->request().headers().end())
+		this->_envpMap["CONTENT_TYPE"] = this->request().headers().find("content-type")->second;
+	else
+		this->_envpMap["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+
+	this->_envpMap["CONTENT_LENGTH"] = utl::numberToString(this->request().body().size());
+
+	// CLIENT VARIABLES
+	this->_envpMap["HTTP_ACCEPT"] = "*/*";
+	this->_envpMap["HTTP_ACCEPT_LANGUAGE"] = "en-US,en";
+	if (this->request().headers().find("user-agent") != this->request().headers().end())
+		this->_envpMap["HTTP_USER_AGENT"] = this->request().headers().find("user-agent")->second;
+	if (this->request().headers().find("cookie") != this->request().headers().end())
+		this->_envpMap["HTTP_COOKIE"] = this->request().headers().find("cookie")->second;
+	this->_envpMap["HTTP_REFERER"] = "";
 }
 
 void CGI::execute() {
@@ -59,15 +118,8 @@ void CGI::execute() {
 	argv[1] = strdup(_scriptPath.c_str());
 	argv[2] = NULL;
 
-	char** envp = new char*[6];
-	//std::string query = "QUERY_STRING=" + _scriptPath.c_str();
-	envp[0] = strcpy(new char[std::string("PATH_INFO=" + _scriptPath).size() + 1], std::string("PATH_INFO=" + _scriptPath).c_str());
-	envp[1] = strcpy(new char[std::string("QUERY_STRING=" + _request.query()).size() + 1], std::string("QUERY_STRING=" + _request.query()).c_str());
-	envp[2] = strcpy(new char[std::string("REQUEST_METHOD=" + _request.method()).size() + 1], std::string("REQUEST_METHOD=" + _request.method()).c_str());
-	envp[3] = strcpy(new char[std::string("SERVER_PROTOCOL=" + _request.method()).size() + 1], std::string("SERVER_PROTOCOL=" + _request.method()).c_str());
-	envp[4] = strcpy(new char[std::string("REDIRECT_STATUS=" + std::string("200")).size() + 1], std::string("REDIRECT_STATUS=" + std::string("200")));
-	envp[5] = NULL;
-
+	_generateEnvpMap();
+	
 	int p[2];
 	if (pipe(p) == -1) {
 		perror("pipe");
@@ -84,12 +136,13 @@ void CGI::execute() {
 	{
 		close(p[0]);
 		dup2(p[1], STDOUT_FILENO);
+		this->_mapToEnvp();
 
-		if (execve(cmd.c_str(), argv, envp) == -1) {
+		if (execve(cmd.c_str(), argv, this->_envp) == -1) {
 			perror("execve");
 		}
 		delete[] argv;
-		delete[] envp;
+		delete[] this->_envp;
 		throw HttpStatus("500");
 	}
 	else
@@ -107,4 +160,7 @@ void CGI::execute() {
 			_output += buffer;
 		}
 	}
+	delete[] argv;
+	delete[] this->_envp;
+
 }

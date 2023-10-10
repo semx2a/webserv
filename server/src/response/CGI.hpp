@@ -7,7 +7,9 @@
 #include <map>
 #include <string>
 #include <iostream>
-
+#include <sstream>
+#include <iterator>
+#include <cstring>
 extern "C" {
 	#include <unistd.h>
 	#include <sys/types.h>
@@ -15,10 +17,13 @@ extern "C" {
 	#include <fcntl.h>
 }
 
-#include "Request.hpp"
 #include "ResponseContext.hpp"
+#include "Request.hpp"
 
 #include "HttpStatus.hpp"
+
+
+typedef std::map<std::string, std::string> envp_t;
 
 class CGI {
 
@@ -29,9 +34,12 @@ class CGI {
 		~CGI();
 
 		Request const&			request() const;
+		ServerContext const&	serverContext() const;
 		ResponseContext const&	responseContext() const;
 		std::string const&		scriptPath() const;
 		std::string const&		output() const;
+		envp_t const&			envpMap() const;
+		char**					envp() const;
 
 		void	setScriptPath(std::string const&);
 		void	setOutput(std::string const&);
@@ -41,12 +49,16 @@ class CGI {
 	private:
 		CGI();
 
-		Request				_request;
-		ResponseContext		_responseContext;
-		std::string			_scriptPath;
-		std::string			_output;
+		Request			_request;
+		ResponseContext	_responseContext;
+		std::string		_scriptPath;
+		std::string		_output;
+		envp_t		 	_envpMap;
+		char**			_envp;
 
-		void	_generateEnvp();
+
+		void	_generateEnvpMap();
+		void	_mapToEnvp();
 };
 
 #endif

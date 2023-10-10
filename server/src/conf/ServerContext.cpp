@@ -26,7 +26,7 @@ ServerContext::~ServerContext() {}
 std::map<std::string, int> const &				ServerContext::listen(void) const { return this->_listen; }
 std::map<std::string, LocationContext> const &	ServerContext::locations(void) const { return this->_locations; }
 std::vector<std::string> const &				ServerContext::serverNames(void) const { return this->_serverNames; }
-
+int												ServerContext::port(void) const { return this->_listen.begin()->second; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 

@@ -83,6 +83,8 @@ class utl {
 		template <typename KeyType, typename T>
 		static std::string 				print_map_of_vectors(const std::map<KeyType, T>& myMap);
 
+		template<typename T>
+		static std::string				numberToString(T number);
 
 };
 

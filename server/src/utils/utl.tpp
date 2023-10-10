@@ -6,7 +6,7 @@
 /*   By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 17:44:00 by seozcan           #+#    #+#             */
-/*   Updated: 2023/10/04 13:40:27 by seozcan          ###   ########.fr       */
+/*   Updated: 2023/10/10 17:01:19 by seozcan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,13 @@ std::string	 utl::print_map_of_vectors(std::map<KeyType, T> const& myMap) {
         print_vector(it->second);
         sstream << RESET << std::endl;
     }
+	return sstream.str();
+}
+
+template<typename T>
+std::string	 utl::numberToString(T number) {
+
+	std::stringstream sstream;
+	sstream << number;
 	return sstream.str();
 }
