@@ -15,12 +15,13 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 
 		if (_path.find(cgi[i]) != std::string::npos) {
 
-			std::string ext = cgi[i].substr(1, cgi[i].size() - 1);
+			std::string ext = cgi[i];
 			t_locationIterator cgiLocIt = this->_serverContext.locations().find(ext);
 			t_locationIterator endIt = this->_serverContext.locations().end();
 			if (cgiLocIt != endIt) {
-				std::cout << "[DEBUG] Is Cgi : " << cgi[i] << std::endl;
-				this->_cgi = cgi[i];
+				std::cout << "CGI: " << cgiLocIt->first << std::endl;
+				this->_cgi.append(cgi[i]);
+				std::cout << "CGI: " << this->_cgi << std::endl;
 				this->_location = cgiLocIt;
 				_locationDirectives();
 				break;
@@ -48,7 +49,7 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 		_path.replace(pos, 2, "/");
 	}
 	#ifdef DEBUG_RESPONSECONTEXT
-		std::cout << BORANGE << "[DEBUG] ResponseContext::ResponseContext()\n" << *this << RESET << std::endl;
+		std::cout << BORANGE << "\n[DEBUG] ResponseContext::ResponseContext()\n" << *this << RESET << std::endl;
 	#endif
 
 }
@@ -67,6 +68,8 @@ ResponseContext &		ResponseContext::operator=(ResponseContext const & rhs) {
 
 	if (this != &rhs) {
 		this->_target = rhs.target();
+		this->_path = rhs.path();
+		this->_location = rhs.location();
 		this->_root = rhs.root();
 		this->_alias = rhs.alias();
 		this->_index = rhs.index();
@@ -74,6 +77,7 @@ ResponseContext &		ResponseContext::operator=(ResponseContext const & rhs) {
 		this->_autoindex = rhs.autoindex();
 		this->_maxBodySize = rhs.maxBodySize();
 		this->_authorizedMethods = rhs.authorizedMethods();
+		this->_cgi = rhs.cgi();
 	}
 	return *this;
 }
@@ -160,6 +164,7 @@ std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 	o << "\t" << ORANGE << "Error pages: " << PURPLE << utl::print_map(rhs.errorPages()) << std::endl;
 	o << "\t" << ORANGE << "Max body size: " << PURPLE << rhs.maxBodySize() << std::endl;
 	o << "\t" << ORANGE << "Authorized methods: " << PURPLE << utl::print_vector(rhs.authorizedMethods()) << std::endl;
+	o << "\t" << ORANGE << "Cgi: " << PURPLE << rhs.cgi() << std::endl;
 	o << "\t" << RESET << std::endl;
 	return o;
 }

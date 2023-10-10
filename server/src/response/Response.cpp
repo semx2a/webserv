@@ -142,8 +142,10 @@ void	Response::_handlePost() {
 	std::cout << "[DEBUG] Entering handlePost" << std::endl;
 	#endif
 	
-	if (this->_request.body().empty())
+	if (this->_request.body().empty()) {
+		std::cout << "[DEBUG] Empty body" << std::endl;
 		throw HttpStatus("400");
+	}
 
 	std::vector<char> postData = _request.body();
 	if (postData.empty())
@@ -157,7 +159,8 @@ void	Response::_handlePost() {
 	else if (access(this->_path.c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 
-	if (not _responseContext.cgi().empty()) {
+	if (_responseContext.cgi() != "none") {
+		std::cout << "[DEBUG] Cgi ok:" << _responseContext.cgi() << std::endl;
 		this->_runCgi();
 		return ;
 	}
@@ -296,6 +299,7 @@ void	Response::_runCgi() {
 	std::cout << "[DEBUG] Entering runCgi" << std::endl;
 	#endif
 
+	std::cout << "[DEBUG] CGI: " << _responseContext.cgi() << std::endl;
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
 	_extension = _responseContext.cgi().substr(1, 2);
