@@ -66,11 +66,13 @@ void Request::_parseHeaders(std::istringstream &stream) {
 	if (!this->_headers.empty())
 		this->_headers.clear();
 	
-	while (std::getline(stream, line, '\r')) {
+	std::getline(stream, line);
+	while (std::getline(stream, line)) {
 
+		if (line.empty() || line == "\r")
+			break;
 		line = utl::trim(line);
-		if (!line.empty())
-			headers_vec.push_back(line);
+		headers_vec.push_back(line);
 	}
 	
 	for (std::vector<std::string>::iterator it = headers_vec.begin(); it != headers_vec.end(); it++)
