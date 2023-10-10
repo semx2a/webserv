@@ -9,36 +9,35 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 	this->_target = this->_request.target();
 	this->_path = this->_target;
 
-	std::string cgi[2] = {".py", ".php"};
+	t_locationIterator locationEndIterator = this->_serverContext.locations().end();
 
+	std::string cgi[2] = {".py", ".php"};
 	for (int i = 0; i < 2; i++) {
 
 		if (_path.find(cgi[i]) != std::string::npos) {
-
 			std::string ext = cgi[i];
 			t_locationIterator cgiLocIt = this->_serverContext.locations().find(ext);
-			t_locationIterator endIt = this->_serverContext.locations().end();
-			if (cgiLocIt != endIt) {
-				std::cout << "CGI: " << cgiLocIt->first << std::endl;
-				this->_cgi.append(cgi[i]);
-				std::cout << "CGI: " << this->_cgi << std::endl;
+			if (cgiLocIt != locationEndIterator) {
+				this->_isCgi = true;
 				this->_location = cgiLocIt;
 				_locationDirectives();
 				break;
 			}
 		}
 	}
-	if (this->_cgi.empty()) {
+	if (_path.find("/upload") != std::string::npos) {
+		this->_isUpload = true;
+	}
+	if (not this->_isCgi) {
 
 		t_locationIterator it = this->_serverContext.locations().begin();
-		t_locationIterator ite = this->_serverContext.locations().end();
-		for (; it != ite; ++it) {
+		for (; it != locationEndIterator; ++it) {
 			if (this->_target.find(it->first) != std::string::npos) {
 				this->_location = it;
 				break;
 			}
 		}
-		if (it != ite) {
+		if (it != locationEndIterator) {
 			_locationDirectives();
 		}
 	}
@@ -72,12 +71,14 @@ ResponseContext &		ResponseContext::operator=(ResponseContext const & rhs) {
 		this->_location = rhs.location();
 		this->_root = rhs.root();
 		this->_alias = rhs.alias();
+		this->_uploadFolder = rhs.uploadFolder();
 		this->_index = rhs.index();
 		this->_errorPages = rhs.errorPages();
 		this->_autoindex = rhs.autoindex();
 		this->_maxBodySize = rhs.maxBodySize();
 		this->_authorizedMethods = rhs.authorizedMethods();
-		this->_cgi = rhs.cgi();
+		this->_isCgi = rhs.isCgi();
+		this->_isUpload = rhs.isUpload();
 	}
 	return *this;
 }
@@ -91,12 +92,14 @@ std::string const&					ResponseContext::target() const { return this->_target; }
 std::string const&					ResponseContext::path() const { return this->_path; }
 std::string const&					ResponseContext::root() const { return this->_root; }
 bool								ResponseContext::alias() const { return this->_alias; }
+std::string const&					ResponseContext::uploadFolder() const { return this->_uploadFolder; }
 std::vector<std::string> const&		ResponseContext::index() const { return this->_index; }
 std::map<int, std::string> const&	ResponseContext::errorPages() const { return this->_errorPages; }
 std::string const&					ResponseContext::autoindex() const { return this->_autoindex; }
 size_t 								ResponseContext::maxBodySize() const { return this->_maxBodySize; }
 std::vector<std::string> const&		ResponseContext::authorizedMethods() const { return this->_authorizedMethods; }
-std::string const&					ResponseContext::cgi() const { return this->_cgi; }
+bool								ResponseContext::isCgi() const { return this->_isCgi; }
+bool								ResponseContext::isUpload() const { return this->_isUpload; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
@@ -116,6 +119,7 @@ void	ResponseContext::_locationDirectives() {
 
 	this->_root = this->_location->second.root();
 	this->_index = this->_location->second.index();
+	this->_uploadFolder = this->_location->second.uploadFolder();
 	this->_errorPages = this->_location->second.errorPages();
 	this->_autoindex = this->_location->second.autoindex();
 	this->_maxBodySize = this->_location->second.maxBodySize();
@@ -134,6 +138,9 @@ void	ResponseContext::_serverDirectives() {
 	}
 	if (this->_index.empty()) {
 		this->_index = this->_serverContext.index();
+	}
+	if (this->_uploadFolder.empty()) {
+		this->_uploadFolder = this->_serverContext.uploadFolder();
 	}
 	if (this->_errorPages.empty()) {
 		this->_errorPages = this->_serverContext.errorPages();
@@ -158,13 +165,15 @@ std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 	o << "\t" << ORANGE << "Target: " << PURPLE << rhs.target() << std::endl;
 	o << "\t" << ORANGE << "Root: " << PURPLE << rhs.root() << std::endl;
 	o << "\t" << ORANGE << "Alias: " << PURPLE << rhs.alias() << std::endl;
+	o << "\t" << ORANGE << "Upload folder: " << PURPLE << rhs.uploadFolder() << std::endl;
 	o << "\t" << ORANGE << "Path: " << PURPLE << rhs.path() << std::endl;
 	o << "\t" << ORANGE << "Index: " << PURPLE << utl::print_vector(rhs.index()) << std::endl;
 	o << "\t" << ORANGE << "Autoindex: " << PURPLE << rhs.autoindex() << std::endl;
 	o << "\t" << ORANGE << "Error pages: " << PURPLE << utl::print_map(rhs.errorPages()) << std::endl;
 	o << "\t" << ORANGE << "Max body size: " << PURPLE << rhs.maxBodySize() << std::endl;
 	o << "\t" << ORANGE << "Authorized methods: " << PURPLE << utl::print_vector(rhs.authorizedMethods()) << std::endl;
-	o << "\t" << ORANGE << "Cgi: " << PURPLE << rhs.cgi() << std::endl;
+	o << "\t" << ORANGE << "isCgi: " << PURPLE << rhs.isCgi() << std::endl;
+	o << "\t" << ORANGE << "isUpload: " << PURPLE << rhs.isUpload() << std::endl;
 	o << "\t" << RESET << std::endl;
 	return o;
 }

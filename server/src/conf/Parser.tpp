@@ -151,6 +151,20 @@ void	Parser::parseRoot(std::string const& line, Context& context) {
 }
 
 template <typename Context>
+void	Parser::parseUploadFolder(std::string const& line, Context& context) {
+
+	std::stringstream stream(line);
+	std::string directive;
+	std::string uploadFolder;
+
+	if (!(stream >> directive >> uploadFolder) || !stream.eof()) {
+		buildAndThrowParamError(line);
+	}
+
+	context.setUploadFolder(uploadFolder);
+}
+
+template <typename Context>
 void	Parser::parseListen(std::string const& line, Context& context) {
 
 	std::stringstream	stream(line);

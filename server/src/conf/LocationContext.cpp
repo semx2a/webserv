@@ -42,11 +42,15 @@ void	LocationContext::setDefaults() {
 std::ostream &	operator<<(std::ostream & o, LocationContext const & sc) {
 
 	o << HIPURPLE << "------ LocationContext ------"	<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "autoindex : " 		<< HIGREEN << sc.autoindex() 							<< RESET << std::endl;
 	o << HIPURPLE << std::setw(52) << "maxBodySize : " 		<< HIGREEN << sc.maxBodySize() 							<< RESET << std::endl;
-	o << HIPURPLE << std::setw(52) << "alias : " 			<< HIGREEN << sc.alias() 								<< RESET << std::endl;
 	o << HIPURPLE << std::setw(52) << "root : " 			<< HIGREEN << sc.root() 								<< RESET << std::endl;
 	o << HIPURPLE << std::setw(52) << "errorPages : " 		<< HIGREEN << utl::print_map(sc.errorPages()) 			<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "index : " 			<< HIGREEN << utl::print_vector(sc.index()) 			<< RESET << std::endl;
 	o << HIPURPLE << std::setw(52) << "authorizedMethods : "<< HIGREEN << utl::print_vector(sc.authorizedMethods())	<< RESET << std::endl;
+	o << HIPURPLE << std::setw(52) << "uploadFolder : " 		<< HIGREEN << sc.uploadFolder() 							<< RESET << std::endl;
+
+	o << HIPURPLE << std::setw(52) << "alias : " 			<< HIGREEN << sc.alias() 								<< RESET << std::endl;
 	o << HIPURPLE << std::setw(62) << "-----------------------------"	<< RESET << std::endl;
 
 	return o;

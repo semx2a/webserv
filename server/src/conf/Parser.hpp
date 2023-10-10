@@ -63,6 +63,8 @@ class Parser {
 		template <typename Context>
 		void	parseRoot(std::string const&, Context&);
 		template <typename Context>
+		void	parseUploadFolder(std::string const&, Context&);
+		template <typename Context>
 		void	parseListen(std::string const&, Context&);
 		template <typename Context>
 		void	parseErrorPage(std::string const&, Context&);

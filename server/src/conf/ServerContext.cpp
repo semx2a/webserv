@@ -54,11 +54,13 @@ std::ostream &	operator<<(std::ostream & o, ServerContext const & sc) {
 	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.autoindex()			<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.maxBodySize()							<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.root()									<< RESET << std::endl;
-	o << HIPURPLE << std::setw(21) << "listen: " 			<< HIGREEN << utl::print_map(sc.listen()) 				<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "errorPages: " 		<< HIGREEN << utl::print_map(sc.errorPages()) 			<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "locations: " 		<< HIGREEN << utl::print_map(sc.locations())			<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "index: " 			<< HIGREEN << utl::print_vector(sc.index())				<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "authorizedMethods: "	<< HIGREEN << utl::print_vector(sc.authorizedMethods()) << RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "uploadFolder: " 		<< HIGREEN << sc.uploadFolder() 							<< RESET << std::endl;
+
+	o << HIPURPLE << std::setw(21) << "listen: " 			<< HIGREEN << utl::print_map(sc.listen()) 				<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "serverNames: " 		<< HIGREEN << utl::print_vector(sc.serverNames())		<< RESET << std::endl;
 
 	return o;

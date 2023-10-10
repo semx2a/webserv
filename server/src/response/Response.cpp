@@ -112,7 +112,7 @@ void	Response::_handleGet () {
 	if (_isDirectory()) {
 		_expandDirectory();
 	}
-	if (not _responseContext.cgi().empty()) {
+	if (_responseContext.isCgi()) {
 		_runCgi();
 		return ;
 	}
@@ -143,13 +143,21 @@ void	Response::_handlePost() {
 	#endif
 	
 	if (this->_request.body().empty()) {
-		std::cout << "[DEBUG] Empty body" << std::endl;
 		throw HttpStatus("400");
 	}
+	if (_responseContext.isUpload()) {
+		std::cout << "[DEBUG] Upload need to be handled!!!" << std::endl;
+		// add to path the upload folders directive
+		// create file
+		//_handleUpload();
+		return ;
+	}
+	if (_responseContext.isCgi())
+		std::cout << "[DEBUG] cgi need to be handled!!!" << std::endl;
 
-	std::vector<char> postData = _request.body();
-	if (postData.empty())
-		throw HttpStatus("400");
+//	std::vector<char> postData = _request.body();
+//	if (postData.empty())
+//		throw HttpStatus("400");
 
 	if (this->_isDirectory())
 		this->_expandDirectory();
@@ -159,19 +167,19 @@ void	Response::_handlePost() {
 	else if (access(this->_path.c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 
-	if (_responseContext.cgi() != "none") {
-		std::cout << "[DEBUG] Cgi ok:" << _responseContext.cgi() << std::endl;
+	if (_responseContext.isCgi()) {
+		std::cout << "[DEBUG] Post : calling runCgi..." << std::endl;
 		this->_runCgi();
 		return ;
 	}
 
-	std::ofstream	file(this->_path.c_str(), std::ios::app);
+//	std::ofstream	file(this->_path.c_str(), std::ios::app);
+//
+//	if (!file.is_open())
+//		throw HttpStatus("500");
 
-	if (!file.is_open())
-		throw HttpStatus("500");
-
-	file.write(&postData[0], postData.size());
-	file.close();
+//	file.write(&postData[0], postData.size());
+//	file.close();
 	
 	this->_status.setStatusCode("201");
 }
@@ -191,7 +199,7 @@ void	Response::_handleError() {
 	int statusCode = std::atoi(_status.statusCode().c_str());
 	if (_responseContext.errorPages().find(statusCode) != _responseContext.errorPages().end()) {
 
-		_path = _responseContext.root() + _responseContext.errorPages().find(statusCode)->second;
+		_path = _responseContext.errorPages().find(statusCode)->second;
 
 		#ifdef DEBUG_RESPONSE
 		std::cout << "[DEBUG ERROR] path: " << _path << std::endl;
@@ -299,10 +307,9 @@ void	Response::_runCgi() {
 	std::cout << "[DEBUG] Entering runCgi" << std::endl;
 	#endif
 
-	std::cout << "[DEBUG] CGI: " << _responseContext.cgi() << std::endl;
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
-	_extension = _responseContext.cgi().substr(1, 2);
+	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
 	_body.build(cgi.output());
 }
 

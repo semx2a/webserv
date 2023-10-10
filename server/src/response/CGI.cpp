@@ -104,12 +104,13 @@ void	CGI::_generateEnvpMap() {
 void CGI::execute() {
 
 	std::string cmd; 
-	if (_responseContext.cgi() == ".php")
+	
+	if (_scriptPath.find(".php"))
 		cmd = strdup("/usr/bin/php-cgi");
-	else if (_responseContext.cgi() == ".py")
+	else if (_scriptPath.find(".py"))
 		cmd = strdup("/usr/bin/python3");
 	else {
-		std::cout << "CGI: Unknown CGI extension: " << _responseContext.cgi() << std::endl;
+		std::cout << "CGI: Unknown CGI extension" << std::endl;
 		throw HttpStatus("500");
 	}
 

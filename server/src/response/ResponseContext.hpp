@@ -29,28 +29,33 @@ class ResponseContext {
 		t_locationIterator					location() const;
 		std::string const&					root() const;
 		bool								alias() const;
+		std::string const&					uploadFolder() const;
 		std::vector<std::string> const&		index() const;
 		std::map<int, std::string> const&	errorPages() const;
 		std::string const&					autoindex() const;
 		size_t 								maxBodySize() const;
 		std::vector<std::string> const&		authorizedMethods() const;
-		std::string const&					cgi() const;
+		bool								isCgi() const;
+		bool								isUpload() const;
 
 	private:
 	 	Request const&						_request;
 		ServerContext const&				_serverContext;
 
 		std::string							_target;
-		std::string							_path;
+		std::string							_path; // += root
 		t_locationIterator					_location;
 		std::string							_root;
 		bool								_alias;
-		std::vector<std::string>			_index;
-		std::map<int, std::string>			_errorPages;
+		std::string							_uploadFolder; // += root
+		std::vector<std::string>			_index; // += root
+		std::map<int, std::string>			_errorPages; // += root
 		std::string							_autoindex;
 		size_t								_maxBodySize;
 		std::vector<std::string>			_authorizedMethods;
-		std::string							_cgi;
+		bool								_isCgi;
+		bool								_isUpload;
+		
 
 		void		_locationDirectives();
 		void		_serverDirectives();

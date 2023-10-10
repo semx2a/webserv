@@ -82,10 +82,12 @@ Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirectives() {
 	directiveMap["autoindex"] = &Parser::parseAutoindex<ServerContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<ServerContext>;
 	directiveMap["root"] = &Parser::parseRoot<ServerContext>;
-    directiveMap["listen"] = &Parser::parseListen<ServerContext>;
 	directiveMap["error_page"] = &Parser::parseErrorPage<ServerContext>;
 	directiveMap["index"] = &Parser::parseIndex<ServerContext>;
 	directiveMap["authorized_methods"] = &Parser::parseAuthorizedMethods<ServerContext>;
+	directiveMap["upload_folder"] = &Parser::parseUploadFolder<ServerContext>;
+
+    directiveMap["listen"] = &Parser::parseListen<ServerContext>;
     directiveMap["server_name"] = &Parser::parseServerName<ServerContext>;
 
     return directiveMap;
@@ -94,12 +96,15 @@ Parser::DirectiveMap<ServerContext>::type Parser::initializeServerDirectives() {
 Parser::DirectiveMap<LocationContext>::type Parser::initializeLocationDirectives() {
     Parser::DirectiveMap<LocationContext>::type directiveMap;
 
+	directiveMap["autoindex"] = &Parser::parseAutoindex<LocationContext>;
 	directiveMap["client_max_body_size"] = &Parser::parseMaxBodySize<LocationContext>;
-	directiveMap["alias"] = &Parser::parseAlias<LocationContext>;
 	directiveMap["root"] = &Parser::parseRoot<LocationContext>;
 	directiveMap["error_page"] = &Parser::parseErrorPage<LocationContext>;
 	directiveMap["index"] = &Parser::parseIndex<LocationContext>;
 	directiveMap["authorized_methods"] = &Parser::parseAuthorizedMethods<LocationContext>;
+	directiveMap["upload_folder"] = &Parser::parseUploadFolder<LocationContext>;
+
+	directiveMap["alias"] = &Parser::parseAlias<LocationContext>;
 
     return directiveMap;
 }
@@ -157,7 +162,7 @@ bool	Parser::isEndOfScope(std::string const& line) const {
 
 void	Parser::searchIfCgi(LocationContext& locationContext, std::string& path) {
 
-	if (path != "*.py" || path != ".php")
+	if (path != ".py" || path != ".php")
 		return;
 	locationContext.setIsCgi(true);
 	path = path.substr(path.find_first_of("*") + 1, path.size() - path.find_first_of("*") - 1);
