@@ -45,6 +45,8 @@ class CGI {
 		ResponseContext		_responseContext;
 		std::string			_scriptPath;
 		std::string			_output;
+
+		void	_generateEnvp();
 };
 
 #endif

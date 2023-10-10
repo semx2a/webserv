@@ -38,16 +38,35 @@ void	CGI::setOutput(std::string const& output) { this->_output = output; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
+void	CGI::generateEnvp() {
+
+}
+
 void CGI::execute() {
 
-	char** argv = new char*[2];
-	argv[0] = strdup(_scriptPath.c_str());
-	argv[1] = NULL;
+	std::string cmd; 
+	if (_responseContext.cgi() == ".php")
+		cmd = strdup("/usr/bin/php-cgi");
+	else if (_responseContext.cgi() == ".py")
+		cmd = strdup("/usr/bin/python3");
+	else {
+		std::cout << "CGI: Unknown CGI extension: " << _responseContext.cgi() << std::endl;
+		throw HttpStatus("500");
+	}
 
-	std::string query = "QUERY_STRING=" + _scriptPath;
-	char** envp = new char*[2];
-	envp[0] = strdup(query.c_str());
-	envp[1] = NULL;
+	char** argv = new char*[2];
+	argv[0] = strdup(cmd.c_str());
+	argv[1] = strdup(_scriptPath.c_str());
+	argv[2] = NULL;
+
+	char** envp = new char*[6];
+	//std::string query = "QUERY_STRING=" + _scriptPath.c_str();
+	envp[0] = strcpy(new char[std::string("PATH_INFO=" + _scriptPath).size() + 1], std::string("PATH_INFO=" + _scriptPath).c_str());
+	envp[1] = strcpy(new char[std::string("QUERY_STRING=" + _request.query()).size() + 1], std::string("QUERY_STRING=" + _request.query()).c_str());
+	envp[2] = strcpy(new char[std::string("REQUEST_METHOD=" + _request.method()).size() + 1], std::string("REQUEST_METHOD=" + _request.method()).c_str());
+	envp[3] = strcpy(new char[std::string("SERVER_PROTOCOL=" + _request.method()).size() + 1], std::string("SERVER_PROTOCOL=" + _request.method()).c_str());
+	envp[4] = strcpy(new char[std::string("REDIRECT_STATUS=" + std::string("200")).size() + 1], std::string("REDIRECT_STATUS=" + std::string("200")));
+	envp[5] = NULL;
 
 	int p[2];
 	if (pipe(p) == -1) {
@@ -66,7 +85,7 @@ void CGI::execute() {
 		close(p[0]);
 		dup2(p[1], STDOUT_FILENO);
 
-		if (execve(_scriptPath.c_str(), argv, envp) == -1) {
+		if (execve(cmd.c_str(), argv, envp) == -1) {
 			perror("execve");
 		}
 		delete[] argv;
