@@ -11,6 +11,7 @@ LocationContext& LocationContext::operator=(LocationContext const& rhs) {
 	if (this != &rhs) {
 		
 		AContext::operator=(rhs);
+		this->_name = rhs.name();
 		this->_alias = rhs.alias();
 	}
 	return *this;
