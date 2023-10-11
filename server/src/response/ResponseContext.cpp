@@ -37,6 +37,7 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 				currentLength = it->first.length();
 				if (currentLength > this->_location.name().length()) {
 					this->_location = it->second;
+				std::cout << "[DEBUG] location name =" << this->_location.name() << std::endl;
 				}
 			}
 		}
@@ -167,7 +168,11 @@ std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 
 	o << "\t" << ORANGE << "Method: " << PURPLE << rhs.request().method() << std::endl;
 	o << "\t" << ORANGE << "Target: " << PURPLE << rhs.target() << std::endl; 
-	o << "\t" << ORANGE << "Location: " << PURPLE << rhs.location().name() << std::endl;
+	o << "\t" << ORANGE << "Contains some specific directives due to location ? " << PURPLE;
+		if (rhs.location().name().empty())
+			o << "no -> server's directives only" << std::endl;
+		else 
+			o << "yes: location '" << rhs.location().name() << "'" << std::endl;
 	o << "\t" << ORANGE << "Root: " << PURPLE << rhs.root() << std::endl;
 	o << "\t=> " << ORANGE << "Path: " << PURPLE << rhs.path() << std::endl;
 	o << "\t" << ORANGE << "Alias: " << PURPLE << rhs.alias() << std::endl;
