@@ -148,7 +148,7 @@ void CGI::execute() {
 		
 		if (this->_request.method() == "POST")
 		{
-			std::string body = this->_request.body();
+			std::string body = std::string(this->_request.body().begin(), this->_request.body().end());
 			write(p[1], body.c_str(), body.length());
 		}
 
