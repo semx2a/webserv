@@ -208,3 +208,26 @@ bool	utl::createDirectory(std::string path) {
     return true;
 
 }
+
+std::string utl::fileToStr(std::ifstream& file) {
+
+	std::stringstream	content;
+	std::string			line;
+	
+	while (std::getline(file, line) && !file.eof()) {
+		content << line << std::endl;
+	}
+	file.close();
+	return content.str();
+}
+
+std::string	utl::printCharArray(char** charArray, int size) {
+
+	std::stringstream	sstream;
+
+    for (int i = 0; i < size; ++i) {
+        sstream << charArray[i] << std::endl;
+    }
+	
+	return sstream.str();
+}

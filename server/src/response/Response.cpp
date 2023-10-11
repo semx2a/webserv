@@ -128,20 +128,8 @@ void	Response::_handleGet () {
 	if (!file.is_open()) {
 		throw HttpStatus("404");
 	}
-	_fillBodyWithFileContent(file);
-}
-
-void	Response::_fillBodyWithFileContent(std::ifstream& file) {
-
-	std::stringstream	bodyContent;
-	std::string			line;
-	
-	while (std::getline(file, line) && !file.eof()) {
-		bodyContent << line << std::endl;
-	}
-	file.close();
 	this->_findExtension();
-	this->_body.build(bodyContent.str());
+	this->_body.build(utl::fileToStr(file));
 }
 
 void	Response::_handleUpload() {
@@ -172,9 +160,8 @@ void	Response::_handlePost() {
 	if (this->_request.body().empty()) {
 		throw HttpStatus("400");
 	}
-	if (_responseContext.isUpload()) {
+	if (this->responseContext().isUpload()) {
 		this->_handleUpload();
-		//return ; cgi could be called after upload
 	}
 
 	if (utl::isDirectory(this->_path)) {
@@ -185,18 +172,19 @@ void	Response::_handlePost() {
 		this->_expandDirectory();
 	}
 
-	if (access(this->_path.c_str(), F_OK) == -1)
+	if (access(this->path().c_str(), F_OK) == -1)
 		throw HttpStatus("404");
-	else if (access(this->_path.c_str(), W_OK) == -1)
+	else if (access(this->path().c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 
-	if (_responseContext.isCgi()) {
+	if (this->responseContext().isCgi()) {
 		std::cout << "[DEBUG] Post : calling runCgi..." << std::endl;
 		this->_runCgi();
 	}
 
-	if (!this->_request.body().empty()) {
-		// handle response body
+	if (!this->body().getContent().empty()) {
+		std::cout << "[DEBUG] Post : building body..." << std::endl;
+		std::cout << this->body().getContent() << std::endl;
 		
 	}
 	this->_status.setStatusCode("201");
@@ -215,26 +203,29 @@ void	Response::_handleDelete() {
 void	Response::_handleError() {
 
 	int statusCode = std::atoi(_status.statusCode().c_str());
+
+	std::string content;
 	if (_responseContext.errorPages().find(statusCode) != _responseContext.errorPages().end()) {
 
-		_path = _responseContext.errorPages().find(statusCode)->second;
+		this->setPath(this->responseContext().errorPages().find(statusCode)->second);
 
 		#ifdef DEBUG_RESPONSE
 		std::cout << "[DEBUG ERROR] path: " << _path << std::endl;
 		#endif
 
-		std::ifstream	file(_path.c_str());
-		if (file.is_open()) {
-			_fillBodyWithFileContent(file);
-			return ;
-		}
+		std::ifstream	file(this->path().c_str());
+		if (file.is_open())
+			content = utl::fileToStr(file);
 	}
-	std::stringstream bodyContent;
-	bodyContent	<< "<html><body><h1>" 
-				<< _status.statusCode() 
-				<< "</h1></body></html>";
-	this->_extension = "html";
-	this->_body.build(bodyContent.str());
+	else {
+		std::stringstream bodyContent;
+		bodyContent	<< "<html><body><h1>" 
+					<< _status.statusCode() 
+					<< "</h1></body></html>";
+		content = bodyContent.str();
+	}
+	this->setExtension("html");
+	this->_body.build(content);
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EXPANSION::
@@ -308,8 +299,8 @@ void	Response::_autoIndex() {
 			<< "</body>" << std::endl
 			<< "</html>" << std::endl;
 
-	this->setBody(page.str());
 	this->setExtension("html");
+	this->setBody(page.str());
 }
 
 void	Response::_runCgi() {
@@ -320,7 +311,7 @@ void	Response::_runCgi() {
 
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
-	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
+	this->_findExtension();
 	if (!cgi.output().empty())
 		_body.build(cgi.output());
 }
@@ -329,7 +320,7 @@ void	Response::_runCgi() {
 
 void	Response::_findExtension() {
 
-	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
+	this->setExtension(this->_path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1));
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::

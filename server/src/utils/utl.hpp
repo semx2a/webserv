@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include <iomanip>
+# include <fstream>
 # include <string>
 # include <sstream>
 # include <vector>
@@ -66,6 +67,8 @@ class utl {
 		static int						find_last_occurrence(const std::vector<char> &, const std::string&);
 		static std::vector<std::string> tokenize(const std::string str, char sep);
 		static std::string 				trimAndReplaceWs(std::string& input);
+		static std::string				fileToStr(std::ifstream &file);
+		static std::string				printCharArray(char** charArray, int size);
 
 		static void						log (int client_fd, std::string str);
 		static std::string				str_of(size_t size, const std::string & c);

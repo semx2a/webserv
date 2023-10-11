@@ -87,7 +87,6 @@ class Response {
 
 		// GET
 		void				_handleGet();
-		void				_fillBodyWithFileContent(std::ifstream&);
 		void				_expandDirectory();
 		void				_autoIndex();
 		void				_runCgi();
