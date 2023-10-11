@@ -82,21 +82,16 @@ void	Engine::connect() {
 	}
 	catch (std::exception& e) {
 
-		std::cerr << "ERROR: " << e.what() << std::endl;
+		utl::log(socket, "Error: " + (std::string)e.what());
 	}
 }
 
 void	Engine::_addNewClient(int serverSocket) {
 
-	int	clientSocket;
-	try {
-		clientSocket = accept(serverSocket, NULL, NULL);
-		if (clientSocket < 0) {
-			throw std::runtime_error(ACCEPTERR);
-		}
-	}
-	catch(const std::exception& e) {
-		std::cerr << "ERROR: " << e.what() << std::endl;
+	int clientSocket = accept(serverSocket, NULL, NULL);
+	if (clientSocket < 0) {
+		utl::log(clientSocket, "Error: " + (std::string)ACCEPTERR);
+		return;
 	}
 	_epoll.addSocketToEpoll(clientSocket);
 	_serverContexts[clientSocket] = _epoll.servers().find(serverSocket)->second;
