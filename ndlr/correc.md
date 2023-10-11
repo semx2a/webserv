@@ -17,10 +17,10 @@
 
 ### Config
 
-- [ ] setup multiple servers with different ports
-- [ ] setup multiple servers with different hostname 
+- [x] setup multiple servers with different ports
+- [x] setup multiple servers with different hostname 
   		> curl --resolve example.com:80:127.0.0.1 http://example.com
-- [ ] setup default error page
+- [x] setup default error page
 		> try to change the error 404
 - [ ] limit the client body
 		> curl -X POST -H "Content-Type: plain/text" --data "BODY IS HERE write stg shorter or longer than body limit"

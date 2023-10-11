@@ -153,7 +153,7 @@ void	ResponseContext::_serverDirectives() {
 	if (this->_errorPages.empty()) {
 		this->_errorPages = this->_serverContext.errorPages();
 	}
-	if (this->_autoindex == "none")	{
+	if (this->_autoindex.empty())	{
 		this->_autoindex = this->_serverContext.autoindex();
 	}
 	if (this->_maxBodySize == 1048576) {

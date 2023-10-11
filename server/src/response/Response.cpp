@@ -242,7 +242,7 @@ void	Response::_expandDirectory() {
 	std::cout << "[DEBUG] Target is a directory" << std::endl;
 	#endif
 
-	if (_responseContext.autoindex() == "true") {
+	if (_responseContext.autoindex() == "on") {
 		_autoIndex();
 		return ;
 	}

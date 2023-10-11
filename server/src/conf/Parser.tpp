@@ -114,12 +114,17 @@ void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
 	}
 
 	size_t mPos = sizeStr.find_first_of("mM");
-	if (sizeStr.find_first_not_of("0123456789") != mPos || sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
+	if (sizeStr.find_first_not_of(" ", mPos + 1) != std::string::npos) {
 		buildAndThrowParamError(line);
 	}
-
-	size_t size = std::atoll(sizeStr.substr(0, mPos).c_str());
+	sizeStr = sizeStr.substr(0, mPos);
+	std::cout << "SizeStr: " << sizeStr << std::endl;
+	float size = std::strtof(sizeStr.substr(0, mPos).c_str(), NULL);
 	size *= 1e6;
+	if (size == 0 && sizeStr != "0") {
+		std::cout << "Size: " << size << std::endl;
+		buildAndThrowParamError(line);
+	}
 	context.setMaxBodySize(size);
 }
 

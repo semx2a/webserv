@@ -2,7 +2,8 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Buffer::Buffer() : 	_hasBody(false),
+Buffer::Buffer() : 	_maxBodySize(0),
+					_hasBody(false),
 					_hasContentLength(false),
 					_contentLength(0),
 					_remainingContentLength(0),
