@@ -24,7 +24,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 			LocationContext	newLocationCtxt;
 			std::string path = line.substr(line.find_first_of(" ") + 1, line.find_first_of("{") - line.find_first_of(" ") - 1);
 			path = utl::trimAndReplaceWs(path);
-			searchIfCgi(newLocationCtxt, path);
+			newLocationCtxt.setName(path);
 			parseLocationContext(stream, newLocationCtxt);
 			context.addLocation(path, newLocationCtxt);
 		} 

@@ -26,7 +26,7 @@ class ResponseContext {
 		ServerContext const&				serverContext() const;
 		std::string const&					target() const;
 		std::string const&					path() const;
-		t_locationIterator					location() const;
+		LocationContext const&				location() const;
 		std::string const&					root() const;
 		bool								alias() const;
 		std::string const&					uploadFolder() const;
@@ -44,7 +44,7 @@ class ResponseContext {
 
 		std::string							_target;
 		std::string							_path; // += root
-		t_locationIterator					_location;
+		LocationContext						_location;
 		std::string							_root;
 		bool								_alias;
 		std::string							_uploadFolder; // += root

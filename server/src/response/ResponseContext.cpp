@@ -19,7 +19,7 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 			t_locationIterator cgiLocIt = this->_serverContext.locations().find(ext);
 			if (cgiLocIt != locationEndIterator) {
 				this->_isCgi = true;
-				this->_location = cgiLocIt;
+				this->_location = cgiLocIt->second;
 				_locationDirectives();
 				break;
 			}
@@ -30,14 +30,17 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 	}
 	if (not this->_isCgi) {
 
+		size_t currentLength = 0;
 		t_locationIterator it = this->_serverContext.locations().begin();
 		for (; it != locationEndIterator; ++it) {
 			if (this->_target.find(it->first) != std::string::npos) {
-				this->_location = it;
-				break;
+				currentLength = it->first.length();
+				if (currentLength > this->_location.name().length()) {
+					this->_location = it->second;
+				}
 			}
 		}
-		if (it != locationEndIterator) {
+		if (currentLength > 0) {
 			_locationDirectives();
 		}
 	}
@@ -87,7 +90,7 @@ ResponseContext &		ResponseContext::operator=(ResponseContext const & rhs) {
 
 Request const&						ResponseContext::request() const { return this->_request; }
 ServerContext const&				ResponseContext::serverContext() const { return this->_serverContext; }
-t_locationIterator					ResponseContext::location() const { return this->_location; }
+LocationContext	const&				ResponseContext::location() const { return this->_location; }
 std::string const&					ResponseContext::target() const { return this->_target; }
 std::string const&					ResponseContext::path() const { return this->_path; }
 std::string const&					ResponseContext::root() const { return this->_root; }
@@ -105,25 +108,26 @@ bool								ResponseContext::isUpload() const { return this->_isUpload; }
 
 void	ResponseContext::_locationDirectives() {
 
-	if (this->_location->second.alias() != "") {
+	if (this->_location.alias() != "") {
 
-		std::string tmp = this->_location->second.alias();
-		size_t pos = this->_path.find(this->_location->first);
-		this->_path.replace(pos, this->_location->first.size(), tmp);
+		std::string tmp = this->_location.alias();
+		size_t pos = this->_path.find(this->_location.name());
+		this->_path.replace(pos, this->_location.name().size(), tmp);
 		this->_alias = true;
 	}
 
-	else if (this->_location->second.root() != "") {
-		this->_path = this->_location->second.root() + this->_path;
+	else if (this->_location.root() != "") {
+		this->_path = this->_location.root() + this->_path;
 	}
 
-	this->_root = this->_location->second.root();
-	this->_index = this->_location->second.index();
-	this->_uploadFolder = this->_location->second.uploadFolder();
-	this->_errorPages = this->_location->second.errorPages();
-	this->_autoindex = this->_location->second.autoindex();
-	this->_maxBodySize = this->_location->second.maxBodySize();
-	this->_authorizedMethods = this->_location->second.authorizedMethods();
+	this->_root = this->_location.root();
+	this->_index = this->_location.index();
+	std::cout << "[DEBUG] upload folder: " << this->_location.uploadFolder() << std::endl;
+	this->_uploadFolder = this->_location.uploadFolder();
+	this->_errorPages = this->_location.errorPages();
+	this->_autoindex = this->_location.autoindex();
+	this->_maxBodySize = this->_location.maxBodySize();
+	this->_authorizedMethods = this->_location.authorizedMethods();
 
 }
 
@@ -162,11 +166,12 @@ void	ResponseContext::_serverDirectives() {
 std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 
 	o << "\t" << ORANGE << "Method: " << PURPLE << rhs.request().method() << std::endl;
-	o << "\t" << ORANGE << "Target: " << PURPLE << rhs.target() << std::endl;
+	o << "\t" << ORANGE << "Target: " << PURPLE << rhs.target() << std::endl; 
+	o << "\t" << ORANGE << "Location: " << PURPLE << rhs.location().name() << std::endl;
 	o << "\t" << ORANGE << "Root: " << PURPLE << rhs.root() << std::endl;
+	o << "\t=> " << ORANGE << "Path: " << PURPLE << rhs.path() << std::endl;
 	o << "\t" << ORANGE << "Alias: " << PURPLE << rhs.alias() << std::endl;
 	o << "\t" << ORANGE << "Upload folder: " << PURPLE << rhs.uploadFolder() << std::endl;
-	o << "\t" << ORANGE << "Path: " << PURPLE << rhs.path() << std::endl;
 	o << "\t" << ORANGE << "Index: " << PURPLE << utl::print_vector(rhs.index()) << std::endl;
 	o << "\t" << ORANGE << "Autoindex: " << PURPLE << rhs.autoindex() << std::endl;
 	o << "\t" << ORANGE << "Error pages: " << PURPLE << utl::print_map(rhs.errorPages()) << std::endl;

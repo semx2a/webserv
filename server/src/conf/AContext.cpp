@@ -53,12 +53,12 @@ void	AContext::setDefaults() {
 	if (this->_root.empty())
 		this->_root = "html";
 	this->_root = "../www/" + this->_root;
-
+	if (this->_root.find_last_of("/") != this->_root.size() - 1)
+		this->_root += "/";
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
 		this->_authorizedMethods.push_back("DELETE");
-		this->_authorizedMethods.push_back("ERROR");
 	}
 
 	if (this->_errorPages.empty())

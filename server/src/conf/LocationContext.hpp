@@ -11,17 +11,15 @@ class LocationContext : public AContext {
 		LocationContext& operator=(LocationContext const& rhs);
 		~LocationContext();
 
+	 	std::string const&	name() const;
 		std::string const&	alias() const;
-		bool				isCgi() const;
 
+		void				setName(std::string const& name);
 		void				setAlias(std::string const& alias);
-		void				setIsCgi(bool isCgi);
 
-		void	setDefaults(void);
-		
 	private:
+	 	std::string		_name;
 		std::string		_alias;
-		bool			_isCgi;
 };
 
 std::ostream &	operator<<(std::ostream & o, LocationContext const & cc);

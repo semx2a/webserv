@@ -160,14 +160,6 @@ bool	Parser::isEndOfScope(std::string const& line) const {
 		and line.find_first_not_of("} ") == std::string::npos;
 }
 
-void	Parser::searchIfCgi(LocationContext& locationContext, std::string& path) {
-
-	if (path != ".py" || path != ".php")
-		return;
-	locationContext.setIsCgi(true);
-	path = path.substr(path.find_first_of("*") + 1, path.size() - path.find_first_of("*") - 1);
-}
-
 void	Parser::buildAndThrowParamError(std::string const& line) const {
 
 	std::string param = line.substr(0, line.find_first_of(" "));
