@@ -71,7 +71,7 @@ void    Epoll::setToPoll(struct epoll_event const& toPoll) { this->_toPoll = toP
 
 void	Epoll::_createEpollEvent() {
 
-	this->_listener = epoll_create(10); // TODO : fix number
+	this->_listener = epoll_create1(EPOLL_CLOEXEC);
 	if (this->_listener < 0) {
 		throw std::runtime_error(ECREATERR);
 	}

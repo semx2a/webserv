@@ -10,7 +10,7 @@ ________________________________________________________________________________
 - [ ] errors : lesquelles et comment les traiter (classe d'erreur? lesquelles terminent le programme?)
 
 ## Epoll
-- [ ] epoll_create : cb? flags?
+- [x] epoll_create : cb? flags?
 
 ## Engine
 - [x] find a way to keep track of status codes to handle response's first line
