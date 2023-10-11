@@ -38,15 +38,19 @@ class Response {
 		// :::::::::::::::::::::::::::: ACCESSORS
 		Request const&			request() const;
 		ResponseContext const&	responseContext() const;
+		
 		Body const&				body() const;
 		HttpStatus const&		status() const;
 
 		std::string const&		path() const;
+		std::string const&		extension() const;
 		std::string const&		responseStr() const;
 
 		// ::::::::::::::::::::::::::::::: MUTATORS
 		void		setRequest(Request const&);
 		void		setResponseContext(ResponseContext const&);
+
+		void		setExtension(std::string const&);
 		void		setBody(Body const&);
 		void		setStatus(HttpStatus const&);
 
@@ -72,7 +76,6 @@ class Response {
 		std::string			_responseStr;
 
 		// ::::::::::::::::::::::::::::::: UTILS
-		std::string			_get_link(std::string const &, std::string const &);
 		void				_findExtension();
 
 		// :::::::::::::::::::::::::: HTTP METHODS

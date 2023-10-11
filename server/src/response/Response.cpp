@@ -38,11 +38,12 @@ Response& Response::operator=(Response const& rhs)
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GETTERS::
 
 Request const&			Response::request() const { return _request; }
-ResponseContext const&	Response::responseContext() const { return _responseContext; }
+std::string const&		Response::extension() const { return _extension; }
 Body const&				Response::body() const { return _body; }
 HttpStatus const&		Response::status() const { return _status; }
 
 std::string const&		Response::path() const { return _path; }
+ResponseContext const&	Response::responseContext() const { return _responseContext; }
 //std::string const&		Response::contentType() const { return _contentType; }
 std::string const&		Response::responseStr() const { return _responseStr; }
 
@@ -54,6 +55,7 @@ void	Response::setBody(Body const& body) { _body = body; }
 void	Response::setStatus(HttpStatus const& status) { _status = status; }
 
 void	Response::setPath(std::string const& path) { _path = path; }
+void	Response::setExtension(std::string const& extension) { _extension = extension; }
 //void	Response::setContentType(std::string const& contentType) { _contentType = contentType; }
 void	Response::setResponseStr(std::string const& responseStr) { _responseStr = responseStr; }
 
@@ -110,7 +112,11 @@ void	Response::_handleGet () {
 	#endif
 
 	if (utl::isDirectory(this->_path)) {
-		_expandDirectory();
+		if (_responseContext.autoindex() == "on") {
+			_autoIndex();
+			return ;
+		}
+		this->_expandDirectory();
 	}
 	if (_responseContext.isCgi()) {
 		_runCgi();
@@ -171,8 +177,13 @@ void	Response::_handlePost() {
 		//return ; cgi could be called after upload
 	}
 
-	if (utl::isDirectory(this->_path))
+	if (utl::isDirectory(this->_path)) {
+		if (_responseContext.autoindex() == "on") {
+			_autoIndex();
+			return ;
+		}
 		this->_expandDirectory();
+	}
 
 	if (access(this->_path.c_str(), F_OK) == -1)
 		throw HttpStatus("404");
@@ -242,10 +253,6 @@ void	Response::_expandDirectory() {
 	std::cout << "[DEBUG] Target is a directory" << std::endl;
 	#endif
 
-	if (_responseContext.autoindex() == "on") {
-		_autoIndex();
-		return ;
-	}
 	for (size_t i = 0; i < _responseContext.index().size(); i++) {
 			
 		_path += _responseContext.index()[i];
@@ -274,30 +281,35 @@ void	Response::_autoIndex() {
 	if (dir == NULL)
 		throw HttpStatus("404");
 
+	std::string to_remove = "../www/";
+	std::string title = "Index of http://www." + this->path().substr(to_remove.size(), this->path().size() - to_remove.size());
 	std::stringstream page;
-	
 	page 	<< "<!DOCTYPE html>" << std::endl
 			<< "<html>" << std::endl
 			<< "<head>" << std::endl
 			<< "<title>webserv</title>" <<std::endl
 			<< "</head>" << std::endl
 			<< "<body>" <<std::endl
-			<< "<h1>Index of "
-			<< this->path()
+			<< "<h1>"
+			<< title
 			<< "</h1>" << std::endl
 			<< "<p>" << std::endl;
 	
-	for (struct dirent *dir_entry = readdir(dir); dir_entry; dir_entry = readdir(dir)) {
-		
-		page << this->_get_link(std::string(dir_entry->d_name), this->path());
+	struct dirent *entry;
+	while ((entry = readdir(dir)) != NULL) {
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+			continue;
+		page << "<a href=\"" << entry->d_name << "\">" << entry->d_name << "</a><br>" << std::endl;
 	}
 
-	page 	<< "</body>" << std::endl
-			<< "</html>" << std::endl;
-	
 	closedir(dir);
-	this->setBody(page.str());
 
+	page	<< "</p>" << std::endl
+			<< "</body>" << std::endl
+			<< "</html>" << std::endl;
+
+	this->setBody(page.str());
+	this->setExtension("html");
 }
 
 void	Response::_runCgi() {
@@ -314,37 +326,6 @@ void	Response::_runCgi() {
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
-
-std::string		Response::_get_link(std::string const &dir_entry, std::string const &route) {
-	
-	std::stringstream   link;
-
-	if (*route.rbegin() == '/') {
-		
-		link	<< "\t\t<p><a href=\"" 
-				<< route 
-				<< dir_entry 
-				<< "\">"
-				<< dir_entry
-				<< "</a></p>" 
-				<< std::endl;
-	}
-	else {
-
-		link	<< "\t\t<p><a href=\""
-				<< route 
-				<< "/"
-				<< dir_entry
-				<< "\">"
-				<< dir_entry
-				<< "</a></p>" 
-				<< std::endl;
-	}
-
-	return link.str();
-}
-
-
 
 void	Response::_findExtension() {
 
