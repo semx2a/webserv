@@ -267,10 +267,7 @@ void	Response::_autoIndex() {
 	DIR *dir = opendir(this->path().c_str());
 
 	if (dir == NULL)
-	{
-		std::cerr << "error: could not open [" << this->path() << "]" << std::endl;
-		return ;
-	}
+		throw HttpStatus("404");
 
 	std::stringstream page;
 	
@@ -321,10 +318,26 @@ std::string		Response::_get_link(std::string const &dir_entry, std::string const
 {
 	std::stringstream   link;
 
-	if (*route.rbegin() == '/')
-		link << "\t\t<p><a href=\"" + route + dir_entry + "\">" + dir_entry + "</a></p>\n";
-	else
-		link << "\t\t<p><a href=\"" << route << "/" + dir_entry + "\">" + dir_entry + "</a></p>\n";
+	if (*route.rbegin() == '/') {
+		
+		link	<< "\t\t<p><a href=\"" 
+				<< route 
+				<< dir_entry 
+				<< "\">"
+				<< dir_entry
+				<< "</a></p>" 
+				<< std::endl;
+	}
+	else {
+
+		link	<< "\t\t<p><a href=\""
+				<< route 
+				<< "/" + dir_entry + "\">"
+				<< dir_entry
+				<< "</a></p>" 
+				<< std::endl;
+	}
+
 	return link.str();
 }
 
