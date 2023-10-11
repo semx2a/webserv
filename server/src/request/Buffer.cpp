@@ -2,12 +2,13 @@
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::CONSTRUCTORS / DESTRUCTORS
 
-Buffer::Buffer() {
-
-	_isTransferEncoding = false;
-	_hasBody = false;
-	_contentLength = 0;
-}
+Buffer::Buffer() : 	_hasBody(false),
+					_hasContentLength(false),
+					_contentLength(0),
+					_remainingContentLength(0),
+					_headerSize(0),
+					_isTransferEncoding(false),
+					_isEnded(false){}
 
 Buffer::Buffer(Buffer const& rhs) {
 

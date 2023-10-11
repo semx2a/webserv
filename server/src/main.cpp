@@ -14,9 +14,12 @@ int	main(int ac, char **av) {
 		
 		Parser	parser(conf_file);
 		Engine	webserv (parser.serverContexts());
-		webserv.connect();
+		webserv.connexionLoop();
 	}
-	catch (const std::exception& e) {
+	catch (Parser::Error const& e) {
+		std::cerr << BOLD << "Error: " << RESET << e.what() << std::endl;
+	}
+	catch (std::exception const& e) {
 		std::cerr << BOLD << "Fatal: " << RESET << e.what() << std::endl;
 	}
 	return 0;

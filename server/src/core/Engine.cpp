@@ -45,44 +45,37 @@ void	Engine::setRequests(std::map<int, Request> const& requestsMap) { this->_req
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::MEMBER FUNCTIONS
 
 
-void	Engine::connect() {
+void	Engine::connexionLoop() {
 
 	struct epoll_event	event;
 	int					nb_events;
 	int					socket;
 
-	try {
+	while (true) {
 
-		while (true) {
+		nb_events = this->_epoll.waitForConnexions();
+		for (int i = 0; i < nb_events; ++i) {
 
-			nb_events = this->_epoll.waitForConnexions();
-			for (int i = 0; i < nb_events; ++i) {
-
-				event = this->_epoll.readyEvent(i);
-				socket = event.data.fd;
-				if ((event.events & EPOLLERR) or (event.events & EPOLLHUP)) {
-					utl::log(socket, "Epoll error");
-					_endConnexion(socket);
-				}
-				else if (event.events & EPOLLRDHUP) {
-					utl::log(socket, "Closed connexion");
-					_endConnexion(socket);
-				}
-				else if (this->_epoll.isNewClient(socket)) {
-					_addNewClient(socket);
-				}
-				else if (event.events & EPOLLIN) {
-					_readFromClient(socket);
-				}
-				else if (event.events & EPOLLOUT) {
-					_writeToClient(socket);
-				}
+			event = this->_epoll.readyEvent(i);
+			socket = event.data.fd;
+			if ((event.events & EPOLLERR) or (event.events & EPOLLHUP)) {
+				utl::log(socket, "Epoll error");
+				_endConnexion(socket);
+			}
+			else if (event.events & EPOLLRDHUP) {
+				utl::log(socket, "Closed connexion");
+				_endConnexion(socket);
+			}
+			else if (this->_epoll.isNewClient(socket)) {
+				_addNewClient(socket);
+			}
+			else if (event.events & EPOLLIN) {
+				_readFromClient(socket);
+			}
+			else if (event.events & EPOLLOUT) {
+				_writeToClient(socket);
 			}
 		}
-	}
-	catch (std::exception& e) {
-
-		utl::log(socket, "Error: " + (std::string)e.what());
 	}
 }
 
@@ -128,6 +121,7 @@ void	Engine::_readFromClient(int clientSocket) {
 	}
 	catch (HttpStatus& e) {
 		this->_status[clientSocket].setStatusCode(e.statusCode());
+		this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 	}
 }
 
@@ -139,23 +133,27 @@ void	Engine::_handleBuffer(int clientSocket) {
 	std::cout << RED << std::string(_buffers[clientSocket].raw().begin(), _buffers[clientSocket].raw().end()) << RESET << std::endl;
 	#endif
 
-	if (not this->_buffers[clientSocket].isRequestEnded()) {
-		#ifdef DEBUG_ENGINE
-		std::cout << "[DEBUG] Request not ended" << std::endl;
-		#endif
-		return ;
-	}
-	
-	this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw());
-	if (this->_buffers[clientSocket].isRequestEnded()	|| this->_status[clientSocket].statusCode() != "202"
-													|| this->_status[clientSocket].statusCode() != "200") {
-		try {
+	try {
+		if (not this->_buffers[clientSocket].isRequestEnded()) {
+			#ifdef DEBUG_ENGINE
+			std::cout << "[DEBUG] Request not ended" << std::endl;
+			#endif
+			return ;
+		}
+		
+		this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw());
+		if (this->_buffers[clientSocket].isRequestEnded()	|| this->_status[clientSocket].statusCode() != "202"
+														|| this->_status[clientSocket].statusCode() != "200") {
 			this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 		}
-		catch (std::exception& e) {
-			utl::log(clientSocket, "Error: " + (std::string)e.what() + ". Connexion closed.");
-			_endConnexion(clientSocket);
-		}
+	}
+	catch (HttpStatus& e) {
+		this->_status[clientSocket].setStatusCode(e.statusCode());
+		this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
+	}
+	catch (std::exception& e) {
+		utl::log(clientSocket, "Error: " + (std::string)e.what() + ". Connexion closed.");
+		_endConnexion(clientSocket);
 	}
 }
 

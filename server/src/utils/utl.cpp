@@ -168,9 +168,9 @@ std::string					utl::print_end_connexion () {
 
 std::string					utl::print_wait () {
 
-	std::string	 str (" Waiting for connections...");
+	std::string	 str ("~~~Waiting for connexions~~~");
 	std::stringstream sstr;
 
-	sstr << std::endl << GREEN << custom_width (68, ':', str) << str << RESET;
+	sstr << std::endl << GREEN << str << RESET << "\n";
 	return sstr.str();
 }

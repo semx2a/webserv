@@ -7,7 +7,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________
 # CORE
 
-- [ ] errors : lesquelles et comment les traiter (classe d'erreur? lesquelles terminent le programme?)
+- [x] errors : lesquelles et comment les traiter (classe d'erreur? lesquelles terminent le programme?)
 
 ## Epoll
 - [x] epoll_create : cb? flags?
@@ -36,13 +36,14 @@ ________________________________________________________________________________
       - [ ] expand target for 
 - [x] error page in conf
 - [x] curl localhost:8000 segfault (connection keep-alive)
-- [ ] longer path for server context loc
+- [x] longer path for server context loc
 - [ ] pb of GET and POST not considered as in ma
 
 ________________________________________________________________________________________________________________________
 # WHEN EVERYTHING FINISHED
 
 - [ ] find remaining "//TODO"s
+- [ ] still reachable when ctrl-C
 
 ## Tests
 - [x] content-length > max body size

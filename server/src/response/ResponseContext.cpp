@@ -5,7 +5,10 @@
 ResponseContext::ResponseContext(Request const& request, ServerContext const& serverContext) :
 																				_request(request),
 																				_serverContext(serverContext),
-																				_maxBodySize(1048576) {
+																				_alias(false),
+																				_maxBodySize(1048576),
+																				_isCgi(false),
+																				_isUpload(false) {
 	this->_target = this->_request.target();
 	this->_path = this->_target;
 

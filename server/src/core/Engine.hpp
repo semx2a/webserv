@@ -32,7 +32,7 @@ class Engine {
 		void	setBuffers(std::map<int, Buffer> const&);
 		void	setRequests(std::map<int, Request> const&);
 
-		void	connect();
+		void	connexionLoop();
 
 	private:
 
