@@ -1,15 +1,18 @@
 #ifndef CGI_HPP
 #define CGI_HPP
+
+# define DEBUG_CGI
 	
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <iterator>
 #include <map>
 #include <string>
-#include <iostream>
 #include <sstream>
-#include <iterator>
-#include <cstring>
+
 extern "C" {
 	#include <unistd.h>
 	#include <sys/types.h>
@@ -21,7 +24,6 @@ extern "C" {
 #include "Request.hpp"
 
 #include "HttpStatus.hpp"
-
 
 typedef std::map<std::string, std::string> envp_t;
 

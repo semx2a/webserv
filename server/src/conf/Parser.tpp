@@ -86,6 +86,7 @@ void	Parser::parseLocationContext(std::stringstream& stream, Context& context) {
 	}
 	if (not context.root().empty() and not context.alias().empty())
 		throw std::runtime_error("Alias and root cannot be set at the same time");
+	context.setDefaults();
 }
 
 template <typename Context>

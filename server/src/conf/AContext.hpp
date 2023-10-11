@@ -1,6 +1,8 @@
 #ifndef ACONTEXT_HPP
 # define ACONTEXT_HPP
 
+# define ROOT_OF_ROOTS "/home/meow/repos/MINE/42/webserv/www/"
+
 #include <iomanip>
 #include <map>
 #include <vector>

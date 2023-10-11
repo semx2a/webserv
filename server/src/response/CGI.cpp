@@ -161,6 +161,10 @@ void CGI::execute() {
 
 		this->setCmd();
 		this->setArgv(); //mallocd
+
+		#ifdef DEBUG_CGI
+		std::cerr << "[DEBUG] CGI: " << *this << std::endl;
+		#endif
 		
 		if (execve(this->cmd().c_str(), this->argv(), this->_envp) == -1) {
 			perror("execve");
@@ -196,7 +200,6 @@ void CGI::execute() {
 		close(p[0]);
 
 	}
-	std::cout << "[DEBUG] CGI: " << *this << std::endl;
 	for (int i = 0 ; this->_envp[i] != NULL ; i++)
 		delete this->_envp[i];
 	delete this->_envp;
@@ -210,8 +213,10 @@ std::ostream& operator<<(std::ostream& o, CGI const& rhs) {
 	o << "CGI: " << std::endl;
 	o << "\t" << "Script path: " 	<< rhs.scriptPath()		<< std::endl;
 	o << "\t" << "Output: " 		<< rhs.output()			<< std::endl;
-	o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;
-	o << "\t" << "Envp: " 			<< utl::printCharArray(rhs.envp(), rhs.envSize()) << std::endl;
+	o << "\t" << "Cmd: " 			<< rhs.cmd()			<< std::endl;
+	o << "\t" << "Argv: " 			<< utl::printCharArray(rhs.argv(), 2) << std::endl;
+	//o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;
+	//o << "\t" << "Envp: " 			<< utl::printCharArray(rhs.envp(), rhs.envSize()) << std::endl;
 
 	return o;
 }

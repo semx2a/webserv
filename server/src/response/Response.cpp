@@ -172,8 +172,9 @@ void	Response::_handlePost() {
 		this->_expandDirectory();
 	}
 
-	if (access(this->path().c_str(), F_OK) == -1)
+	if (access(this->path().c_str(), F_OK) == -1) {
 		throw HttpStatus("404");
+	}
 	else if (access(this->path().c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 
@@ -272,7 +273,7 @@ void	Response::_autoIndex() {
 	if (dir == NULL)
 		throw HttpStatus("404");
 
-	std::string to_remove = "../www/";
+	std::string to_remove = ROOT_OF_ROOTS;
 	std::string title = "Index of http://www." + this->path().substr(to_remove.size(), this->path().size() - to_remove.size());
 	std::stringstream page;
 	page 	<< "<!DOCTYPE html>" << std::endl

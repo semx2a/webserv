@@ -17,6 +17,8 @@ class LocationContext : public AContext {
 		void				setName(std::string const& name);
 		void				setAlias(std::string const& alias);
 
+		void				setDefaults();
+
 	private:
 	 	std::string		_name;
 		std::string		_alias;

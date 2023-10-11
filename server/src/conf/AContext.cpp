@@ -52,9 +52,9 @@ void	AContext::setDefaults() {
 	
 	if (this->_root.empty())
 		this->_root = "html";
-	this->_root = "../www/" + this->_root;
 	if (this->_root.find_last_of("/") != this->_root.size() - 1)
 		this->_root += "/";
+
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
@@ -62,9 +62,12 @@ void	AContext::setDefaults() {
 	}
 
 	if (this->_errorPages.empty())
-		this->_errorPages[404] = "error_page.html";
-	for (std::map<int, std::string>::iterator it = this->_errorPages.begin(); it != this->_errorPages.end(); it++)
-		it->second = this->_root + it->second;
+		this->_errorPages[404] = ROOT_OF_ROOTS + (std::string)"error_page.html";
+	else {
+		for (std::map<int, std::string>::iterator it = this->_errorPages.begin(); it != this->_errorPages.end(); it++)
+			it->second = ROOT_OF_ROOTS + it->second;
+	}
 
-	this->_uploadFolder = "../www/" + this->_uploadFolder;
+	if (this->_uploadFolder.find(ROOT_OF_ROOTS) != 0)
+		this->_uploadFolder = ROOT_OF_ROOTS + this->_uploadFolder;
 }

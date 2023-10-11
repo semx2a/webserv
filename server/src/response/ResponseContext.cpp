@@ -54,6 +54,9 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 		size_t pos = _path.find("//");
 		_path.replace(pos, 2, "/");
 	}
+	if (_path.find(ROOT_OF_ROOTS) != 0) {
+		_path = ROOT_OF_ROOTS + _path;
+	}
 	#ifdef DEBUG_RESPONSECONTEXT
 		std::cout << BORANGE << "\n[DEBUG] ResponseContext::ResponseContext()\n" << *this << RESET << std::endl;
 	#endif
@@ -177,7 +180,7 @@ std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 		else 
 			o << "yes: location '" << rhs.location().name() << "'" << std::endl;
 	o << "\t" << ORANGE << "Root: " << PURPLE << rhs.root() << std::endl;
-	o << "\t=> " << ORANGE << "Path: " << PURPLE << rhs.path() << std::endl;
+	o << "\t" << ORANGE << "=> Path: " << PURPLE << rhs.path() << std::endl;
 	o << "\t" << ORANGE << "Alias: " << PURPLE << rhs.alias() << std::endl;
 	o << "\t" << ORANGE << "Upload folder: " << PURPLE << rhs.uploadFolder() << std::endl;
 	o << "\t" << ORANGE << "Index: " << PURPLE << utl::print_vector(rhs.index()) << std::endl;

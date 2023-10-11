@@ -29,6 +29,13 @@ std::string const&		LocationContext::alias(void) const { return this->_alias; }
 void	LocationContext::setName(std::string const& name) { this->_name = name; }
 void	LocationContext::setAlias(std::string const& alias) { this->_alias = alias; }
 
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
+
+void	LocationContext::setDefaults() {
+
+	// NO DEFAULTS FOR LOCATION CONTEXT : SERVER DIRECTIVES WILL BE USED
+}
+
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::
 
 std::ostream &	operator<<(std::ostream & o, LocationContext const & sc) {
