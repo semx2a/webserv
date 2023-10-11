@@ -40,11 +40,17 @@ class CGI {
 		std::string const&		output() const;
 		envp_t const&			envpMap() const;
 		char**					envp() const;
-
+		size_t					envSize() const;
+		std::string const&		cmd() const;
+		char**					argv() const;
+		
 		void	setScriptPath(std::string const&);
 		void	setOutput(std::string const&);
 		void	setEnvpMap(envp_t const&);
 		void	setEnvp(char**);
+		void	setEnvSize(size_t);
+		void	setCmd();
+		void	setArgv();
 
 		void	execute();
 
@@ -58,6 +64,9 @@ class CGI {
 		std::string		_output;
 		envp_t		 	_envpMap;
 		char**			_envp;
+		size_t			_envSize;
+		std::string		_cmd;
+		char**			_argv;
 
 
 		void	_generateEnvpMap();
