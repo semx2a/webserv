@@ -134,10 +134,14 @@ void	Engine::_readFromClient(int clientSocket) {
 void	Engine::_handleBuffer(int clientSocket) {
 
 	utl::log(clientSocket, "Buffer received");
+	#ifdef DEBUG_ENGINE
 	std::cout << RED << std::string(_buffers[clientSocket].raw().begin(), _buffers[clientSocket].raw().end()) << RESET << std::endl;
+	#endif
 
 	if (not this->_buffers[clientSocket].isRequestEnded()) {
-		std::cout << "Request not ended" << std::endl;
+		#ifdef DEBUG_ENGINE
+		std::cout << "[DEBUG] Request not ended" << std::endl;
+		#endif
 		return ;
 	}
 	
@@ -154,7 +158,9 @@ void	Engine::_writeToClient(int clientSocket) {
 	Response res(this->_requests[clientSocket], rc, this->_status[clientSocket]);
 	
 	utl::log(clientSocket, "Response about to be sent");
+	#ifdef DEBUG_ENGINE
 	std::cout << GREEN << res.responseStr() << RESET << std::endl;
+	#endif
 
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");
