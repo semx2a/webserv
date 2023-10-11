@@ -126,7 +126,6 @@ void CGI::execute() {
 	argv[2] = NULL;
 
 	_generateEnvpMap();
-	std::cout << "[DEBUG]: " << *this << std::endl;
 	
 	int p[2];
 	if (pipe(p) == -1) {
@@ -163,17 +162,17 @@ void CGI::execute() {
 	{
 		close(p[1]);
 
-		int status;
-		waitpid(pid, &status, 0);
-
 		char buffer[4096];
 		ssize_t bytesRead;
 		while ((bytesRead = read(p[0], buffer, sizeof(buffer) - 1)) > 0) {
 			buffer[bytesRead] = '\0';
-			std::cout << "CGI Output: " << buffer << std::endl;
 			_output += buffer;
 		}
+
+		int status;
+		waitpid(pid, &status, 0);
 	}
+	std::cout << "[DEBUG]: " << *this << std::endl;
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATTOR OVERLOAD::

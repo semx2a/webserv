@@ -74,7 +74,6 @@ class Response {
 		// ::::::::::::::::::::::::::::::: UTILS
 		std::string			_get_link(std::string const &, std::string const &);
 		void				_findExtension();
-		bool				_isDirectory();
 
 		// :::::::::::::::::::::::::: HTTP METHODS
 		struct MethodsMap {
@@ -92,12 +91,15 @@ class Response {
 
 		// POST
 		void				_handlePost();
+		void				_handleUpload();
 
 		// DELETE
 		void				_handleDelete();
 
 		// ERROR
 		void				_handleError();
+
+
 
 };
 

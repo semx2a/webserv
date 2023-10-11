@@ -19,7 +19,7 @@ t_lexicon	MimeTypes::initFile(std::string const& fileName) {
 
     std::ifstream file(fileName.c_str());
 
-    if (file.is_open()) {
+    if (!file.is_open()) {
 		throw std::runtime_error("Could not open " + fileName + " file");
     }
 

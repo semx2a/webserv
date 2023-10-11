@@ -7,6 +7,13 @@
 # include <sstream>
 # include <vector>
 # include <map>
+# include <cstdlib>
+
+extern "C" {
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+}
 
 # define RESET		"\033[m"
 # define BOLD 		"\033[1m"
@@ -62,15 +69,17 @@ class utl {
 
 		static void						log (int client_fd, std::string str);
 		static std::string				str_of(size_t size, const std::string & c);
-		static std::string				custom_width (int width, char c, std::string const& content);
+		static std::string				custom_width(int width, char c, std::string const& content);
 
-		static std::string 				print_vector_of_char (std::vector <char>& buffer);
-		static std::string 				print_str (std::string buffer);
+		static std::string 				print_vector_of_char(std::vector <char>& buffer);
+		static std::string 				print_str(std::string buffer);
 
-		static std::string	   			print_client_added ();
-		static std::string	   			print_end_connexion ();
-		static std::string	   			print_wait ();
+		static std::string	   			print_client_added();
+		static std::string	   			print_end_connexion();
+		static std::string	   			print_wait();
 
+		static bool						isDirectory(std::string path);
+		static bool						createDirectory(std::string path);
 
 		template <typename T>
 		static std::string				print_vector(std::vector<T> const& vec);

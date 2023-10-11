@@ -109,7 +109,7 @@ void	Response::_handleGet () {
 	std::cout << "[DEBUG] Entering handleGet" << std::endl;
 	#endif
 
-	if (_isDirectory()) {
+	if (utl::isDirectory(this->_path)) {
 		_expandDirectory();
 	}
 	if (_responseContext.isCgi()) {
@@ -138,6 +138,25 @@ void	Response::_fillBodyWithFileContent(std::ifstream& file) {
 	this->_body.build(bodyContent.str());
 }
 
+void	Response::_handleUpload() {
+
+	if (utl::createDirectory(this->_path + this->responseContext().uploadFolder()) == false)
+		throw HttpStatus("500");
+		
+	std::cout << "[DEBUG] Post: entering handleUpload..." << std::endl;
+	std::vector<char> postData = _request.body();
+	std::cout << "[DEBUG] Post: postData: " << std::string(postData.begin(), postData.end()) << std::endl;
+		
+	std::ofstream	file(this->_path.c_str(), std::ios::app);
+
+	if (!file.is_open())
+		throw HttpStatus("500");
+
+	file.write(&postData[0], postData.size());
+	file.close();
+}
+		
+
 void	Response::_handlePost() {
 
 	#ifdef DEBUG_RESPONSE
@@ -148,14 +167,11 @@ void	Response::_handlePost() {
 		throw HttpStatus("400");
 	}
 	if (_responseContext.isUpload()) {
-		std::cout << "[DEBUG] Upload need to be handled!!!" << std::endl;
-		// add to path the upload folders directive
-		// create file
-		//_handleUpload();
-		return ;
+		this->_handleUpload();
+		//return ; cgi could be called after upload
 	}
 
-	if (this->_isDirectory())
+	if (utl::isDirectory(this->_path))
 		this->_expandDirectory();
 
 	if (access(this->_path.c_str(), F_OK) == -1)
@@ -169,17 +185,7 @@ void	Response::_handlePost() {
 	}
 
 	if (!this->_request.body().empty()) {
-
-		std::cout << "[DEBUG] Post: entering write to file..." << std::endl;
-		std::vector<char> postData = _request.body();
-		
-		std::ofstream	file(this->_path.c_str(), std::ios::app);
-
-		if (!file.is_open())
-			throw HttpStatus("500");
-
-		file.write(&postData[0], postData.size());
-		file.close();
+		// handle response body
 		
 	}
 	this->_status.setStatusCode("201");
@@ -262,8 +268,7 @@ void	Response::_autoIndex() {
 	#ifdef DEBUG_RESPONSE
 	std::cout << "[DEBUG] Entering AutoIndex" << std::endl;
 	#endif
-	
-	std::string	dirName(this->path());
+
 	DIR *dir = opendir(this->path().c_str());
 
 	if (dir == NULL)
@@ -277,12 +282,8 @@ void	Response::_autoIndex() {
 			<< "<title>webserv</title>" <<std::endl
 			<< "</head>" << std::endl
 			<< "<body>" <<std::endl
-			<< "<h1>Index of ";
-
-	if (dirName[0] != '/')
-		dirName = "/" + dirName;
-
-	page	<< this->path()
+			<< "<h1>Index of "
+			<< this->path()
 			<< "</h1>" << std::endl
 			<< "<p>" << std::endl;
 	
@@ -314,8 +315,8 @@ void	Response::_runCgi() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
 
-std::string		Response::_get_link(std::string const &dir_entry, std::string const &route)
-{
+std::string		Response::_get_link(std::string const &dir_entry, std::string const &route) {
+	
 	std::stringstream   link;
 
 	if (*route.rbegin() == '/') {
@@ -332,7 +333,9 @@ std::string		Response::_get_link(std::string const &dir_entry, std::string const
 
 		link	<< "\t\t<p><a href=\""
 				<< route 
-				<< "/" + dir_entry + "\">"
+				<< "/"
+				<< dir_entry
+				<< "\">"
 				<< dir_entry
 				<< "</a></p>" 
 				<< std::endl;
@@ -341,10 +344,7 @@ std::string		Response::_get_link(std::string const &dir_entry, std::string const
 	return link.str();
 }
 
-bool	Response::_isDirectory() {
 
-	return _path.find_last_of('/') == _path.size() - 1;
-}
 
 void	Response::_findExtension() {
 

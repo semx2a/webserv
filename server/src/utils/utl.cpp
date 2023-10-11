@@ -174,3 +174,37 @@ std::string					utl::print_wait () {
 	sstr << std::endl << GREEN << str << RESET << "\n";
 	return sstr.str();
 }
+
+bool	utl::isDirectory(std::string path) {
+
+	struct stat		fileStat;
+
+	if (stat(path.c_str(), &fileStat) != 0) {
+		// error occured 
+		return false;
+	}
+
+	return S_ISDIR(fileStat.st_mode);
+}
+
+bool	utl::createDirectory(std::string path) {
+
+    // Check if the directory already exists
+	if (utl::isDirectory(path) == true)
+		return true;
+
+   // Attempt to create the directory using the 'mkdir' command
+	std::string *createCmd = new std::string("mkdir \"" + path + "\"");
+    const char* cmd = createCmd->c_str();
+	delete(createCmd);
+
+    int result = std::system(cmd);
+	
+	// Failed to create directory
+	if (result != 0) {
+        return false;
+    }
+
+    return true;
+
+}
