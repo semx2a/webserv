@@ -9,6 +9,7 @@
 # include <map>
 
 # define RESET		"\033[m"
+# define BOLD 		"\033[1m"
 
 # define BLACK 		"\033[0;30m"
 # define RED 		"\033[0;31m"

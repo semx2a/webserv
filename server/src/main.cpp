@@ -17,7 +17,7 @@ int	main(int ac, char **av) {
 		webserv.connect();
 	}
 	catch (const std::exception& e) {
-		std::cerr << "ERROR: " << e.what() << std::endl;
+		std::cerr << BOLD << "Fatal: " << RESET << e.what() << std::endl;
 	}
 	return 0;
 }
