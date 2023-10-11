@@ -73,12 +73,11 @@ void	Socket::_setServerAddr() {
 void	Socket::_bindSock() {
 
 	std::cout << RED << "Binding listening socket " << this->_fd << " to port " << this->_port << " ..." << RESET << std::endl;
-	if (bind(this->_fd, (struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) == -1) {
+	if (bind(this->_fd, (struct sockaddr*)&this->_serverAddr, sizeof(this->_serverAddr)) < 0) {
 		
 		close(this->_fd);
-		// TODO : close general des sockets
 		std::stringstream err;
-		err << "bind(): " << this->_port << " " << strerror(errno);
+		err << "bind(): " << this->_port << ": " << strerror(errno);
 		throw std::runtime_error(err.str());
 	}
 }
@@ -87,7 +86,6 @@ void	Socket::_bindSock() {
 void	Socket::_startListening() {
 
 	if (listen(this->_fd, 5) == -1) {
-
 		close(this->_fd);
 		throw std::runtime_error("listen(): " +(std::string) strerror(errno));
 	}

@@ -7,21 +7,21 @@ Epoll::Epoll() {}
 Epoll::Epoll(std::vector<ServerContext> const& serversContexts) {
 
 	_createEpollEvent();
-	try {
-		for (std::vector<ServerContext>::const_iterator serversIt = serversContexts.begin(); serversIt != serversContexts.end(); serversIt++) {
+	for (std::vector<ServerContext>::const_iterator serversIt = serversContexts.begin(); serversIt != serversContexts.end(); serversIt++) {
 
-			for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->listen().begin(); ipPortIt != serversIt->listen().end(); ipPortIt++) {
+		for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->listen().begin(); ipPortIt != serversIt->listen().end(); ipPortIt++) {
 
+			try {
 				int newServerListener = _pollPort(ipPortIt->first, ipPortIt->second);
 				this->_servers[newServerListener] = *serversIt;
 			}
+			catch (const std::exception& e) {
+				std::cerr << BOLD << "Error: " << RESET << e.what() << std::endl;
+			}
 		}
 	}
-	catch(const std::exception& e) {
-		std::cerr << BOLD << "Error: " << RESET << e.what() << std::endl;	
-		if (this->_servers.empty()) {
-			throw std::runtime_error("No server to listen to");
-		}
+	if (this->_servers.empty()) {
+		throw std::runtime_error("No server to listen to");
 	}
 }
 
@@ -113,7 +113,7 @@ int		Epoll::waitForConnexions() {
 	if (numEvents < 0) {
 		throw std::runtime_error(strerror(errno));
 	}
-	utl::print_wait();
+	std::cout << utl::print_wait() << std::endl;
 	return numEvents;
 }
 
