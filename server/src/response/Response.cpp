@@ -114,8 +114,10 @@ void	Response::_handleGet () {
 	}
 	if (_responseContext.isCgi()) {
 		_runCgi();
-		return ;
+		if (!this->_body.getContent().empty())
+			return ;
 	}
+
 	std::ifstream	file(_path.c_str());
 	if (!file.is_open()) {
 		throw HttpStatus("404");
@@ -152,12 +154,6 @@ void	Response::_handlePost() {
 		//_handleUpload();
 		return ;
 	}
-	if (_responseContext.isCgi())
-		std::cout << "[DEBUG] cgi need to be handled!!!" << std::endl;
-
-//	std::vector<char> postData = _request.body();
-//	if (postData.empty())
-//		throw HttpStatus("400");
 
 	if (this->_isDirectory())
 		this->_expandDirectory();
@@ -170,17 +166,22 @@ void	Response::_handlePost() {
 	if (_responseContext.isCgi()) {
 		std::cout << "[DEBUG] Post : calling runCgi..." << std::endl;
 		this->_runCgi();
-		return ;
 	}
 
-//	std::ofstream	file(this->_path.c_str(), std::ios::app);
-//
-//	if (!file.is_open())
-//		throw HttpStatus("500");
+	if (!this->_request.body().empty()) {
 
-//	file.write(&postData[0], postData.size());
-//	file.close();
-	
+		std::cout << "[DEBUG] Post: entering write to file..." << std::endl;
+		std::vector<char> postData = _request.body();
+		
+		std::ofstream	file(this->_path.c_str(), std::ios::app);
+
+		if (!file.is_open())
+			throw HttpStatus("500");
+
+		file.write(&postData[0], postData.size());
+		file.close();
+		
+	}
 	this->_status.setStatusCode("201");
 }
 
@@ -310,7 +311,8 @@ void	Response::_runCgi() {
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
 	_extension = _path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1);
-	_body.build(cgi.output());
+	if (!cgi.output().empty())
+		_body.build(cgi.output());
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::

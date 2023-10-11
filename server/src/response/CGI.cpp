@@ -145,6 +145,12 @@ void CGI::execute() {
 		close(p[0]);
 		dup2(p[1], STDOUT_FILENO);
 		this->_mapToEnvp();
+		
+		if (this->_request.method() == "POST")
+		{
+			std::string body = this->_request.body();
+			write(p[1], body.c_str(), body.length());
+		}
 
 		if (execve(cmd.c_str(), argv, this->_envp) == -1) {
 			perror("execve");
