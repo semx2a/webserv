@@ -6,23 +6,22 @@ Epoll::Epoll() {}
 
 Epoll::Epoll(std::vector<ServerContext> const& serversContexts) {
 
+	_createEpollEvent();
 	try {
-		_createEpollEvent();
-
 		for (std::vector<ServerContext>::const_iterator serversIt = serversContexts.begin(); serversIt != serversContexts.end(); serversIt++) {
 
 			for (std::map<std::string, int>::const_iterator ipPortIt = serversIt->listen().begin(); ipPortIt != serversIt->listen().end(); ipPortIt++) {
 
-				#ifdef DEBUG_EPOLL
-					std::cout << "[DEBUG] Listening on " << ipPortIt->first << ": " << ipPortIt->second << std::endl;
-				#endif
 				int newServerListener = _pollPort(ipPortIt->first, ipPortIt->second);
 				this->_servers[newServerListener] = *serversIt;
 			}
 		}
 	}
 	catch(const std::exception& e) {
-		std::cerr << "ERROR: " << e.what() << std::endl;	
+		std::cerr << BOLD << "Error: " << RESET << e.what() << std::endl;	
+		if (this->_servers.empty()) {
+			throw std::runtime_error("No server to listen to");
+		}
 	}
 }
 
@@ -73,7 +72,7 @@ void	Epoll::_createEpollEvent() {
 
 	this->_listener = epoll_create1(EPOLL_CLOEXEC);
 	if (this->_listener < 0) {
-		throw std::runtime_error(ECREATERR);
+		throw std::runtime_error(strerror(errno));
 	}
 }
 
@@ -92,7 +91,7 @@ void	Epoll::addSocketToEpoll(int socket) {
 	this->_toPoll.events = EPOLLIN; 
 	this->_toPoll.data.fd = socket;  
 	if (epoll_ctl(this->_listener, EPOLL_CTL_ADD, socket, &this->_toPoll) < 0) {
-		throw std::runtime_error(ECTLERR);
+		throw std::runtime_error(strerror(errno));
 	}
 }
 
@@ -104,7 +103,7 @@ void	Epoll::editSocketInEpoll(int socket, int eventToWatch) {
 	this->_toPoll.events = eventToWatch; 
 	this->_toPoll.data.fd = socket;  
 	if (epoll_ctl(this->_listener, EPOLL_CTL_MOD, socket, &this->_toPoll) < 0) {
-		throw std::runtime_error(ECTLERR);
+		throw std::runtime_error(strerror(errno));
 	}
 }
 
@@ -112,7 +111,7 @@ int		Epoll::waitForConnexions() {
 
 	int numEvents = epoll_wait(this->_listener, this->_events, MAX_EVENTS, -1);
 	if (numEvents < 0) {
-		throw std::runtime_error(EWAITERR);
+		throw std::runtime_error(strerror(errno));
 	}
 	utl::print_wait();
 	return numEvents;

@@ -90,7 +90,7 @@ void	Engine::_addNewClient(int serverSocket) {
 
 	int clientSocket = accept(serverSocket, NULL, NULL);
 	if (clientSocket < 0) {
-		utl::log(clientSocket, "Error: " + (std::string)ACCEPTERR);
+		utl::log(clientSocket, "Error: " + (std::string)strerror(errno));
 		return;
 	}
 	_epoll.addSocketToEpoll(clientSocket);

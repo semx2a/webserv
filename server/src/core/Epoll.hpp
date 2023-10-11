@@ -13,13 +13,6 @@
 
 # define BUFFER_SIZE 1024
 
-# define ACCEPTERR "accept(): failed"
-# define ECREATERR "epoll_create(): failed"
-# define ECTLERR "epoll_ctl(): failed"
-# define EWAITERR "epoll_wait(): failed"
-# define RECVERR "recv(): failed"
-# define SENDERR "send(): failed"
-
 class Epoll {
 
 	public:
