@@ -108,8 +108,8 @@ void CGI::execute() {
 		execve(this->cmd().c_str(), this->argv(), this->_envp);
 		perror("execve");
 
-		this->_deleteArgv();
-		this->_deleteEnvp();
+		utl::deleteCharArray(this->_argv);
+		utl::deleteCharArray(this->_envp);
 		exit (EXIT_FAILURE);
 	}
 
@@ -156,9 +156,9 @@ void	CGI::_generateEnvpMap() {
 	this->_envpMap["REQUEST_METHOD"] = this->request().method();
 	this->_envpMap["REDIRECT_STATUS"] = "200";
 	this->_envpMap["PATH_INFO"] = this->scriptPath();
-	this->_envpMap["PATH_TRANSLATED"] = this->scriptPath();
-	this->_envpMap["SCRIPT_NAME"] = this->scriptPath();
+	this->_envpMap["PATH_TRANSLATED"] =  this->scriptPath();
 	this->_envpMap["SCRIPT_FILENAME"] = this->scriptPath();
+	this->_envpMap["SCRIPT_NAME"] = this->scriptPath();
 	this->_envpMap["QUERY_STRING"] = this->request().query();
 	this->_envpMap["REMOTE_HOST"] = "";
 	this->_envpMap["REMOTE_ADDR"] = "";
@@ -207,21 +207,6 @@ void CGI::_mapToEnvp() {
 	
 	v.erase(v.begin(), v.end());
 }
-
-void	CGI::_deleteArgv() {
-
-	for (int i = 0 ; this->_argv[i] != NULL ; i++)
-		delete this->_argv[i];
-	delete[] this->_argv;
-}
-
-void	CGI::_deleteEnvp() {
-
-	for (int i = 0 ; this->_envp[i] != NULL ; i++)
-		delete this->_envp[i];
-	delete this->_envp;
-}
-
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATTOR OVERLOAD::
 

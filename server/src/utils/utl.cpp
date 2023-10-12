@@ -231,3 +231,10 @@ std::string	utl::printCharArray(char** charArray, int size) {
 	
 	return sstream.str();
 }
+
+void	utl::deleteCharArray(char **arr) {
+
+	for (int i = 0; arr[i] != NULL; ++i)
+		delete[] arr[i];
+	delete arr;
+}

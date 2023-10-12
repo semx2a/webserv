@@ -69,6 +69,7 @@ class utl {
 		static std::string 				trimAndReplaceWs(std::string& input);
 		static std::string				fileToStr(std::ifstream &file);
 		static std::string				printCharArray(char** charArray, int size);
+		static void						deleteCharArray(char **);
 
 		static void						log (int client_fd, std::string str);
 		static std::string				str_of(size_t size, const std::string & c);
