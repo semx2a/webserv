@@ -7,7 +7,7 @@ $email = $_POST["email"];
 $fullname = $_POST["fullname"];
 
 // Path to user data file
-$userDataFilePath = "/var/www/testwebsite.com/data/users/$username.txt";
+$userDataFilePath = "/mnt/nfs/homes/nfauconn/repos/webserv/www/testwebsite.com/data/users/$username.txt";
 
 if (!file_exists($userDataFilePath)) {
     // Hash the password securely before storing it

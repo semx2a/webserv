@@ -2,7 +2,7 @@ ________________________________________________________________________________
 # CONF
 
 ## parser
-- [ ] upload_folder directive
+- [x] upload_folder directive
 
 ________________________________________________________________________________________________________________________
 # CORE
@@ -37,7 +37,8 @@ ________________________________________________________________________________
 - [x] error page in conf
 - [x] curl localhost:8000 segfault (connection keep-alive)
 - [x] longer path for server context loc
-- [ ] pb of GET and POST not considered as in ma
+- [x] pb of GET and POST not considered as in ma
+- [ ] header for server name
 
 ________________________________________________________________________________________________________________________
 # WHEN EVERYTHING FINISHED

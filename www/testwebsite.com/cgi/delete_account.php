@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
         echo "Please consent to delete your account by checking the box.";
     } else {
         // Path to user data file
-        $userDataFilePath = "/var/www/testwebsite.com/data/users/$username.txt";
+        $userDataFilePath = "/mnt/nfs/homes/nfauconn/repos/webserv/www/testwebsite.com/data/users/$username.txt";
         
         // Check if the user data file exists
         if (file_exists($userDataFilePath)) {

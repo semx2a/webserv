@@ -1,7 +1,7 @@
 #ifndef ACONTEXT_HPP
 # define ACONTEXT_HPP
 
-# define ROOT_OF_ROOTS "/home/meow/repos/MINE/42/webserv/www/"
+# define ROOT_OF_ROOTS "/mnt/nfs/homes/nfauconn/repos/webserv/www/"
 
 #include <iomanip>
 #include <map>
