@@ -158,6 +158,7 @@ void	Response::_handleUpload() {
 }
 		
 bool 	Response::_bodyBoundary(std::string boundary, std::vector<char> &body) {
+	
 	boundary = "--" + boundary + "--";
 	if (utl::searchVectorChar(body, boundary.c_str(), body.size() - boundary.length() - 10) == -1)
 		return (false);
