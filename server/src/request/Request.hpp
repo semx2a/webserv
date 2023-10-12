@@ -45,6 +45,8 @@ class Request {
 
 		//METHODS
 		void	parser(std::vector<char> const& raw);
+		void						parseHeaders(std::istringstream&);
+		void						parseBody(std::vector<char> const&);
 		
 	private:
 
@@ -58,8 +60,6 @@ class Request {
 
 		//PRIVATE METHODS
 		void						_parseRequestLine(std::istringstream&);
-		void						_parseHeaders(std::istringstream&);
-		void						_parseBody(std::vector<char> const&);
 };
 
 std::ostream &	operator<<(std::ostream & o, Request const & r);

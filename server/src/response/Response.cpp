@@ -316,8 +316,27 @@ void	Response::_runCgi() {
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
 	this->_findExtension();
-	if (!cgi.output().empty())
-		_body.build(cgi.output());
+	if (!cgi.output().empty()) {
+
+		Request		request;
+
+		std::vector<char>	str_vec(cgi.output().begin(), cgi.output().end());
+		std::string			str(str_vec.begin(), str_vec.end());
+		std::istringstream	stream(str);
+
+		std::string			line;
+		if (str.empty())
+			return ;
+		while (std::getline(stream, line)) {
+			if (line.empty() || line == "\r")
+			break;
+		}
+		if (!stream.eof())
+			request.parseBody(str_vec);
+
+		_body.build(request.body());
+		setExtension("html");
+	}
 }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::

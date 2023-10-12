@@ -51,14 +51,14 @@ t_headers const &		 	Request::headers(void) const { return this->_headers; }
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
-void Request::_parseBody(std::vector<char> const& str_vec) {
+void Request::parseBody(std::vector<char> const& str_vec) {
 	
 	int pos = utl::find_last_occurrence(str_vec, "\r\n\r\n");
 	
 	this->_body.assign(str_vec.begin() + (pos + 1), str_vec.end());
 }
 
-void Request::_parseHeaders(std::istringstream &stream) {
+void Request::parseHeaders(std::istringstream &stream) {
 
 	std::string 				line;
 	std::vector<std::string>	headers_vec;
@@ -125,9 +125,9 @@ void Request::parser(std::vector<char> const& str_vec) {
 	if (str.empty())
 		return ;
 	this->_parseRequestLine(stream);
-	this->_parseHeaders(stream);
+	this->parseHeaders(stream);
 	if (!stream.eof())
-		this->_parseBody(str_vec);
+		this->parseBody(str_vec);
 
 	#ifdef DEBUG_REQUEST
 		std::cout << "[DEBUG]" << *this << std::endl;
