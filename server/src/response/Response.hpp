@@ -92,6 +92,8 @@ class Response {
 		void				_runCgi();
 
 		// POST
+		bool 				_bodyBoundary(std::string, std::vector<char> &);
+		void				_postData(std::string);
 		void				_handlePost();
 		void				_handleUpload();
 

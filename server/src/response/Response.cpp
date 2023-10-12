@@ -157,6 +157,44 @@ void	Response::_handleUpload() {
 	file.close();
 }
 		
+bool 	Response::_bodyBoundary(std::string boundary, std::vector<char> &body) {
+	boundary = "--" + boundary + "--";
+	if (utl::searchVectorChar(body, boundary.c_str(), body.size() - boundary.length() - 10) == -1)
+		return (false);
+	return (true);
+}
+
+
+void	Response::_postData(std::string path)
+{
+	std::string			boundary = this->_request.headers().at("content-type");
+	std::vector<char>	body = _request.body();
+	int					i = 0;
+
+	if (!this->_bodyBoundary(boundary, body))
+		throw HttpStatus("400");
+
+	while ((i = utl::searchVectorChar(body, boundary.c_str(), i)) != -1) {
+		
+		i += boundary.length() + 1;
+		if (utl::searchVectorChar(body, "filename=", i) == -1)
+			break ;
+		if (utl::searchVectorChar(body, "filename=", i) > utl::searchVectorChar(body, boundary.c_str(), i) || body[utl::searchVectorChar(body, "filename=", i) + 10] == '\"')
+			continue ;
+		i = utl::searchVectorChar(body, "filename=", i) + 10;
+
+		std::string			filename(body.begin() + i, body.begin() + utl::searchVectorChar(body, "\"", i));
+		std::vector<char>	content(body.begin() + utl::searchVectorChar(body, "\r\n\r\n", i) + 4,
+									body.begin() + utl::searchVectorChar(body, "\r\n\r\n", i) + 4 + 
+									utl::searchVectorChar(body, ("\r\n--" + boundary).c_str(), i) -
+									utl::searchVectorChar(body, "\r\n\r\n", i) - 4);
+		
+		if (utl::createFile(path, content, filename) == false)
+			throw HttpStatus("500");
+		
+		this->_status.setStatusCode("201");
+	}
+}
 
 void	Response::_handlePost() {
 
@@ -184,6 +222,9 @@ void	Response::_handlePost() {
 	}
 	else if (access(this->path().c_str(), W_OK) == -1)
 		throw HttpStatus("403");
+	
+	if (!_request.headers().at("content-type").compare(0, 30,"multipart/form-data; boundary="))
+		this->_postData(this->responseContext().uploadFolder());
 
 	if (this->responseContext().isCgi()) {
 		std::cout << "[DEBUG] Post : calling runCgi..." << std::endl;

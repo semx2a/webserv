@@ -73,7 +73,7 @@ class utl {
 		static std::string				printCharArray(char** charArray, int size);
 		static void						deleteCharArray(char **);
 
-		static void						log (int client_fd, std::string str);
+		static void						log(int client_fd, std::string str);
 		static std::string				str_of(size_t size, const std::string & c);
 		static std::string				custom_width(int width, char c, std::string const& content);
 
@@ -86,6 +86,7 @@ class utl {
 
 		static bool						isDirectory(std::string path);
 		static bool						createDirectory(std::string path);
+		static bool						createFile(std::string path, std::vector<char> content, std::string filename);
 
 		template <typename T>
 		static std::string				print_vector(std::vector<T> const& vec);
@@ -102,9 +103,9 @@ class utl {
 		template<typename T>
 		static std::string				numberToString(T number);
 
-		int								searchVectorChar(std::vector<char> tab, const char *to_find, size_t index);
-		int								searchVectorCharUntil(std::vector<char> tab, const char *to_find, size_t index);
-		std::vector<char>&				replaceVectorChar(std::vector<char> &tab, size_t position, size_t length, std::string str);
+		static int						searchVectorChar(std::vector<char> tab, const char *to_find, size_t index);
+		static int						searchVectorCharUntil(std::vector<char> tab, const char *to_find, size_t index);
+		static std::vector<char>&		replaceVectorChar(std::vector<char> &tab, size_t position, size_t length, std::string str);
 
 };
 

@@ -17,7 +17,7 @@ utl& utl::operator=(utl const& rhs) {
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-int	searchVectorChar(std::vector<char> tab, char const* to_find, size_t index) {
+int	utl::searchVectorChar(std::vector<char> tab, char const* to_find, size_t index) {
 
 	std::vector<char>::iterator it = std::search(tab.begin() + index, tab.end(), to_find, to_find + std::strlen(to_find));
 	if (it == tab.end())
@@ -25,7 +25,7 @@ int	searchVectorChar(std::vector<char> tab, char const* to_find, size_t index) {
 	return (it - tab.begin());
 }
 
-int	searchVectorCharUntil(std::vector<char> tab, char const* to_find, size_t index) {
+int	utl::searchVectorCharUntil(std::vector<char> tab, char const* to_find, size_t index) {
 
 	std::vector<char>::iterator it = std::search(tab.begin(), tab.begin() + index, to_find, to_find + std::strlen(to_find));
 	if (it == tab.begin() + index)
@@ -33,7 +33,7 @@ int	searchVectorCharUntil(std::vector<char> tab, char const* to_find, size_t ind
 	return (it - tab.begin());
 }
 
-std::vector<char>& replaceVectorChar(std::vector<char>& tab, size_t position, size_t length, std::string str) {
+std::vector<char>&	utl::replaceVectorChar(std::vector<char>& tab, size_t position, size_t length, std::string str) {
 
 	tab.erase(tab.begin() + position, tab.begin() + position + length);
 	tab.insert(tab.begin() + position, str.begin(), str.end());
@@ -262,4 +262,21 @@ void	utl::deleteCharArray(char **arr) {
 	for (int i = 0; arr[i] != NULL; ++i)
 		delete[] arr[i];
 	delete arr;
+}
+
+bool	utl::createFile(std::string path, std::vector<char> content, std::string filename) {
+
+	filename = path + filename;
+	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
+	out.clear();
+
+	for (std::vector<char>::iterator it = content.begin(); it != content.end(); it++)
+		out.put(*it);
+
+	if (out.fail()) {
+		out.close();
+		return false;
+	}
+	out.close();
+	return true;
 }
