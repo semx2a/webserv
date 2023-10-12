@@ -1,6 +1,8 @@
 #ifndef UTL_CPP
 # define UTL_CPP
 
+# include <algorithm>
+# include <cstring>
 # include <iostream>
 # include <iomanip>
 # include <fstream>
@@ -99,6 +101,10 @@ class utl {
 
 		template<typename T>
 		static std::string				numberToString(T number);
+
+		int								searchVectorChar(std::vector<char> tab, const char *to_find, size_t index);
+		int								searchVectorCharUntil(std::vector<char> tab, const char *to_find, size_t index);
+		std::vector<char>&				replaceVectorChar(std::vector<char> &tab, size_t position, size_t length, std::string str);
 
 };
 
