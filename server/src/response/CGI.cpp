@@ -74,67 +74,7 @@ void	CGI::setArgv() {
 
 void CGI::execute() {
 
-/* 	int p[2];
-	if (pipe(p) == -1) {
-		perror("pipe");
-		throw HttpStatus("500");
-	}
-
-	pid_t pid = fork();
-	if (pid == -1) {
-		perror("fork");
-		throw HttpStatus("500");
-	}	
-
-	// CHILD PROCESS
-	if (pid == 0) {
-
-		close(p[0]);
-		if (dup2(p[1], STDOUT_FILENO) == -1) {
-			perror("dup2");
-			close(p[1]);
-			throw HttpStatus("500");
-		}
-		close(p[1]);
-
-		this->_generateEnvp();
-		this->setCmd();
-		this->setArgv();
-
-		#ifdef DEBUG_CGI
-		std::cerr << "[DEBUG] " << *this << std::endl;
-		#endif
-
-		execve(this->cmd().c_str(), this->argv(), this->_envp);
-		perror("execve");
-
-		utl::deleteCharArray(this->_argv);
-		utl::deleteCharArray(this->_envp);
-		exit (EXIT_FAILURE);
-	}
-
-	// PARENT PROCESS
-	else {
-
-		close(p[1]);
-
-		char buffer[4096];
-		ssize_t bytesRead;
-		bytesRead = read(p[0], buffer, sizeof(buffer) - 1);
-		buffer[bytesRead] = '\0';
-		std::cout << "[DEBUG] Buffer: " << buffer << std::endl;
-		_output += buffer;
-
-		if (bytesRead < 0)
-			throw HttpStatus("500");
-		
-		pid_t	wpid;
-		int		status;
-		wpid = wait(&status);
-		if (pid != 0)
-			throw HttpStatus("500");
-	} */
-		int pid, stat, fd[2];
+	int pid, stat, fd[2];
 
 	if (access(_responseContext.path().c_str(), X_OK) == -1)
 		throw HttpStatus("403");
@@ -162,9 +102,6 @@ void CGI::execute() {
 			exit(1);
 		close(fd[1]);
 		
-		//char* binPath = strdup(getProgName(path).c_str());
-		//char* progPath = strdup(path.c_str());
-		//char* argv[3] = { binPath, progPath, NULL };
 		this->setArgv();
 		this->setCmd();
 		this->_generateEnvp();
@@ -176,7 +113,6 @@ void CGI::execute() {
 	}
 	else // parent process
 	{
-		//utl::deleteCharArray(this->_envp);
 		waitpid(pid, &stat, 0);
 		stat = WEXITSTATUS(stat);
 		if (stat != 0)

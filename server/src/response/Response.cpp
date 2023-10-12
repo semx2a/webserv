@@ -137,6 +137,10 @@ void	Response::_handleGet () {
 
 void	Response::_handleUpload() {
 
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Post: entering handleUpload..." << std::endl;
+	#endif
+
 	if (utl::createDirectory(this->_path + this->responseContext().uploadFolder()) == false)
 		throw HttpStatus("500");
 		
