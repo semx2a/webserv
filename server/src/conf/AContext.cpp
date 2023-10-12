@@ -71,9 +71,6 @@ void	AContext::setDefaults() {
 		this->_authorizedMethods.push_back("POST");
 		this->_authorizedMethods.push_back("DELETE");
 	}
-
-	if (this->_errorPages.empty())
-		this->_errorPages[404] = this->pwd() + (std::string)"error_page.html";
 	else {
 		for (std::map<int, std::string>::iterator it = this->_errorPages.begin(); it != this->_errorPages.end(); it++)
 			it->second = this->pwd() + it->second;
