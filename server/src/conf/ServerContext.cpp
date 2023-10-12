@@ -53,6 +53,7 @@ std::ostream &	operator<<(std::ostream & o, ServerContext const & sc) {
 
 	o << HIPURPLE << std::setw(21) << "autoindex: " 		<< HIGREEN << std::boolalpha <<sc.autoindex()			<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "maxBodySize: "		<< HIGREEN << sc.maxBodySize()							<< RESET << std::endl;
+	o << HIPURPLE << std::setw(21) << "pwd: " 				<< HIGREEN << sc.pwd()									<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "root: " 				<< HIGREEN << sc.root()									<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "errorPages: " 		<< HIGREEN << utl::print_map(sc.errorPages()) 			<< RESET << std::endl;
 	o << HIPURPLE << std::setw(21) << "locations: " 		<< HIGREEN << utl::print_map(sc.locations())			<< RESET << std::endl;

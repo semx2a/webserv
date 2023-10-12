@@ -153,7 +153,7 @@ void	Parser::parseRoot(std::string const& line, Context& context) {
 		buildAndThrowParamError(line);
 	}
 
-	context.setRoot(root);
+	context.setRoot(context.pwd() + root);
 }
 
 template <typename Context>

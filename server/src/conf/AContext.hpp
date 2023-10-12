@@ -1,8 +1,6 @@
 #ifndef ACONTEXT_HPP
 # define ACONTEXT_HPP
 
-# define ROOT_OF_ROOTS "/mnt/nfs/homes/nfauconn/repos/webserv/www/"
-
 #include <iomanip>
 #include <map>
 #include <vector>
@@ -19,6 +17,7 @@ class AContext {
 
 		std::string const&							autoindex() const;
 		size_t										maxBodySize() const;
+		std::string const &							pwd() const;
 		std::string const&							root() const;
 		std::map<int, std::string> const&			errorPages() const;
 		std::vector<std::string> const&				index() const;
@@ -27,6 +26,7 @@ class AContext {
 
 		void	setAutoindex(std::string const& autoindex);
 		void 	setMaxBodySize(size_t size);
+		void	setPwd(std::string const& pwd);
 		void	setRoot(std::string const& root);
 		void	setUploadFolder(std::string const& uploadFolder);
 		void	addErrorPage(int code, std::string const& path);
@@ -41,6 +41,7 @@ class AContext {
 	protected:
 		std::string							_autoindex;
 		size_t								_maxBodySize;
+		std::string							_pwd;
 		std::string							_root;
 		std::map<int, std::string>			_errorPages;		
 		std::vector<std::string>			_index;

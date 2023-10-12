@@ -273,7 +273,7 @@ void	Response::_autoIndex() {
 	if (dir == NULL)
 		throw HttpStatus("404");
 
-	std::string to_remove = ROOT_OF_ROOTS;
+	std::string to_remove = this->responseContext().serverContext().pwd();
 	std::string title = "Index of http://www." + this->path().substr(to_remove.size(), this->path().size() - to_remove.size());
 	std::stringstream page;
 	page 	<< "<!DOCTYPE html>" << std::endl

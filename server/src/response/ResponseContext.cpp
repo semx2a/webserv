@@ -54,9 +54,9 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 		size_t pos = _path.find("//");
 		_path.replace(pos, 2, "/");
 	}
-	if (_path.find(ROOT_OF_ROOTS) != 0) {
-		_path = ROOT_OF_ROOTS + _path;
-	}
+/* 	if (_path.find(this->serverContext().pwd()) != 0) {
+		_path = this->serverContext().pwd() + _path;
+	} */
 	#ifdef DEBUG_RESPONSECONTEXT
 		std::cout << BORANGE << "\n[DEBUG] ResponseContext::ResponseContext()\n" << *this << RESET << std::endl;
 	#endif
@@ -172,6 +172,7 @@ void	ResponseContext::_serverDirectives() {
 
 std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs) {
 
+	o << "\t" << ORANGE << "PWD: " << PURPLE << rhs.serverContext().pwd() << std::endl;
 	o << "\t" << ORANGE << "Method: " << PURPLE << rhs.request().method() << std::endl;
 	o << "\t" << ORANGE << "Target: " << PURPLE << rhs.target() << std::endl; 
 	o << "\t" << ORANGE << "Contains some specific directives due to location ? " << PURPLE;

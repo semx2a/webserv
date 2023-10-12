@@ -160,6 +160,7 @@ void	Engine::_handleBuffer(int clientSocket) {
 void	Engine::_writeToClient(int clientSocket) {
 
 	ResponseContext rc(this->_requests[clientSocket], this->_serverContexts[clientSocket]);
+	std::cout << "[DEBUG] ServerContext: " << this->_serverContexts[clientSocket] << std::endl; 
 	Response res(this->_requests[clientSocket], rc, this->_status[clientSocket]);
 	
 	utl::log(clientSocket, "Response about to be sent");
