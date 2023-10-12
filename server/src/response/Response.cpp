@@ -118,7 +118,10 @@ void	Response::_handleGet () {
 		}
 		this->_expandDirectory();
 	}
-	if (_responseContext.isCgi()) {
+	std::cout << "[DEBUG] handleGet: path: " << _path << std::endl;
+	if (_responseContext.isCgi()
+		|| _path.find(".php") != std::string::npos
+		|| _path.find(".py") != std::string::npos) {
 		_runCgi();
 		if (!this->_body.getContent().empty())
 			return ;

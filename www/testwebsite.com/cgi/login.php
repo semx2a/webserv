@@ -4,7 +4,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST["password"];
 
     // Path to user data file
-    $userDataFilePath = "/mnt/nfs/homes/nfauconn/repos/webserv/www/testwebsite.com/data/users/$username.txt";
+    $userDataFilePath = "/sgoinfre/goinfre/Perso/seozcan/CCORE/github/webserv_github/www/testwebsite.com/data/users/$username.txt";
     
     // Check if the user data file exists
     if (file_exists($userDataFilePath)) {

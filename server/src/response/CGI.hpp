@@ -39,7 +39,7 @@ class CGI {
 		ServerContext const&	serverContext() const;
 		ResponseContext const&	responseContext() const;
 		std::string const&		scriptPath() const;
-		std::string const&		output() const;
+		std::vector<char> const&		output() const;
 		envp_t const&			envpMap() const;
 		char**					envp() const;
 		size_t					envSize() const;
@@ -47,7 +47,7 @@ class CGI {
 		char**					argv() const;
 		
 		void	setScriptPath(std::string const&);
-		void	setOutput(std::string const&);
+		void	setOutput(std::vector<char> const&);
 		void	setEnvpMap(envp_t const&);
 		void	setEnvp(char**);
 		void	setEnvSize(size_t);
@@ -63,7 +63,7 @@ class CGI {
 		ResponseContext	_responseContext;
 		
 		std::string		_scriptPath;
-		std::string		_output;
+		std::vector<char>		_output;
 		envp_t		 	_envpMap;
 		char**			_envp;
 		size_t			_envSize;

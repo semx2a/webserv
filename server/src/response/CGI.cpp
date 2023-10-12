@@ -3,7 +3,7 @@
 CGI::CGI(std::string const& scriptPath, Request const& req, ResponseContext const& sc) :	_request(req),
 																							_responseContext(sc),
 																							_scriptPath(scriptPath),
-																							_output("") {}
+																							_output() {}
 
 CGI::CGI(CGI const& rhs) :	_request(rhs.request()),
 							_responseContext(rhs.responseContext()),
@@ -32,7 +32,7 @@ Request const& 			CGI::request() const { return this->_responseContext.request()
 ServerContext const& 	CGI::serverContext() const { return this->_responseContext.serverContext(); }
 ResponseContext const& 	CGI::responseContext() const { return this->_responseContext; }
 std::string const& 		CGI::scriptPath() const { return this->_scriptPath; }
-std::string const& 		CGI::output() const { return this->_output; }
+std::vector<char> const& 		CGI::output() const { return this->_output; }
 envp_t const&			CGI::envpMap() const { return this->_envpMap; }
 char**					CGI::envp() const { return this->_envp; }
 size_t					CGI::envSize() const { return this->_envSize; }
@@ -42,7 +42,7 @@ char**					CGI::argv() const { return this->_argv; }
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
 void	CGI::setScriptPath(std::string const& scriptPath) { this->_scriptPath = scriptPath; }
-void	CGI::setOutput(std::string const& output) { this->_output = output; }
+void	CGI::setOutput(std::vector<char> const& output) { this->_output = output; }
 void	CGI::setEnvpMap(envp_t const& envpMap) { this->_envpMap = envpMap; }
 void	CGI::setEnvp(char** envp) { this->_envp = envp; }
 void	CGI::setEnvSize(size_t envSize) { this->_envSize = envSize; }
@@ -74,7 +74,7 @@ void	CGI::setArgv() {
 
 void CGI::execute() {
 
-	int p[2];
+/* 	int p[2];
 	if (pipe(p) == -1) {
 		perror("pipe");
 		throw HttpStatus("500");
@@ -120,12 +120,11 @@ void CGI::execute() {
 
 		char buffer[4096];
 		ssize_t bytesRead;
-		while ((bytesRead = read(p[0], buffer, sizeof(buffer) - 1)) > 0) {
-			buffer[bytesRead] = '\0';
-			std::cout << "[DEBUG] Buffer: " << buffer << std::endl;
-			_output += buffer;
-		}
-		close(p[0]);
+		bytesRead = read(p[0], buffer, sizeof(buffer) - 1);
+		buffer[bytesRead] = '\0';
+		std::cout << "[DEBUG] Buffer: " << buffer << std::endl;
+		_output += buffer;
+
 		if (bytesRead < 0)
 			throw HttpStatus("500");
 		
@@ -134,6 +133,62 @@ void CGI::execute() {
 		wpid = wait(&status);
 		if (pid != 0)
 			throw HttpStatus("500");
+	} */
+		int pid, stat, fd[2];
+
+	if (access(_responseContext.path().c_str(), X_OK) == -1)
+		throw HttpStatus("403");
+	if (pipe(fd) != 0)
+		throw HttpStatus("503");
+	pid = fork();
+	if (pid == -1)
+		throw HttpStatus("500");
+	if (pid == 0) // child process
+	{
+		close(fd[0]);
+		close(STDOUT_FILENO);
+		close(STDIN_FILENO);
+	
+		std::vector<char> copy(_request.body());
+		copy.push_back('\0');
+		std::FILE* tmpf = std::tmpfile();
+		std::fputs(&copy[0], tmpf);
+		std::rewind(tmpf);
+		if (dup2(fileno(tmpf), STDIN_FILENO) == -1)
+			exit(1);
+
+
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+			exit(1);
+		close(fd[1]);
+		
+		//char* binPath = strdup(getProgName(path).c_str());
+		//char* progPath = strdup(path.c_str());
+		//char* argv[3] = { binPath, progPath, NULL };
+		this->setArgv();
+		this->setCmd();
+		this->_generateEnvp();
+
+		execve(_cmd.c_str(), _argv, _envp);
+		utl::deleteCharArray(this->_argv);
+		utl::deleteCharArray(this->_envp);
+		exit(1);
+	}
+	else // parent process
+	{
+		//utl::deleteCharArray(this->_envp);
+		waitpid(pid, &stat, 0);
+		stat = WEXITSTATUS(stat);
+		if (stat != 0)
+			throw HttpStatus("500");
+		close(fd[1]);
+		int	 ret = 0;
+		std::vector<char> buff(1024, 0);
+		while ((ret = read(fd[0], &buff[0], 1024)) > 0)
+			_output.insert(_output.end(), buff.begin(), buff.begin() + ret);
+		if (ret < 0)
+			throw HttpStatus("500");
+		close(fd[0]);
 	}
 }
 
@@ -214,7 +269,7 @@ std::ostream& operator<<(std::ostream& o, CGI const& rhs) {
 
 	o << "CGI: " << std::endl;
 	o << "\t" << "Script path: " 	<< rhs.scriptPath()		<< std::endl;
-	o << "\t" << "Output: " 		<< rhs.output()			<< std::endl;
+	o << "\t" << "Output: " 		<< utl::print_vector_of_char(rhs.output())			<< std::endl;
 	o << "\t" << "Cmd: " 			<< rhs.cmd()			<< std::endl;
 	o << "\t" << "Argv: " 			<< utl::printCharArray(rhs.argv(), 2) << std::endl;
 //	o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;

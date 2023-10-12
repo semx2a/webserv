@@ -139,7 +139,7 @@ std::string					utl::print_str (std::string buffer) {
 	return sstr.str();
 }
 
-std::string					utl::print_vector_of_char (std::vector <char>& buffer) {
+std::string					utl::print_vector_of_char (std::vector <char> const& buffer) {
 
 	std::string	 str("Received: ");
 	std::stringstream sstr(str);

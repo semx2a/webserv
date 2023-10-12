@@ -75,7 +75,7 @@ class utl {
 		static std::string				str_of(size_t size, const std::string & c);
 		static std::string				custom_width(int width, char c, std::string const& content);
 
-		static std::string 				print_vector_of_char(std::vector <char>& buffer);
+		static std::string 				print_vector_of_char(std::vector <char> const& buffer);
 		static std::string 				print_str(std::string buffer);
 
 		static std::string	   			print_client_added();
