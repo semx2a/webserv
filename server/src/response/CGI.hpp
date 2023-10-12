@@ -71,8 +71,12 @@ class CGI {
 		char**			_argv;
 
 
+		void	_generateEnvp();
 		void	_generateEnvpMap();
 		void	_mapToEnvp();
+		void	_deleteEnvp();
+		void	_deleteArgv();
+		void	_waitChild(pid_t);
 };
 
 std::ostream&	operator<<(std::ostream& o, CGI const& rhs);

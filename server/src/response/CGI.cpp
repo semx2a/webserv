@@ -72,30 +72,75 @@ void	CGI::setArgv() {
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
-void CGI::_mapToEnvp() {
+void CGI::execute() {
 
-	std::vector<std::string> v;
-	for (std::map<std::string, std::string>::const_iterator it = this->_envpMap.begin() ; it != this->_envpMap.end() ; it++)
-		v.push_back(it->first + "=" + it->second);
-
-	_envSize = v.size();
-	this->_envp = new char*[_envSize + 1];
-	std::memset(this->_envp, 0, sizeof(char*) * (_envSize + 1));
-	if (this->_envp == NULL)
+	int p[2];
+	if (pipe(p) == -1) {
+		perror("pipe");
 		throw HttpStatus("500");
-	this->_envp[this->_envSize] = NULL;
-	
-	std::vector<std::string>::size_type index = 0;
-	for (std::vector<std::string>::iterator it = v.begin() ; it != v.end() ; ++it)
-	{
-		this->_envp[index] = new char[it->length() + 1];
-		std::strcpy(this->_envp[index], it->c_str());
-		if (this->_envp[index] == NULL)
-			throw HttpStatus("500");
-		index++;
 	}
-	
-	v.erase(v.begin(), v.end());
+
+	pid_t pid = fork();
+	if (pid == -1) {
+		perror("fork");
+		throw HttpStatus("500");
+	}	
+
+	// CHILD PROCESS
+	if (pid == 0) {
+
+		close(p[0]);
+		if (dup2(p[1], STDOUT_FILENO) == -1) {
+			perror("dup2");
+			close(p[1]);
+			throw HttpStatus("500");
+		}
+		close(p[1]);
+
+		this->_generateEnvp();
+		this->setCmd();
+		this->setArgv();
+
+		#ifdef DEBUG_CGI
+		std::cerr << "[DEBUG] " << *this << std::endl;
+		#endif
+
+		execve(this->cmd().c_str(), this->argv(), this->_envp);
+		perror("execve");
+
+		this->_deleteArgv();
+		this->_deleteEnvp();
+		exit (EXIT_FAILURE);
+	}
+
+	// PARENT PROCESS
+	else {
+
+		close(p[1]);
+
+		char buffer[4096];
+		ssize_t bytesRead;
+		while ((bytesRead = read(p[0], buffer, sizeof(buffer) - 1)) > 0) {
+			buffer[bytesRead] = '\0';
+			std::cout << "[DEBUG] Buffer: " << buffer << std::endl;
+			_output += buffer;
+		}
+		close(p[0]);
+		if (bytesRead < 0)
+			throw HttpStatus("500");
+		
+		pid_t	wpid;
+		int		status;
+		wpid = wait(&status);
+		if (pid != 0)
+			throw HttpStatus("500");
+	}
+}
+
+void	CGI::_generateEnvp() {
+
+	this->_generateEnvpMap();
+	this->_mapToEnvp();
 }
 
 void	CGI::_generateEnvpMap() {
@@ -137,74 +182,46 @@ void	CGI::_generateEnvpMap() {
 	this->_envpMap["HTTP_REFERER"] = "";
 }
 
-void CGI::execute() {
+void CGI::_mapToEnvp() {
 
-	int p[2];
-	if (pipe(p) == -1) {
-		perror("pipe");
+	std::vector<std::string> v;
+	for (std::map<std::string, std::string>::const_iterator it = this->_envpMap.begin() ; it != this->_envpMap.end() ; it++)
+		v.push_back(it->first + "=" + it->second);
+
+	_envSize = v.size();
+	this->_envp = new char*[_envSize + 1];
+	std::memset(this->_envp, 0, sizeof(char*) * (_envSize + 1));
+	if (this->_envp == NULL)
 		throw HttpStatus("500");
-	}
-
-	pid_t pid = fork();
-	if (pid == -1) {
-		perror("fork");
-		throw HttpStatus("500");
-	}	
-
-	this->_generateEnvpMap();
-	this->_mapToEnvp(); //mallocd
-
-	if (pid == 0)
+	this->_envp[this->_envSize] = NULL;
+	
+	std::vector<std::string>::size_type index = 0;
+	for (std::vector<std::string>::iterator it = v.begin() ; it != v.end() ; ++it)
 	{
-		close(p[0]);
-		dup2(p[1], STDOUT_FILENO);
-
-		this->setCmd();
-		this->setArgv(); //mallocd
-
-		#ifdef DEBUG_CGI
-		std::cerr << "[DEBUG] CGI: " << *this << std::endl;
-		#endif
-		
-		if (execve(this->cmd().c_str(), this->argv(), this->_envp) == -1) {
-			perror("execve");
-		}
-
-		for (int i = 0 ; this->_envp[i] != NULL ; i++)
-			delete this->_envp[i];
-		delete this->_envp;
-		for (int i = 0 ; this->_argv[i] != NULL ; i++)
-			delete this->_argv[i];
-		delete[] this->_argv;
-		
-		throw HttpStatus("500");
-		
-	}
-	else
-	{
-		int status;
-		waitpid(pid, &status, 0);
-		status = WEXITSTATUS(status);
-		if (status != 0)
+		this->_envp[index] = new char[it->length() + 1];
+		std::strcpy(this->_envp[index], it->c_str());
+		if (this->_envp[index] == NULL)
 			throw HttpStatus("500");
-		close(p[1]);
-
-		char buffer[4096];
-		ssize_t bytesRead;
-		while ((bytesRead = read(p[0], buffer, sizeof(buffer) - 1)) > 0) {
-			buffer[bytesRead] = '\0';
-			_output += buffer;
-		}
-		if (bytesRead < 0)
-			throw HttpStatus("500");
-		close(p[0]);
-
+		index++;
 	}
+	
+	v.erase(v.begin(), v.end());
+}
+
+void	CGI::_deleteArgv() {
+
+	for (int i = 0 ; this->_argv[i] != NULL ; i++)
+		delete this->_argv[i];
+	delete[] this->_argv;
+}
+
+void	CGI::_deleteEnvp() {
+
 	for (int i = 0 ; this->_envp[i] != NULL ; i++)
 		delete this->_envp[i];
 	delete this->_envp;
-
 }
+
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATTOR OVERLOAD::
 
@@ -215,8 +232,8 @@ std::ostream& operator<<(std::ostream& o, CGI const& rhs) {
 	o << "\t" << "Output: " 		<< rhs.output()			<< std::endl;
 	o << "\t" << "Cmd: " 			<< rhs.cmd()			<< std::endl;
 	o << "\t" << "Argv: " 			<< utl::printCharArray(rhs.argv(), 2) << std::endl;
-	//o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;
-	//o << "\t" << "Envp: " 			<< utl::printCharArray(rhs.envp(), rhs.envSize()) << std::endl;
+//	o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;
+	o << "\t" << "Envp: " 			<< utl::printCharArray(rhs.envp(), rhs.envSize()) << std::endl;
 
 	return o;
 }

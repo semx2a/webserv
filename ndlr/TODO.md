@@ -38,7 +38,7 @@ ________________________________________________________________________________
 - [x] curl localhost:8000 segfault (connection keep-alive)
 - [x] longer path for server context loc
 - [x] pb of GET and POST not considered as in ma
-- [ ] header for server name
+- [ ] server_name dans le header de la reponse
 
 ________________________________________________________________________________________________________________________
 # WHEN EVERYTHING FINISHED
