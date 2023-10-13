@@ -28,66 +28,51 @@ class Buffer {
 		~Buffer();
 
 		std::vector<char> const&	raw() const;
-		std::string const&			str() const;
-		size_t						maxBodySize() const;
-		bool						hasBody() const;
-		bool						hasContentLength() const;
-		size_t						contentLength() const;
-		t_ull						remainingContentLength() const;
-		size_t						headerSize() const;
-		bool						isTransferEncoding() const;
-		bool						isRequestEnded() const;
 
-		void						setRaw(std::vector<char> request);
-		void						setStr(std::string requestStr);
+		bool						hasBody() const;
+		bool						isEnded() const;
+
+		std::string const&			boundary() const;
+		size_t						contentLength() const;
+		bool						transferEncoding() const;
+
+		size_t						maxBodySize() const;
+		size_t						headerSize() const;
+		t_ull						remainingContentLength() const;
+
 		void						setMaxBodySize(size_t maxBodySize);
-		void						setHasBody(bool hasBody);
-		void						setHasContentLength(bool hasContentLength);
 		void						setRemainingContentLength(t_ull remainingContentLength);
-		void						setHeaderSize(size_t headerSize);
-		void						setIsTransferEncoding(bool isTransferEncoding);
-		void						setIsEnded(bool isEnded);
 
 		void						add(std::vector<char> raw);
-//		void						checkEnd();
-		void						setContentLength(size_t contentLength);
-//		void						clear();
 
 
-void	checkEnd();
-void	searchForHeaders();
-void	processBodyEndCheck();
-void	clear();
-void	resetFlagsAndValues();
+		void	checkEnd();
+		void	searchForHeaders();
+		void	processBodyEndCheck();
+		void	clear();
+		void	resetFlagsAndValues();
 
 	private:
-		std::vector<char>	_raw;
-		std::string			_str;
-		size_t				_maxBodySize;
-		t_ull				_contentLength;
-		t_ull				_remainingContentLength;
-		size_t				_headerSize;
-		std::string			_boundary;
-		bool				_isTransferEncoding;
-		bool				_isEnded;
-		bool				_isBoundary;
-		bool				_hasBody;
-		bool				_hasContentLength;
-		
-	//	void				_searchContentLength();
-	//	void				_searchTransferEncoding();
-	//	void				_searchBoundary();
-	//	void				_checkEndContentLength();
-	//	void				_checkEndTransferEncoding();
-	//	bool				_bodyBoundary();
-	//	void				_checkEndBoundary();
 
-void	_searchContentLength();
-void	_searchTransferEncoding();
-void	_searchBoundary();
-void	_checkEndBoundary();
-void	_checkEndContentLength();
-void	_checkEndTransferEncoding();
+		std::vector<char>	_raw;
+
+		bool				_hasBody;
+		bool				_isEnded;
+
+		std::string			_boundary;
+		t_ull				_contentLength;
+		bool				_transferEncoding;
+
+		size_t				_maxBodySize;
+		size_t				_headerSize;
+		t_ull				_remainingContentLength;
+		
+		void	_searchContentLength();
+		void	_searchTransferEncoding();
+		void	_searchBoundary();
+		void	_checkEndBoundary();
+		void	_checkEndContentLength();
+		void	_checkEndTransferEncoding();
 };
 
 #endif

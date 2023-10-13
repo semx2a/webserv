@@ -134,7 +134,7 @@ void	Engine::_handleBuffer(int clientSocket) {
 	#endif
 
 	try {
-		if (not this->_buffers[clientSocket].isRequestEnded()) {
+		if (not this->_buffers[clientSocket].isEnded()) {
 			#ifdef DEBUG_ENGINE
 			std::cout << "[DEBUG] Request not ended" << std::endl;
 			#endif
@@ -142,7 +142,7 @@ void	Engine::_handleBuffer(int clientSocket) {
 		}
 		
 		this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw());
-		if (this->_buffers[clientSocket].isRequestEnded()	|| this->_status[clientSocket].statusCode() != "202"
+		if (this->_buffers[clientSocket].isEnded()	|| this->_status[clientSocket].statusCode() != "202"
 														|| this->_status[clientSocket].statusCode() != "200") {
 			this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 		}
