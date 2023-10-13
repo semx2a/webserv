@@ -58,8 +58,7 @@ void	Headers::build(std::string const& path, size_t contentLength, std::string c
 			headers << "Content-Type: " << this->_mimeTypes.getMimeType(this->_findExtension(path)) << CRLF;
 		headers << "Content-Length: " << contentLength << CRLF;
 	}
-	headers << "Connection: keep-alive" << CRLF;
-	headers << "Keep-Alive: timeout=5, max=1000" << CRLF;
+	headers << "Connection: close" << CRLF;
 	if (customHeaders.find("Cache-Control") == std::string::npos)
 		headers << "Cache-Control: no-cache" << CRLF;
 	if (not filePath.empty())
@@ -81,7 +80,7 @@ void	Headers::build() {
 	headers << "Server: webserv" << CRLF;
 	headers << "Content-Type: " << "text/html; charset=utf-8" << CRLF;
 	headers << "Content-Length: " << this->contentLength() << CRLF;
-	headers << "Connection: keep-alive" << CRLF;
+	headers << "Connection: close" << CRLF;
 	headers << "Keep-Alive: timeout=5, max=1000" << CRLF;
 	headers << "Cache-Control: no-cache" << CRLF;
 	headers << "Location: /" << CRLF;

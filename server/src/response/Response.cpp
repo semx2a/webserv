@@ -248,14 +248,12 @@ void	Response::_handlePost() {
 	else if (access(this->path().c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 	
-//	if (not _boundary.empty()) {
 	this->_postData();
-	//}
-//	else {
-//		this->_handleUpload();
-//	}
+	std::cout << "[DEBUG] Post: _path: " << _path << std::endl;
+	this->_runCgi();
 
 	this->_status.setStatusCode("201");
+	//this->_body = _request.body();
 }
 
 void	Response::_handleDelete() {
