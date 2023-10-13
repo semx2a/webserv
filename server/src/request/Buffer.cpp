@@ -66,24 +66,20 @@ void		Buffer::setIsTransferEncoding(bool isTransferEncoding) { _isTransferEncodi
 void		Buffer::setIsEnded(bool isEnded) { _isEnded = isEnded; }
 
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::OTHERS
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
 void		Buffer::add(std::vector<char> raw) { 
-	
 	_raw.insert(_raw.end(), raw.begin(), raw.end()); 
 }
 
 void Buffer::checkEnd() {
+	if (_raw.size() < 4)
+		return;
 	if (_hasBody) {
 		processBodyEndCheck();
 		return;
 	}
-
 	_str.assign(_raw.begin(), _raw.end());
-
-	if (_raw.size() < 4)
-		return;
-
 	if (_str.find(DB_CRLF) != std::string::npos) {
 		searchForHeaders();
 		processBodyEndCheck();
@@ -110,6 +106,34 @@ void Buffer::processBodyEndCheck() {
 		_checkEndContentLength();
 	} 
 }
+void Buffer::_searchBoundary() {
+	int boundary_position = utl::searchVectorCharUntil(_raw, 
+														"boundary=", 
+														utl::searchVectorChar(_raw, "\r\n\r\n", 0));
+	if (boundary_position == -1) {
+		std::cout << "boundary not found" << std::endl;
+		return;
+	}
+
+	std::string		crlf = "\r\n";
+    std::string     boundary(_raw.begin() + boundary_position + 9, 
+								std::search(_raw.begin() + boundary_position, 
+								_raw.end(), crlf.begin(), crlf.end()));
+
+	#ifdef DEBUG_BUFFER
+	std::cout << "boundary = " << boundary << std::endl;
+	#endif
+
+	boundary = "--" + boundary + "--";
+	_isBoundary = true;
+	_hasBody = true;
+	_boundary = boundary;
+
+	#ifdef DEBUG_BUFFER
+	std::cout << "ending boundary will be : " << boundary << std::endl;
+	sleep(2);
+	#endif
+}
 
 void Buffer::_searchContentLength() {
 	const std::string CONTENT_LENGTH = "Content-Length: ";
@@ -128,36 +152,35 @@ void Buffer::_searchContentLength() {
 }
 
 void Buffer::_searchTransferEncoding() {
+
 	if (_str.find("Transfer-Encoding: ") != std::string::npos) {
+
 		_isTransferEncoding = true;	
-		std::cout << "Transfer Encoding found" << std::endl;
 		_hasBody = true;
+
+		#ifdef DEBUG_BUFFER
+		std::cout << "Transfer Encoding found" << std::endl;
+		#endif
 	}
 }
 
-void Buffer::_searchBoundary() {
-	int boundary_position = utl::searchVectorCharUntil(_raw, "boundary=", utl::searchVectorChar(_raw, "\r\n\r\n", 0));
-	if (boundary_position == -1) {
-		std::cout << "boundary not found" << std::endl;
-		return;
-	}
-
-	std::string		crlf = "\r\n";
-    std::string     boundary(_raw.begin() + boundary_position + 9, std::search(_raw.begin() + boundary_position, _raw.end(), crlf.begin(), crlf.end()));
-	//std::string boundary(_raw.begin() + boundary_position + 9, utl::searchVectorChar(_raw, "\r\n", boundary_position));
-	boundary = "--" + boundary + "--";
-	std::cout << "boundary = " << boundary << std::endl;
-	_isBoundary = true;
-	_boundary = boundary;
-}
 
 void Buffer::_checkEndBoundary() {
+
 	if (utl::searchVectorChar(_raw, _boundary.c_str(), 0) == -1) {
-		//utl::print_vector_of_char(_raw);
+
+		#ifdef DEBUG_BUFFER
+		std::cout << utl::vectorOfCharToStr(_raw) << std::endl;
 		std::cout << RED << "boundary not found" << std::endl;
+		sleep(2);
+		#endif
+
 		return;
 	}
+	#ifdef DEBUG_BUFFER
 	std::cout << GREEN << "boundary found" << std::endl;
+	#endif
+
 	_isEnded = true;
 }
 
@@ -285,7 +308,7 @@ void	Buffer::_searchBoundary() {
 void	Buffer::_checkEndBoundary() {
 
 	if (utl::searchVectorChar(_raw, _boundary.c_str(), 0) == -1) {
-		utl::print_vector_of_char(_raw);
+		utl::vectorOfCharToStr(_raw);
 		std::cout << "boundary not found" << std::endl;
 		return ;
 	}

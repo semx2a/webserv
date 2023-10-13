@@ -205,7 +205,7 @@ std::ostream& operator<<(std::ostream& o, CGI const& rhs) {
 
 	o << "CGI: " << std::endl;
 	o << "\t" << "Script path: " 	<< rhs.scriptPath()		<< std::endl;
-	o << "\t" << "Output: " 		<< utl::print_vector_of_char(rhs.output())			<< std::endl;
+	o << "\t" << "Output: " 		<< utl::vectorOfCharToStr(rhs.output())			<< std::endl;
 	o << "\t" << "Cmd: " 			<< rhs.cmd()			<< std::endl;
 	o << "\t" << "Argv: " 			<< utl::printCharArray(rhs.argv(), 2) << std::endl;
 //	o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;

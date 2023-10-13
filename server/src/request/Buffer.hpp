@@ -1,8 +1,9 @@
 #ifndef BUFFER_HPP
 # define BUFFER_HPP
 
-//# define DEBUG_BUFFER
+# define DEBUG_BUFFER
 
+# define CRLF "\r\n"
 # define DB_CRLF "\r\n\r\n"
 
 #include <algorithm>

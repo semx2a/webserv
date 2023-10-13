@@ -40,7 +40,7 @@ std::vector<char>&	utl::replaceVectorChar(std::vector<char>& tab, size_t positio
 	return (tab);
 }
 
-std::string					utl::trim(std::string const& str) {
+std::string	utl::trim(std::string const& str) {
 
     const std::string ws = " \n\r\t\f\v";
     
@@ -53,7 +53,7 @@ std::string					utl::trim(std::string const& str) {
     return str.substr(start, end-start+1);
 }
 
-int							utl::find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
+int	utl::find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
     // Convert the vector of characters to a string
     std::string haystack_str(haystack.begin(), haystack.end());
 
@@ -164,13 +164,10 @@ std::string					utl::print_str (std::string buffer) {
 	return sstr.str();
 }
 
-std::string					utl::print_vector_of_char (std::vector <char> const& buffer) {
+std::string					utl::vectorOfCharToStr (std::vector <char> const& buffer) {
 
-	std::string	 str("Received: ");
-	std::stringstream sstr(str);
-
-	sstr << &buffer[0];
-	return sstr.str();
+	std::string	 str(buffer.begin(), buffer.end());
+	return str;
 }
 
 std::string					utl::print_client_added () {

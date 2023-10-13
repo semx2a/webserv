@@ -144,9 +144,13 @@ void	Response::_handleUpload() {
 	if (utl::createDirectory(this->_path + this->responseContext().uploadFolder()) == false)
 		throw HttpStatus("500");
 		
+	#ifdef DEBUG_RESPONSE
 	std::cout << "[DEBUG] Post: entering handleUpload..." << std::endl;
+	#endif
+
 	std::vector<char> postData = _request.body();
 	std::cout << "[DEBUG] Post: postData: " << std::string(postData.begin(), postData.end()) << std::endl;
+	sleep(2);
 		
 	std::ofstream	file(this->_path.c_str(), std::ios::app);
 
