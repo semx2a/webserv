@@ -71,7 +71,7 @@ class Response {
 		// UTILS
 		std::string			_path;
 		std::string			_responseStr;
-		std::string			_contentType;
+		std::string			_cgiHeaders;
 
 		// :::::::::::::::::::::::::: HTTP METHODS
 		struct MethodsMap {

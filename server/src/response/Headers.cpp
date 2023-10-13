@@ -49,22 +49,24 @@ std::string	Headers::_findExtension(std::string const& path) {
 	return (ext);
 }
 
-void	Headers::build(std::string const& path, size_t contentLength, std::string const& contentType) {
+void	Headers::build(std::string const& path, size_t contentLength, std::string const& cgiHeaders) {
 
 	std::stringstream headers;
 
 	headers << "Date: " << utl::getDate() << CRLF;
 	headers << "Server: webserv" << CRLF;
-	if (contentType != "")
-		headers << "Content-Type: " << contentType << CRLF;
-	else
+	if (cgiHeaders.find("Content-Type") == std::string::npos)
 		headers << "Content-Type: " << this->_mimeTypes.getMimeType(this->_findExtension(path)) << CRLF;
 	headers << "Content-Length: " << contentLength << CRLF;
 	headers << "Connection: keep-alive" << CRLF;
 	headers << "Keep-Alive: timeout=5, max=1000" << CRLF;
-	headers << "Cache-Control: no-cache" << CRLF;
+	if (cgiHeaders.find("Cache-Control") == std::string::npos)
+		headers << "Cache-Control: no-cache" << CRLF;
 	headers << "Location: /" << CRLF;
+	if (!cgiHeaders.empty())
+		headers << cgiHeaders;
 	headers << CRLF;
+	std::cout << "leaving headers build" << std::endl;
 
 	this->setContent(headers.str());
 }

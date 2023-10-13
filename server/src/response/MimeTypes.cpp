@@ -11,7 +11,7 @@ std::string const&	MimeTypes::getMimeType(std::string const& extension) const {
 	t_lexicon::const_iterator it = this->lexicon().find(extension);
 
 	if (it == this->lexicon().end())
-		return this->lexicon().find("text")->second;
+		return this->lexicon().find("txt")->second;
 	return it->second;
 }
 

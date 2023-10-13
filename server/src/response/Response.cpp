@@ -81,7 +81,7 @@ void	Response::buildResponse() {
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	Headers		headers(this->path(), _body.getContentLength(), _contentType);
+	Headers		headers(this->path(), _body.getContentLength(), this->_cgiHeaders);
 
 	_responseStr = statusLine.getContent() + headers.getContent() + _body.getContent();
 }
@@ -373,12 +373,10 @@ void	Response::_runCgi() {
 		if (str.empty())
 			return ;
 		while (std::getline(stream, line)) {
-			if (line.find("Content-type:") != std::string::npos)
-				this->_contentType = line.substr(14, line.size() - 14);
-			else if (line.empty() || line == "\r")
-				break;
+
 			if (line.empty() || line == "\r")
-			break;
+				break;
+			this->_cgiHeaders.append(line + CRLF);
 		}
 		if (!stream.eof())
 			request.parseBody(str_vec);
