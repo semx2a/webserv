@@ -48,10 +48,11 @@ void	CGI::setEnvp(char** envp) { this->_envp = envp; }
 void	CGI::setEnvSize(size_t envSize) { this->_envSize = envSize; }
 void	CGI::setCmd() {
 
-	if (this->_scriptPath.find(".php"))
+	if (this->_scriptPath.find(".php") != std::string::npos)
 		this->_cmd = "/usr/bin/php-cgi";
-	else if (this->_scriptPath.find(".py"))
+	else if (this->_scriptPath.find(".py") != std::string::npos) {
 		this->_cmd = "/usr/bin/python3";
+	}
 	else {
 		std::cout << "CGI: Unknown CGI extension" << std::endl;
 		throw HttpStatus("500");

@@ -151,6 +151,8 @@ void	Engine::_handleBuffer(int clientSocket) {
 	}
 	catch (HttpStatus& e) {
 		this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw(), this->_buffers[clientSocket].boundary());
+		utl::log(clientSocket, "Error in request");
+		std::cout << RED << utl::vectorOfCharToStr(this->_buffers[clientSocket].raw()) << RESET << std::endl;
 		this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 	}
 	catch (std::exception& e) {

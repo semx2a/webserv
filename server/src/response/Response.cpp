@@ -208,7 +208,7 @@ void	Response::_postData() {
 
 		#ifdef DEBUG_RESPONSE
 		std::cout << "[DEBUG] " << BOLD << "filename: " << RESET << filename << std::endl;
-		std::cout << "[DEBUG] " << BOLD << "filepath: " << RESET << filepath << std::endl;
+		std::cout << "[DEBUG] " << BOLD << "filepath: " << RESET << _filePath << std::endl;
 		#endif
 
 		if (utl::createFile(_filePath, content, filename) == false)

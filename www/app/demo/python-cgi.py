@@ -13,7 +13,7 @@ print ("<link rel=\"stylesheet\" href=\"./assets/css/upload_file.css\">")
 print ("<link rel=\"stylesheet\" href=\"./assets/css/form.css\">")
 print ("<script src=\"https://code.jquery.com/jquery-1.10.2.js\"></script>")
 
-print ("<title>Perl</title>")
+print ("<title>Python</title>")
 print ("</head>")
 print ("<body>")
 print ("<div id=\"navbar\"></div>")

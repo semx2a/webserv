@@ -1,4 +1,6 @@
 
+.nfs*
+**/.nfs*
 *.cache
 .vscode/
 server/webserv
