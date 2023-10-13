@@ -43,14 +43,12 @@ class Response {
 		HttpStatus const&		status() const;
 
 		std::string const&		path() const;
-		std::string const&		extension() const;
 		std::string const&		responseStr() const;
 
 		// ::::::::::::::::::::::::::::::: MUTATORS
 		void		setRequest(Request const&);
 		void		setResponseContext(ResponseContext const&);
 
-		void		setExtension(std::string const&);
 		void		setBody(Body const&);
 		void		setStatus(HttpStatus const&);
 
@@ -72,11 +70,8 @@ class Response {
 
 		// UTILS
 		std::string			_path;
-		std::string			_extension;
 		std::string			_responseStr;
-
-		// ::::::::::::::::::::::::::::::: UTILS
-		void				_findExtension();
+		std::string			_contentType;
 
 		// :::::::::::::::::::::::::: HTTP METHODS
 		struct MethodsMap {

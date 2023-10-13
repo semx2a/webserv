@@ -59,16 +59,16 @@ class CGI {
 	private:
 		CGI();
 
-		Request			_request;
-		ResponseContext	_responseContext;
+		Request				_request;
+		ResponseContext		_responseContext;
 		
-		std::string		_scriptPath;
-		std::vector<char>		_output;
-		envp_t		 	_envpMap;
-		char**			_envp;
-		size_t			_envSize;
-		std::string		_cmd;
-		char**			_argv;
+		std::string			_scriptPath;
+		std::vector<char>	_output;
+		envp_t		 		_envpMap;
+		char**				_envp;
+		size_t				_envSize;
+		std::string			_cmd;
+		char**				_argv;
 
 
 		void	_generateEnvp();

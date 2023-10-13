@@ -277,3 +277,16 @@ bool	utl::createFile(std::string path, std::vector<char> content, std::string fi
 	out.close();
 	return true;
 }
+
+std::string	utl::getDate() {
+    // Get the current time
+    std::time_t now = std::time(NULL);
+
+    // Convert it to a string in the HTTP date format
+    char buf[50];
+    struct tm tm;
+    gmtime_r(&now, &tm); // Use GMT/UTC time
+    std::strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", &tm);
+
+    return std::string(buf);
+}

@@ -4,9 +4,15 @@
 
 Headers::Headers() : ARespComponent() {}
 
-Headers::Headers(std::string const& contentType, size_t const & contentLength, ResponseContext const& sc) {
+Headers::Headers(size_t contentLength) : ARespComponent() {
 
-	this->build(contentType, contentLength, sc);
+	this->setContentLength(contentLength);
+	this->build();
+}
+
+Headers::Headers(std::string const& path, size_t contentLength, std::string const& contentType) : ARespComponent() {
+
+	this->build(path, contentLength, contentType);
 }
 
 Headers::Headers(Headers const & rhs) : ARespComponent(rhs) {
@@ -22,37 +28,59 @@ Headers &		Headers::operator=(Headers const & rhs) {
 
 	if (this != &rhs) {
 		ARespComponent::operator=(rhs);
+		
 	}
 	return *this;
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-size_t				Headers::contentLength() const { return _contentLength; }
+size_t			Headers::contentLength() const { return this->_contentLength; }
 
-void				Headers::setContentLength(size_t contentLength) { _contentLength = contentLength; }
+void			Headers::setContentLength(size_t contentLength) { this->_contentLength = contentLength; }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-void			Headers::build(std::string const& contentType, size_t const & contentLength, ResponseContext const& sc) {
+std::string	Headers::_findExtension(std::string const& path) {
 
-	(void)sc;
+	std::cout << BORANGE << "[DEBUG] Headers::_findExtension() path = " << path << RESET << std::endl;
+	std::string ext = path.substr(path.find_last_of('.') + 1, path.size() - path.find_last_of('.') - 1);
+	std::cout << BORANGE << "[DEBUG] Headers::_findExtension() ext = " << ext << RESET << std::endl;
+	return (ext);
+}
+
+void	Headers::build(std::string const& path, size_t contentLength, std::string const& contentType) {
+
 	std::stringstream headers;
 
-	headers << "Content-Type: " << contentType << CRLF;
+	headers << "Date: " << utl::getDate() << CRLF;
+	headers << "Server: webserv" << CRLF;
+	if (contentType != "")
+		headers << "Content-Type: " << contentType << CRLF;
+	else
+		headers << "Content-Type: " << this->_mimeTypes.getMimeType(this->_findExtension(path)) << CRLF;
 	headers << "Content-Length: " << contentLength << CRLF;
+	headers << "Connection: keep-alive" << CRLF;
+	headers << "Keep-Alive: timeout=5, max=1000" << CRLF;
+	headers << "Cache-Control: no-cache" << CRLF;
+	headers << "Location: /" << CRLF;
 	headers << CRLF;
 
 	this->setContent(headers.str());
 }
 
-/* Sets default headers if constructor called with size_t contentLength */
 void	Headers::build() {
-
+	
 	std::stringstream headers;
 
-	headers << "Content-Type: text/html" << CRLF;
+	headers << "Date: " << utl::getDate() << CRLF;
+	headers << "Server: webserv" << CRLF;
+	headers << "Content-Type: " << "text/html; charset=utf-8" << CRLF;
 	headers << "Content-Length: " << this->contentLength() << CRLF;
+	headers << "Connection: keep-alive" << CRLF;
+	headers << "Keep-Alive: timeout=5, max=1000" << CRLF;
+	headers << "Cache-Control: no-cache" << CRLF;
+	headers << "Location: /" << CRLF;
 	headers << CRLF;
 
 	this->setContent(headers.str());

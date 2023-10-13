@@ -3,26 +3,30 @@
 
 # include "ARespComponent.hpp"
 # include "ResponseContext.hpp"
+# include "MimeTypes.hpp"
 
 class Headers : public ARespComponent {
 	
 	public:
-		Headers(size_t const&);
-		Headers(std::string const&, size_t const&, ResponseContext const&);
+		Headers(size_t);
+		Headers(std::string const&, size_t, std::string const&);
 		Headers(Headers const&);
 		~Headers();
 	
 		Headers &	operator=(Headers const&);
 
-		void				setContentLength(size_t);
-		size_t				contentLength() const;
+		size_t		contentLength() const;
+		void		setContentLength(size_t);
 
-		void		build(std::string const&, size_t const&, ResponseContext const&);
+		void 		build();
+		void		build(std::string const&, size_t, std::string const&); // for CGI
 
 	private:
 		Headers();
-		void		build();
 		size_t		_contentLength;
+		MimeTypes	_mimeTypes;
+
+		std::string	_findExtension(std::string const& path);
 };
 
 #endif

@@ -38,7 +38,6 @@ Response& Response::operator=(Response const& rhs)
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GETTERS::
 
 Request const&			Response::request() const { return _request; }
-std::string const&		Response::extension() const { return _extension; }
 Body const&				Response::body() const { return _body; }
 HttpStatus const&		Response::status() const { return _status; }
 
@@ -55,7 +54,6 @@ void	Response::setBody(Body const& body) { _body = body; }
 void	Response::setStatus(HttpStatus const& status) { _status = status; }
 
 void	Response::setPath(std::string const& path) { _path = path; }
-void	Response::setExtension(std::string const& extension) { _extension = extension; }
 //void	Response::setContentType(std::string const& contentType) { _contentType = contentType; }
 void	Response::setResponseStr(std::string const& responseStr) { _responseStr = responseStr; }
 
@@ -64,7 +62,6 @@ void	Response::setResponseStr(std::string const& responseStr) { _responseStr = r
 void	Response::buildResponse() {
 
 	StatusCodes					statusCodes;
-	MimeTypes					mimeTypes;
 	Response::MethodsMap::type	methodsMap = _initMethods();
  
 	try {
@@ -84,10 +81,9 @@ void	Response::buildResponse() {
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	Body		body(_body.getContent());
-	Headers		headers(mimeTypes.getMimeType(_extension), body.getContentLength(), _responseContext);
+	Headers		headers(this->path(), _body.getContentLength(), _contentType);
 
-	_responseStr = statusLine.getContent() + headers.getContent() + body.getContent();
+	_responseStr = statusLine.getContent() + headers.getContent() + _body.getContent();
 }
 
 
@@ -131,7 +127,6 @@ void	Response::_handleGet () {
 	if (!file.is_open()) {
 		throw HttpStatus("404");
 	}
-	this->_findExtension();
 	this->_body.build(utl::fileToStr(file));
 }
 
@@ -281,7 +276,6 @@ void	Response::_handleError() {
 					<< "</h1></body></html>";
 		content = bodyContent.str();
 	}
-	this->setExtension("html");
 	this->_body.build(content);
 }
 
@@ -356,7 +350,6 @@ void	Response::_autoIndex() {
 			<< "</body>" << std::endl
 			<< "</html>" << std::endl;
 
-	this->setExtension("html");
 	this->setBody(page.str());
 }
 
@@ -368,19 +361,22 @@ void	Response::_runCgi() {
 
 	CGI	cgi(_path, _request, _responseContext);
 	cgi.execute();
-	this->_findExtension();
 	if (!cgi.output().empty()) {
 
-		Request		request;
+ 		Request		request;
 
 		std::vector<char>	str_vec(cgi.output().begin(), cgi.output().end());
 		std::string			str(str_vec.begin(), str_vec.end());
+		
 		std::istringstream	stream(str);
-
 		std::string			line;
 		if (str.empty())
 			return ;
 		while (std::getline(stream, line)) {
+			if (line.find("Content-type:") != std::string::npos)
+				this->_contentType = line.substr(14, line.size() - 14);
+			else if (line.empty() || line == "\r")
+				break;
 			if (line.empty() || line == "\r")
 			break;
 		}
@@ -388,15 +384,7 @@ void	Response::_runCgi() {
 			request.parseBody(str_vec);
 
 		_body.build(request.body());
-		setExtension("html");
 	}
-}
-
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: UTILS::
-
-void	Response::_findExtension() {
-
-	this->setExtension(this->_path.substr(_path.find_last_of('.') + 1, _path.size() - _path.find_last_of('.') - 1));
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::OUTPUT OPERATOR OVERLOAD::
