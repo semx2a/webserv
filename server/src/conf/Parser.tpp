@@ -20,6 +20,7 @@ void	Parser::parseServerContext(std::stringstream& stream, Context& context) {
 			break;
 		}
 		if (line.find("location") != std::string::npos) {
+			_brackets++;
 
 			LocationContext	newLocationCtxt;
 			std::string path = line.substr(line.find_first_of(" ") + 1, line.find_first_of("{") - line.find_first_of(" ") - 1);

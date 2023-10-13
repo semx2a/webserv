@@ -35,6 +35,7 @@ class Parser {
 		Parser();
 
 		size_t						_linesRead;
+		int							_brackets;
 		std::string		 			_confFilename;
 		std::vector<ServerContext>	_serversContexts;
 
@@ -77,7 +78,7 @@ class Parser {
 		// UTILS
 		bool	isDirective(std::string const&) const;
 		bool	isCommentOrEmptyLine(std::string const&) const;
-		bool	isEndOfScope(std::string const&) const;
+		bool	isEndOfScope(std::string const&);
 		void	isValidIPv4(std::string const&) const;
 		void	buildAndThrowParamError(std::string const&) const;
 		void	searchIfCgi(LocationContext&, std::string&);

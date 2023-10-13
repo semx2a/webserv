@@ -2,9 +2,9 @@
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CONSTRUCTORS::
 
-Parser::Parser() : _linesRead(0), _confFilename(), _serversContexts() {}
+Parser::Parser() : _linesRead(0), _brackets(0), _serversContexts() {}
 
-Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _confFilename(_conf_filename), _serversContexts() {
+Parser::Parser (std::string const& _conf_filename) :  _linesRead(0), _brackets(0), _confFilename(_conf_filename), _serversContexts() {
 
 	parse();
 }
@@ -63,7 +63,10 @@ void	Parser::parse() {
 		if (isEndOfScope(line)) {
 			break;
 		}
-		else if (line.find("server {") != std::string::npos) {
+		else if (line.find("server") != std::string::npos 
+					and line.find_first_not_of(" \t", line.find("server") + 6) == line.find("{") 
+					and line.find_first_not_of(" \t", line.find("{") + 1) == std::string::npos) {
+			_brackets++;
 			ServerContext	newServerCtxt;
 			this->parseServerContext(stream, newServerCtxt);
 			this->_serversContexts.push_back(newServerCtxt);
@@ -73,6 +76,9 @@ void	Parser::parse() {
 		}
 	}
 	checkIfPortDoublons();
+	if (_brackets != 0) {
+		throw Parser::Error("Missing closing bracket");
+	}
 }
 
 
@@ -154,10 +160,14 @@ bool	Parser::isDirective(std::string const& line) const {
 			&& line.find_first_not_of(" ", semicolonPos) != line.find('\n');
 }
 
-bool	Parser::isEndOfScope(std::string const& line) const {
+bool	Parser::isEndOfScope(std::string const& line) {
 
-	return line.find('}') != std::string::npos 
-		and line.find_first_not_of("} ") == std::string::npos;
+	if (line.find('}') != std::string::npos 
+		and line.find_first_not_of("} ") == std::string::npos) {
+		_brackets--;
+		return true;
+	}
+	return false;
 }
 
 void	Parser::buildAndThrowParamError(std::string const& line) const {

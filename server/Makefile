@@ -59,7 +59,7 @@ NAME	:=	webserv
 TNAME	:=	testexe
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
-PROJ	:=	./
+PROJ	:= 	./
 SDIR	:=	$(addprefix $(PROJ), src/)
 TDIR	:=	$(addprefix $(PROJ), test/src/)
 ODIR	:=	$(addprefix $(PROJ), obj/)
