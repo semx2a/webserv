@@ -122,7 +122,7 @@ void Buffer::_searchBoundary() {
 
 	#ifdef DEBUG_BUFFER
 	std::cout << "[DEBUG] Ending boundary will be : " << boundary << std::endl;
-	sleep(2);
+	//sleep(2);
 	#endif
 }
 
@@ -136,7 +136,7 @@ void Buffer::_searchContentLength() {
 
 		#ifdef DEBUG_BUFFER
 		std::cout << "[DEBUG] Content Length found" << std::endl;
-		sleep(2);
+		//sleep(2);
 		#endif
 
 		_contentLength = std::atoll(str.substr(key_pos + key.size()).c_str());
@@ -154,7 +154,7 @@ void Buffer::_searchTransferEncoding() {
 
 		#ifdef DEBUG_BUFFER
 		std::cout << "[DEBUG] Transfer Encoding found" << std::endl;
-		sleep(2);
+		//sleep(2);
 		#endif
 
 		_transferEncoding = true;	
@@ -170,7 +170,7 @@ void Buffer::_checkEndBoundary() {
 		#ifdef DEBUG_BUFFER
 		std::cout << utl::vectorOfCharToStr(_raw) << std::endl;
 		std::cout << RED << "[DEBUG] boundary not found" << std::endl;
-		sleep(2);
+		//sleep(2);
 		#endif
 
 		return;

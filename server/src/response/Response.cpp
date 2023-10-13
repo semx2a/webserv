@@ -81,7 +81,7 @@ void	Response::buildResponse() {
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	Headers		headers(this->path(), _body.getContentLength(), this->_cgiHeaders);
+	Headers		headers(this->path(), _body.getContentLength(), this->_customHeaders);
 
 	_responseStr = statusLine.getContent() + headers.getContent() + _body.getContent();
 }
@@ -276,6 +276,8 @@ void	Response::_handleError() {
 					<< "</h1></body></html>";
 		content = bodyContent.str();
 	}
+	this->_customHeaders.append("Content-Type: text/html");
+	this->_customHeaders.append(CRLF);
 	this->_body.build(content);
 }
 
@@ -376,7 +378,7 @@ void	Response::_runCgi() {
 
 			if (line.empty() || line == "\r")
 				break;
-			this->_cgiHeaders.append(line + CRLF);
+			this->_customHeaders.append(line + CRLF);
 		}
 		if (!stream.eof())
 			request.parseBody(str_vec);
