@@ -54,7 +54,7 @@
 
         </div>        
 		<script>
-			function sleep(delay) {
+			function //sleep(delay) {
 				var start = new Date().getTime();
 				while (new Date().getTime() < start + delay);
 			}
@@ -70,7 +70,7 @@
 				.then(file_deleted())
 			}
 			function file_deleted() {
-				sleep(200)
+				//sleep(200)
 				document.location.reload(true)
 			}
 		</script>

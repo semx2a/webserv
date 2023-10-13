@@ -40,7 +40,6 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 				currentLength = it->first.length();
 				if (currentLength > this->_location.name().length()) {
 					this->_location = it->second;
-				std::cout << "[DEBUG] location name =" << this->_location.name() << std::endl;
 				}
 			}
 		}
@@ -129,7 +128,6 @@ void	ResponseContext::_locationDirectives() {
 
 	this->_root = this->_location.root();
 	this->_index = this->_location.index();
-	std::cout << "[DEBUG] upload folder: " << this->_location.uploadFolder() << std::endl;
 	this->_uploadFolder = this->_location.uploadFolder();
 	this->_errorPages = this->_location.errorPages();
 	this->_autoindex = this->_location.autoindex();

@@ -100,12 +100,12 @@
 				})
 				.then(reload_delay())
 			}
-			function sleep(delay) {
+			function //sleep(delay) {
 				var start = new Date().getTime();
 				while (new Date().getTime() < start + delay);
 			}
 			function reload_delay() {
-				sleep(200)
+				//sleep(200)
 				document.location.reload(true)
 			} 
 		</script>

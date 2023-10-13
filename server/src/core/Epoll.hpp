@@ -1,7 +1,7 @@
 #ifndef EPOLL_HPP
 # define EPOLL_HPP
 
-//# define DEBUG_EPOLL
+////#define DEBUG_EPOLL
 
 #include <algorithm>
 #include <iostream>
@@ -11,7 +11,7 @@
 #include "Socket.hpp"
 #include "ServerContext.hpp"
 
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 2048
 
 class Epoll {
 

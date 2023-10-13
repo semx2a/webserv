@@ -10,6 +10,14 @@ Buffer::Buffer() :						_hasBody(false),
 										_headerSize(0),
 										_remainingContentLength(0) {}
 
+/* Buffer::Buffer(size_t maxBodySize) :	_hasBody(false),
+										_isEnded(false),
+										_contentLength(0),
+										_transferEncoding(false),
+										_maxBodySize(maxBodySize),
+										_headerSize(0),
+										_remainingContentLength(0) {} */
+
 Buffer::Buffer(Buffer const& rhs) {
 
 	*this = rhs;
@@ -21,14 +29,7 @@ Buffer&	Buffer::operator=(Buffer const& rhs) {
 	if (this != &rhs) {
 
 		this->_raw = rhs.raw();
-		this->_hasBody = rhs.hasBody();
-		this->_isEnded = rhs.isEnded();
-		this->_boundary = rhs.boundary();
-		this->_contentLength = rhs.contentLength();
-		this->_transferEncoding = rhs.transferEncoding();
-		this->_maxBodySize = rhs.maxBodySize();
-		this->_headerSize = rhs.headerSize();
-		this->_remainingContentLength = rhs.remainingContentLength();
+		this->_str = rhs.str();
 	}
 	return *this;
 }
@@ -40,6 +41,7 @@ Buffer::~Buffer() {
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
+std::string const&			Buffer::str() const { return _str; }
 std::vector<char> const&	Buffer::raw() const { return _raw; }
 bool						Buffer::hasBody() const { return _hasBody; }
 bool						Buffer::isEnded() const { return _isEnded; }
@@ -58,33 +60,35 @@ void	Buffer::setRemainingContentLength(t_ull remainingContentLength) { _remainin
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::METHODS
 
 void		Buffer::add(std::vector<char> raw) { 
-
 	_raw.insert(_raw.end(), raw.begin(), raw.end()); 
 }
 
 void Buffer::checkEnd() {
-
 	if (_raw.size() < 4)
 		return;
-	if (_hasBody)
+	if (_hasBody) {
 		processBodyEndCheck();
-	else if (utl::searchVectorChar(_raw, "\r\n\r\n", 0) != -1) {
+		return;
+	}
+	_str.assign(_raw.begin(), _raw.end());
+	if (_str.find(DB_CRLF) != std::string::npos) {
 		searchForHeaders();
 		processBodyEndCheck();
 	}
 }
 
 void Buffer::searchForHeaders() {
-
-	if (_findBoundary() or _findTransferEncoding() or _findContentLength()) {
-		_hasBody = true;
-		return;
+	_searchBoundary();
+	_searchTransferEncoding();
+	_searchContentLength();
+	if (!_transferEncoding && !_contentLength != 0 && boundary().empty()) {
+		_isEnded = true;
+		return ;
 	}
-	_isEnded = true;
+	_hasBody = true;
 }
 
 void Buffer::processBodyEndCheck() {
-
 	if (not boundary().empty()) {
 		_checkEndBoundary();
 	}
@@ -95,14 +99,13 @@ void Buffer::processBodyEndCheck() {
 		_checkEndContentLength();
 	} 
 }
-
-bool Buffer::_findBoundary() {
-
+void Buffer::_searchBoundary() {
 	int boundary_position = utl::searchVectorCharUntil(_raw, 
 														"boundary=", 
 														utl::searchVectorChar(_raw, "\r\n\r\n", 0));
 	if (boundary_position == -1) {
-		return false;
+		std::cout << "boundary not found" << std::endl;
+		return;
 	}
 
 	std::string		crlf = "\r\n";
@@ -114,68 +117,53 @@ bool Buffer::_findBoundary() {
 	std::cout << "[DEBUG] Boundary = " << boundary << std::endl;
 	#endif
 
-	_boundary = boundary;
 	boundary = "--" + boundary + "--";
-	_finalBoundary = boundary;
+	_boundary = boundary;
 
 	#ifdef DEBUG_BUFFER
-	std::cout << "[DEBUG] Boundary = " << _boundary << std::endl;
-	std::cout << "[DEBUG] Ending boundary will be : " << _finalBoundary << std::endl;
-	//sleep(3);
+	std::cout << "[DEBUG] Ending boundary will be : " << boundary << std::endl;
+	sleep(2);
 	#endif
-
-	return true;
 }
 
-bool Buffer::_findContentLength() {
+void Buffer::_searchContentLength() {
 
 	const std::string	key = "Content-Length: ";
-	size_t				key_pos = utl::searchVectorChar(_raw, key.c_str(), 0);
-	std::string			str = utl::vectorOfCharToStr(_raw);
+	size_t				key_pos = _str.find(key);
 	
-	if (key_pos == std::string::npos) {
-		return false;
-	}
+	if (key_pos != std::string::npos) {
 
-		#ifdef DEBUG_BUFFER
-		std::cout << "[DEBUG] Content Length found" << std::endl;
-		//sleep(2);
-		#endif
-
-	_contentLength = std::atoll(str.substr(key_pos + key.size()).c_str());
-	if (_contentLength > _maxBodySize) {
-		throw HttpStatus("413");
+		_contentLength = std::atoll(_str.substr(key_pos + key.size()).c_str());
+		if (_contentLength > _maxBodySize) {
+			throw HttpStatus("413");
+		}
+		_headerSize = _str.size() - _str.find(DB_CRLF) + 4; // to remove it from the raw when checking in EndContentLength
+		_remainingContentLength = _contentLength;
 	}
-	_headerSize = str.size() - str.find(DB_CRLF) + 4; // to remove it from the raw when checking in EndContentLength
-	_remainingContentLength = _contentLength;
-	return true;
 }
 
-bool Buffer::_findTransferEncoding() {
+void Buffer::_searchTransferEncoding() {
 
-	if (utl::searchVectorChar(_raw, "Transfer-Encoding: chunked", 0) == -1) {
-		return false;
-	}
+	if (_str.find("Transfer-Encoding: ") != std::string::npos) {
 
 		#ifdef DEBUG_BUFFER
 		std::cout << "[DEBUG] Transfer Encoding found" << std::endl;
-		//sleep(2);
 		#endif
 
-	_transferEncoding = true;	
-	return true;
+		_transferEncoding = true;	
+	}
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: CHECK END
 
 void Buffer::_checkEndBoundary() {
 
-	if (utl::searchVectorChar(_raw, _finalBoundary.c_str(), 0) == -1) {
+	if (utl::searchVectorChar(_raw, _boundary.c_str(), 0) == -1) {
 
 		#ifdef DEBUG_BUFFER
 		std::cout << utl::vectorOfCharToStr(_raw) << std::endl;
 		std::cout << RED << "[DEBUG] boundary not found" << std::endl;
-		//sleep(2);
+		sleep(2);
 		#endif
 
 		return;
@@ -199,7 +187,7 @@ void Buffer::_checkEndContentLength() {
 
 void Buffer::_checkEndTransferEncoding() {
 
-	if (utl::searchVectorChar(_raw, "0\r\n\r\n", 0) != -1)
+	if (_str.find("0\r\n\r\n"))
 		_isEnded = true;
 }
 
@@ -208,17 +196,17 @@ void Buffer::_checkEndTransferEncoding() {
 void Buffer::clear() {
 
 	_raw.clear();
+	_str.clear();
 	_boundary.clear();
 	resetFlagsAndValues();
 }
 
 void Buffer::resetFlagsAndValues() {
 
-	_hasBody = false;
-	_isEnded = false;
+	_maxBodySize = 0;
+	_headerSize = 0;	
 	_contentLength = 0;
-	_transferEncoding = false;
-	// we dont reset maxBodySize coz it is set in Engine::_addNewClient so will not be set again for the same client
-	_headerSize = 0;
 	_remainingContentLength = 0;
+	_transferEncoding = false;
+	_isEnded = false;
 }

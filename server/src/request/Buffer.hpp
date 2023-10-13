@@ -1,7 +1,7 @@
 #ifndef BUFFER_HPP
 # define BUFFER_HPP
 
-# define DEBUG_BUFFER
+//#define DEBUG_BUFFER
 
 # define CRLF "\r\n"
 # define DB_CRLF "\r\n\r\n"
@@ -33,6 +33,7 @@ class Buffer {
 		bool						isEnded() const;
 
 		std::string const&			boundary() const;
+		std::string const&			finalBoundary() const;
 		size_t						contentLength() const;
 		bool						transferEncoding() const;
 
@@ -60,6 +61,7 @@ class Buffer {
 		bool				_isEnded;
 
 		std::string			_boundary;
+		std::string 		_finalBoundary;
 		t_ull				_contentLength;
 		bool				_transferEncoding;
 
@@ -67,9 +69,9 @@ class Buffer {
 		size_t				_headerSize;
 		t_ull				_remainingContentLength;
 		
-		void	_searchContentLength();
-		void	_searchTransferEncoding();
-		void	_searchBoundary();
+		bool	_findContentLength();
+		bool	_findTransferEncoding();
+		bool	_findBoundary();
 		void	_checkEndBoundary();
 		void	_checkEndContentLength();
 		void	_checkEndTransferEncoding();

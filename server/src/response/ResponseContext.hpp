@@ -1,7 +1,7 @@
 #ifndef RESPONSECONTEXT_HPP
 # define RESPONSECONTEXT_HPP
 
-# define DEBUG_RESPONSECONTEXT
+//#define DEBUG_RESPONSECONTEXT
 
 # include <iostream>
 

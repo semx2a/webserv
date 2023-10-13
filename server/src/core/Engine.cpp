@@ -116,7 +116,8 @@ void	Engine::_readFromClient(int clientSocket) {
 		}
 		this->_buffers[clientSocket].add(buffer);
 		this->_buffers[clientSocket].checkEnd();
-		this->_buffers[clientSocket].setRemainingContentLength(this->_buffers[clientSocket].remainingContentLength() - bytesRead);
+		if (this->_buffers[clientSocket].contentLength() != 0)
+			this->_buffers[clientSocket].setRemainingContentLength(this->_buffers[clientSocket].remainingContentLength() - bytesRead);
 		_handleBuffer(clientSocket);
 	}
 	catch (HttpStatus& e) {
@@ -140,15 +141,16 @@ void	Engine::_handleBuffer(int clientSocket) {
 			#endif
 			return ;
 		}
-		
-		this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw());
 		if (this->_buffers[clientSocket].isEnded()	|| this->_status[clientSocket].statusCode() != "202"
 														|| this->_status[clientSocket].statusCode() != "200") {
+			this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw(), this->_buffers[clientSocket].boundary());
+			utl::log(clientSocket, "Request parsed");
+			std::cout << RED << utl::vectorOfCharToStr(this->_buffers[clientSocket].raw()) << RESET << std::endl;
 			this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 		}
 	}
 	catch (HttpStatus& e) {
-		this->_status[clientSocket].setStatusCode(e.statusCode());
+		this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw(), this->_buffers[clientSocket].boundary());
 		this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 	}
 	catch (std::exception& e) {
@@ -163,9 +165,7 @@ void	Engine::_writeToClient(int clientSocket) {
 	Response res(this->_requests[clientSocket], rc, this->_status[clientSocket]);
 	
 	utl::log(clientSocket, "Response about to be sent");
-	#ifdef DEBUG_ENGINE
 	std::cout << GREEN << res.responseStr() << RESET << std::endl;
-	#endif
 
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");

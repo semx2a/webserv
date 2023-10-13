@@ -10,9 +10,9 @@ Headers::Headers(size_t contentLength) : ARespComponent() {
 	this->build();
 }
 
-Headers::Headers(std::string const& path, size_t contentLength, std::string const& contentType, ResponseContext const& rc) : ARespComponent() {
+Headers::Headers(std::string const& path, size_t contentLength, std::string const& contentType, ResponseContext const& rc, std::string const& filePath) : ARespComponent() {
 
-	this->build(path, contentLength, contentType, rc);
+	this->build(path, contentLength, contentType, rc, filePath);
 }
 
 Headers::Headers(Headers const & rhs) : ARespComponent(rhs) {
@@ -43,13 +43,11 @@ void			Headers::setContentLength(size_t contentLength) { this->_contentLength = 
 
 std::string	Headers::_findExtension(std::string const& path) {
 
-	std::cout << BORANGE << "[DEBUG] Headers::_findExtension() path = " << path << RESET << std::endl;
 	std::string ext = path.substr(path.rfind('.') + 1, path.size() - path.rfind('.') - 1);
-	std::cout << BORANGE << "[DEBUG] Headers::_findExtension() ext = " << ext << RESET << std::endl;
 	return (ext);
 }
 
-void	Headers::build(std::string const& path, size_t contentLength, std::string const& customHeaders, ResponseContext const& rc) {
+void	Headers::build(std::string const& path, size_t contentLength, std::string const& customHeaders, ResponseContext const& rc, std::string const& filePath) {
 
 	std::stringstream headers;
 
@@ -64,11 +62,13 @@ void	Headers::build(std::string const& path, size_t contentLength, std::string c
 	headers << "Keep-Alive: timeout=5, max=1000" << CRLF;
 	if (customHeaders.find("Cache-Control") == std::string::npos)
 		headers << "Cache-Control: no-cache" << CRLF;
-	headers << "Location: /" << CRLF;
+	if (not filePath.empty())
+		headers << "Location: " << filePath << CRLF;
+	else
+		headers << "Location: /" << CRLF;
 	if (!customHeaders.empty())
 		headers << customHeaders;
 	headers << CRLF;
-	std::cout << "leaving headers build" << std::endl;
 
 	this->setContent(headers.str());
 }

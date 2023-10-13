@@ -1,7 +1,7 @@
 #ifndef ENGINE_HPP
 # define ENGINE_HPP
 
-# define DEBUG_ENGINE
+//#define DEBUG_ENGINE
 
 #include <exception>
 #include <iostream>

@@ -1,7 +1,7 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
-//# define DEBUG_REQUEST
+////#define DEBUG_REQUEST
 
 # include <string>
 # include <iostream>
@@ -21,9 +21,9 @@ class Request {
 	
 	public:
 
-		Request(void);
+		Request();
 		Request(Request const &src);
-		~Request(void);
+		~Request();
 
 		Request &	operator=(Request const &rhs);
 
@@ -34,19 +34,21 @@ class Request {
 		void	setVersion(const std::string);
 		void	setHeaders(const t_headers);
 		void	setBody(const std::vector<char>);
+		void	setBoundary(const std::string);
 		
-		std::string const &			method(void) const;
-		std::string const &			target(void) const;
-		std::string const &			query(void) const;
-		std::string const &			version(void) const;
-		std::vector<char> const &	body(void) const;
+		std::string const &			method() const;
+		std::string const &			target() const;
+		std::string const &			query() const;
+		std::string const &			version() const;
+		std::vector<char> const &	body() const;
 		std::string const &			header(std::string const &) const;
-		t_headers const &			headers(void) const;
+		t_headers const &			headers() const;
+		std::string const &			boundary() const;
 
 		//METHODS
-		void	parser(std::vector<char> const& raw);
-		void						parseHeaders(std::istringstream&);
-		void						parseBody(std::vector<char> const&);
+		void	parser(std::vector<char> const& raw, std::string const& boundary);
+		void	parseHeaders(std::istringstream&);
+		void	parseBody(std::vector<char> const&);
 		
 	private:
 
@@ -57,6 +59,7 @@ class Request {
 		std::string			_version;
 		t_headers			_headers;
 		std::vector<char>	_body;
+		std::string			_boundary;
 
 		//PRIVATE METHODS
 		void						_parseRequestLine(std::istringstream&);

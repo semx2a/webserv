@@ -67,6 +67,7 @@ class utl {
 		utl & operator=(utl const &);
 
 		static std::string				trim(std::string const &);
+		static int						find_first_occurrence(const std::vector<char> &, const std::string&);
 		static int						find_last_occurrence(const std::vector<char> &, const std::string&);
 		static std::vector<std::string> tokenize(const std::string str, char sep);
 		static std::string 				trimAndReplaceWs(std::string& input);

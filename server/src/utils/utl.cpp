@@ -53,6 +53,23 @@ std::string	utl::trim(std::string const& str) {
     return str.substr(start, end-start+1);
 }
 
+int	utl::find_first_occurrence(const std::vector<char> & haystack, const std::string& needle) {
+
+    // Convert the vector of characters to a string
+	std::string haystack_str(haystack.begin(), haystack.end());
+
+	// Use find to find the first occurrence of the needle
+	size_t pos = haystack_str.find(needle);
+
+	// If the needle is not found, return -1
+	if(pos == std::string::npos) {
+		return -1;
+	}
+
+	// Otherwise, return the position of the first character of the needle
+	return pos; 
+}
+
 int	utl::find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
     // Convert the vector of characters to a string
     std::string haystack_str(haystack.begin(), haystack.end());
@@ -212,8 +229,8 @@ bool	utl::isDirectory(std::string path) {
 bool	utl::createDirectory(std::string path) {
 
     // Check if the directory already exists
-	if (utl::isDirectory(path) == true)
-		return true;
+//	if (utl::isDirectory(path) == true)
+//		return true;
 
    // Attempt to create the directory using the 'mkdir' command
 	std::string *createCmd = new std::string("mkdir \"" + path + "\"");
@@ -264,7 +281,7 @@ void	utl::deleteCharArray(char **arr) {
 bool	utl::createFile(std::string path, std::vector<char> content, std::string filename) {
 
 	filename = path + filename;
-	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::app);
+	std::ofstream	out(filename.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
 	out.clear();
 
 	for (std::vector<char>::iterator it = content.begin(); it != content.end(); it++)

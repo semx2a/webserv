@@ -6,7 +6,10 @@ Response::Response(Request const& request, ResponseContext const& responseContex
 														_request(request), 
 														_responseContext(responseContext), 
 														_status(status),
-														_path(responseContext.path()) {
+														_path(responseContext.path()),
+														_responseStr(),
+														_customHeaders(),
+														_filePath() {
 
 	this->buildResponse();
 }
@@ -27,9 +30,18 @@ Response::~Response() {}
 
 Response& Response::operator=(Response const& rhs)
 {
-	if (this != &rhs)
-	{
-		//TODO
+	if (this != &rhs) {
+
+//		this->setRequest(rhs.request());
+//		this->setResponseContext(rhs.responseContext());
+//		this->setStatus(rhs.status());
+//		this->setBody(rhs.body());
+//		this->setPath(rhs.path());
+//		this->setBoundary(rhs.boundary());
+//		this->setResponseStr(rhs.responseStr());
+//		this->setCustomHeaders(rhs.customHeaders());
+//		this->setFilePath(rhs.filePath());
+
 	}
 	return (*this);
 }
@@ -38,24 +50,28 @@ Response& Response::operator=(Response const& rhs)
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: GETTERS::
 
 Request const&			Response::request() const { return _request; }
-Body const&				Response::body() const { return _body; }
+ResponseContext const&	Response::responseContext() const { return _responseContext; }
 HttpStatus const&		Response::status() const { return _status; }
+Body const&				Response::body() const { return _body; }
 
 std::string const&		Response::path() const { return _path; }
-ResponseContext const&	Response::responseContext() const { return _responseContext; }
-//std::string const&		Response::contentType() const { return _contentType; }
+std::string const&		Response::boundary() const { return _boundary; }
 std::string const&		Response::responseStr() const { return _responseStr; }
+std::string const&		Response::customHeaders() const { return _customHeaders; }
+std::string const&		Response::filePath() const { return _filePath; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: SETTERS::
 
 void	Response::setRequest(Request const& request) { _request = request; }
 void	Response::setResponseContext(ResponseContext const& responseContext) { _responseContext = responseContext; }
-void	Response::setBody(Body const& body) { _body = body; }
 void	Response::setStatus(HttpStatus const& status) { _status = status; }
+void	Response::setBody(Body const& body) { _body = body; }
 
 void	Response::setPath(std::string const& path) { _path = path; }
-//void	Response::setContentType(std::string const& contentType) { _contentType = contentType; }
+void	Response::setBoundary(std::string const& boundary) { _boundary = boundary; }
 void	Response::setResponseStr(std::string const& responseStr) { _responseStr = responseStr; }
+void	Response::setCustomHeaders(std::string const& customHeaders) { _customHeaders = customHeaders; }
+void	Response::setFilePath(std::string const& filePath) { _filePath = filePath; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ENTRYPOINT::
 
@@ -73,7 +89,8 @@ void	Response::buildResponse() {
 			throw HttpStatus("501");
 
 		(this->*methodsMap[_request.method()])();
-		_status.setStatusCode("200");
+		if (_status.statusCode().empty())
+			_status.setStatusCode("200");
 	}
 	catch (HttpStatus& e) {
 		_status.setStatusCode(e.statusCode());
@@ -81,7 +98,7 @@ void	Response::buildResponse() {
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	Headers		headers(this->path(), _body.getContentLength(), this->_customHeaders, this->responseContext());
+	Headers		headers(this->path(), _body.getContentLength(), this->_customHeaders, this->responseContext(), this->_filePath);
 
 	_responseStr = statusLine.getContent() + headers.getContent() + _body.getContent();
 }
@@ -136,18 +153,23 @@ void	Response::_handleUpload() {
 	std::cout << "[DEBUG] Post: entering handleUpload..." << std::endl;
 	#endif
 
-	if (utl::createDirectory(this->_path + this->responseContext().uploadFolder()) == false)
+	if (_path.find("/") == _path.size() - 1 
+		and utl::createDirectory(this->_path + this->responseContext().uploadFolder()) == false)
 		throw HttpStatus("500");
 		
+	std::vector<char> postData = _request.body();
+	
 	#ifdef DEBUG_RESPONSE
 	std::cout << "[DEBUG] Post: entering handleUpload..." << std::endl;
-	#endif
-
-	std::vector<char> postData = _request.body();
 	std::cout << "[DEBUG] Post: postData: " << std::string(postData.begin(), postData.end()) << std::endl;
-	sleep(2);
+	//sleep(2);
+	#endif
 		
-	std::ofstream	file(this->_path.c_str(), std::ios::app);
+	size_t			filenamePos = utl::searchVectorChar(postData, "filename=\"", 0);
+	size_t			filenameSize = utl::searchVectorChar(postData, "\"", filenamePos + 11) - filenamePos - 11;
+	std::string		filename(postData.begin() + filenamePos + 11, postData.begin() + filenameSize);
+	std::string		filepath = this->responseContext().root() + this->responseContext().uploadFolder() + filename;
+	std::ofstream	file(filename.c_str(), std::ios::app);
 
 	if (!file.is_open())
 		throw HttpStatus("500");
@@ -156,29 +178,22 @@ void	Response::_handleUpload() {
 	file.close();
 }
 		
-bool 	Response::_bodyBoundary(std::string boundary, std::vector<char> &body) {
-	
-	boundary = "--" + boundary + "--";
-	if (utl::searchVectorChar(body, boundary.c_str(), body.size() - boundary.length() - 10) == -1)
-		return (false);
-	return (true);
-}
+void	Response::_postData() {
 
+	#ifdef DEBUG_RESPONSE
+	std::cout << "[DEBUG] Entering postData" << std::endl;
+	#endif
 
-void	Response::_postData(std::string path)
-{
-	std::string			boundary = this->_request.headers().at("content-type");
+	std::string			boundary = this->_request.boundary();
 	std::vector<char>	body = _request.body();
 	int					i = 0;
-
-	if (!this->_bodyBoundary(boundary, body))
-		throw HttpStatus("400");
 
 	while ((i = utl::searchVectorChar(body, boundary.c_str(), i)) != -1) {
 		
 		i += boundary.length() + 1;
-		if (utl::searchVectorChar(body, "filename=", i) == -1)
+		if (utl::searchVectorChar(body, "filename=", i) == -1) {
 			break ;
+		}
 		if (utl::searchVectorChar(body, "filename=", i) > utl::searchVectorChar(body, boundary.c_str(), i) || body[utl::searchVectorChar(body, "filename=", i) + 10] == '\"')
 			continue ;
 		i = utl::searchVectorChar(body, "filename=", i) + 10;
@@ -189,9 +204,17 @@ void	Response::_postData(std::string path)
 									utl::searchVectorChar(body, ("\r\n--" + boundary).c_str(), i) -
 									utl::searchVectorChar(body, "\r\n\r\n", i) - 4);
 		
-		if (utl::createFile(path, content, filename) == false)
+		_filePath = this->responseContext().root() + this->responseContext().uploadFolder();
+
+		#ifdef DEBUG_RESPONSE
+		std::cout << "[DEBUG] " << BOLD << "filename: " << RESET << filename << std::endl;
+		std::cout << "[DEBUG] " << BOLD << "filepath: " << RESET << filepath << std::endl;
+		#endif
+
+		if (utl::createFile(_filePath, content, filename) == false)
 			throw HttpStatus("500");
-		
+
+		_filePath += filename;
 		this->_status.setStatusCode("201");
 	}
 }
@@ -201,14 +224,16 @@ void	Response::_handlePost() {
 	#ifdef DEBUG_RESPONSE
 	std::cout << "[DEBUG] Entering handlePost" << std::endl;
 	#endif
-	
+
 	if (this->_request.body().empty()) {
 		throw HttpStatus("400");
 	}
-	if (this->responseContext().isUpload()) {
-		this->_handleUpload();
+	if (this->responseContext().isCgi()) {
+		#ifdef DEBUG_RESPONSE
+		std::cout << "[DEBUG] Post : calling runCgi..." << std::endl;
+		#endif
+		this->_runCgi();
 	}
-
 	if (utl::isDirectory(this->_path)) {
 		if (_responseContext.autoindex() == "on") {
 			_autoIndex();
@@ -223,19 +248,13 @@ void	Response::_handlePost() {
 	else if (access(this->path().c_str(), W_OK) == -1)
 		throw HttpStatus("403");
 	
-	if (!_request.headers().at("content-type").compare(0, 30,"multipart/form-data; boundary="))
-		this->_postData(this->responseContext().uploadFolder());
+//	if (not _boundary.empty()) {
+	this->_postData();
+	//}
+//	else {
+//		this->_handleUpload();
+//	}
 
-	if (this->responseContext().isCgi()) {
-		std::cout << "[DEBUG] Post : calling runCgi..." << std::endl;
-		this->_runCgi();
-	}
-
-	if (!this->body().getContent().empty()) {
-		std::cout << "[DEBUG] Post : building body..." << std::endl;
-		std::cout << this->body().getContent() << std::endl;
-		
-	}
 	this->_status.setStatusCode("201");
 }
 

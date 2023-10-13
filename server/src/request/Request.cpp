@@ -25,6 +25,7 @@ Request &Request::operator=(Request const &rhs)
 		this->setQuery(rhs.query());
 		this->setBody(rhs.body());
 		this->setHeaders(rhs.headers());
+		this->setBoundary(rhs.boundary());
 	}
 	return *this;
 }
@@ -32,12 +33,13 @@ Request &Request::operator=(Request const &rhs)
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ACCESSORS::
 
-void Request::setMethod(const std::string method) { this->_method = method; }
-void Request::setTarget(const std::string target) { this->_target = target; }
-void Request::setVersion(const std::string version) { this->_version = version; }
-void Request::setQuery(const std::string query) { this->_query = query; }
-void Request::setBody(const std::vector<char> body) { this->_body = body; }
-void Request::setHeaders(const std::map<std::string, std::string> headers) { this->_headers = headers; }
+void	Request::setMethod(const std::string method) { this->_method = method; }
+void	Request::setTarget(const std::string target) { this->_target = target; }
+void	Request::setVersion(const std::string version) { this->_version = version; }
+void	Request::setQuery(const std::string query) { this->_query = query; }
+void	Request::setBody(const std::vector<char> body) { this->_body = body; }
+void	Request::setHeaders(const std::map<std::string, std::string> headers) { this->_headers = headers; }
+void	Request::setBoundary(const std::string boundary) { this->_boundary = boundary; }
 
 
 std::string const & 		Request::method(void) const { return this->_method; }
@@ -47,13 +49,14 @@ std::string const & 		Request::query(void) const { return this->_query; }
 std::vector<char> const & 	Request::body(void) const { return this->_body; }
 std::string const & 		Request::header(std::string const & key) const { return this->_headers.find(key)->second; }
 t_headers const &		 	Request::headers(void) const { return this->_headers; }
+std::string const & 		Request::boundary(void) const { return this->_boundary; }
 
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::: MEMBER FUNCTIONS::
 
 void Request::parseBody(std::vector<char> const& str_vec) {
 	
-	int pos = utl::find_last_occurrence(str_vec, "\r\n\r\n");
+	int pos = utl::find_first_occurrence(str_vec, "\r\n\r\n");
 	
 	this->_body.assign(str_vec.begin() + (pos + 1), str_vec.end());
 }
@@ -117,11 +120,12 @@ void Request::_parseRequestLine(std::istringstream &stream) {
 	}
 }
 
-void Request::parser(std::vector<char> const& str_vec) {
+void Request::parser(std::vector<char> const& str_vec, std::string const& boundary) {
 	
 	std::string			str(str_vec.begin(), str_vec.end());
 	std::istringstream	stream(str);
 
+	_boundary = boundary;
 	if (str.empty())
 		return ;
 	this->_parseRequestLine(stream);

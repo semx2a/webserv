@@ -1,7 +1,7 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
-// # define DEBUG_SOCKET
+// //#define DEBUG_SOCKET
 
 #include <cerrno>
 #include <cstdlib>
