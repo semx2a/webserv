@@ -35,18 +35,29 @@
         
                 <div class="row">
         
-                    <?php 
-                    $dirname = "./files/";
-                    $images = glob($dirname."*.jpg");
-                    
-                    foreach($images as $image) {
-                        echo "<div class=\"col-sm-12 col-md-4\">";
-                        echo '<a class="lightbox" href="'.$image.'">';
-                        echo '<img src="'.$image.'">';
-                        echo '</a>';
-						echo '</div>';
-                    }
-                    ?>
+<?php 
+$dirname = "./files/";
+$images = array();
+
+// Get all files in the directory
+$files = glob($dirname . "*");
+
+// Check if each file is an image file
+foreach ($files as $file) {
+	if (getimagesize($file)) {
+		$images[] = $file;
+	}
+}
+
+// Display the images
+foreach($images as $image) {
+	echo "<div class=\"col-sm-12 col-md-4\">";
+	echo '<a class="lightbox" href="'.$image.'">';
+	echo '<img src="'.$image.'">';
+	echo '</a>';
+	echo '</div>';
+}
+?>
 
 
                     
