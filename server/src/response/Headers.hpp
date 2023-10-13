@@ -9,7 +9,7 @@ class Headers : public ARespComponent {
 	
 	public:
 		Headers(size_t);
-		Headers(std::string const&, size_t, std::string const&);
+		Headers(std::string const&, size_t, std::string const&, ResponseContext const&);
 		Headers(Headers const&);
 		~Headers();
 	
@@ -19,7 +19,7 @@ class Headers : public ARespComponent {
 		void		setContentLength(size_t);
 
 		void 		build();
-		void		build(std::string const&, size_t, std::string const&); // for CGI
+		void		build(std::string const&, size_t, std::string const&, ResponseContext const&);
 
 	private:
 		Headers();

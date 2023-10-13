@@ -81,7 +81,7 @@ void	Response::buildResponse() {
 	}
 
  	StatusLine	statusLine(_status.statusCode(), statusCodes.getReasonPhrase(_status.statusCode()));
-	Headers		headers(this->path(), _body.getContentLength(), this->_customHeaders);
+	Headers		headers(this->path(), _body.getContentLength(), this->_customHeaders, this->responseContext());
 
 	_responseStr = statusLine.getContent() + headers.getContent() + _body.getContent();
 }
