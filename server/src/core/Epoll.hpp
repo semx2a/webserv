@@ -1,8 +1,6 @@
 #ifndef EPOLL_HPP
 # define EPOLL_HPP
 
-////#define DEBUG_EPOLL
-
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -36,7 +34,7 @@ class Epoll {
 		int			waitForConnexions();
 		bool		isNewClient(int fd) const;
 		void		addSocketToEpoll(int fd);
-		void		editSocketInEpoll(int fd, int eventToWatch); //TODO
+		void		editSocketInEpoll(int fd, int eventToWatch);
 
 	private:
 

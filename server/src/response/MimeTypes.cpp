@@ -28,8 +28,9 @@ t_lexicon	MimeTypes::initFile(std::string const& fileName) {
 
     while (std::getline(file, line) && !file.eof()) {
 
+		// Skip blank lines or lines that start with spaces/tabs
         if (line.empty() || line.find_first_of("{}") != std::string::npos)
-            continue; // Skip blank lines or lines that start with spaces/tabs
+            continue; 
 
 		std::stringstream sstream(line);
 		std::string value;

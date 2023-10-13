@@ -1,8 +1,6 @@
 #ifndef ENGINE_HPP
 # define ENGINE_HPP
 
-//#define DEBUG_ENGINE
-
 #include <exception>
 #include <iostream>
 #include <map>

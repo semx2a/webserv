@@ -1,8 +1,6 @@
 #ifndef CGI_HPP
 #define CGI_HPP
 
-//#define DEBUG_CGI
-	
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>

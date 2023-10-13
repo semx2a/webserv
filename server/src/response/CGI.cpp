@@ -77,6 +77,8 @@ void CGI::execute() {
 
 	int pid, stat, fd[2];
 
+	if (access(_responseContext.path().c_str(), F_OK) == -1)
+		throw HttpStatus("404");
 	if (access(_responseContext.path().c_str(), X_OK) == -1)
 		throw HttpStatus("403");
 	if (pipe(fd) != 0)
@@ -84,8 +86,8 @@ void CGI::execute() {
 	pid = fork();
 	if (pid == -1)
 		throw HttpStatus("500");
-	if (pid == 0) // child process
-	{
+	if (pid == 0) {
+
 		close(fd[0]);
 		close(STDOUT_FILENO);
 		close(STDIN_FILENO);
@@ -112,8 +114,8 @@ void CGI::execute() {
 		utl::deleteCharArray(this->_envp);
 		exit(1);
 	}
-	else // parent process
-	{
+	else {
+
 		waitpid(pid, &stat, 0);
 		stat = WEXITSTATUS(stat);
 		if (stat != 0)
@@ -209,7 +211,6 @@ std::ostream& operator<<(std::ostream& o, CGI const& rhs) {
 	o << "\t" << "Output: " 		<< utl::vectorOfCharToStr(rhs.output())			<< std::endl;
 	o << "\t" << "Cmd: " 			<< rhs.cmd()			<< std::endl;
 	o << "\t" << "Argv: " 			<< utl::printCharArray(rhs.argv(), 2) << std::endl;
-//	o << "\t" << "EnvpMap: "		<< utl::print_map(rhs.envpMap()) << std::endl;
 	o << "\t" << "Envp: " 			<< utl::printCharArray(rhs.envp(), rhs.envSize()) << std::endl;
 
 	return o;

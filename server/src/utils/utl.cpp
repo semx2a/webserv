@@ -228,10 +228,6 @@ bool	utl::isDirectory(std::string path) {
 
 bool	utl::createDirectory(std::string path) {
 
-    // Check if the directory already exists
-//	if (utl::isDirectory(path) == true)
-//		return true;
-
    // Attempt to create the directory using the 'mkdir' command
 	std::string *createCmd = new std::string("mkdir \"" + path + "\"");
     const char* cmd = createCmd->c_str();
@@ -302,7 +298,8 @@ std::string	utl::getDate() {
     // Convert it to a string in the HTTP date format
     char buf[50];
     struct tm tm;
-    gmtime_r(&now, &tm); // Use GMT/UTC time
+	setenv("TZ", "Europe/Paris", 1);
+    localtime_r(&now, &tm); // Use GMT/UTC time
     std::strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", &tm);
 
     return std::string(buf);

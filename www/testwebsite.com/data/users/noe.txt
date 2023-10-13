@@ -1,1 +1,0 @@
-{"username":"noe","password":"$2y$10$qjsZSMiLbJQmuRN1H4GZo.mq\/.LlhaL0Tex3S8gDJDY8Ss2rNqivu","email":"noe@miaou","fullname":null}

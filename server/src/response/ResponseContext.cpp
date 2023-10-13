@@ -53,9 +53,7 @@ ResponseContext::ResponseContext(Request const& request, ServerContext const& se
 		size_t pos = _path.find("//");
 		_path.replace(pos, 2, "/");
 	}
-/* 	if (_path.find(this->serverContext().pwd()) != 0) {
-		_path = this->serverContext().pwd() + _path;
-	} */
+
 	#ifdef DEBUG_RESPONSECONTEXT
 		std::cout << BORANGE << "\n[DEBUG] ResponseContext::ResponseContext()\n" << *this << RESET << std::endl;
 	#endif

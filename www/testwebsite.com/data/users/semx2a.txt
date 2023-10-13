@@ -1,1 +1,0 @@
-{"username":"semx2a","password":"$2y$10$JmSU\/BiMcAepjb9UuII4l.LRWa9zJUpvitZi.TwRQY8CXVs2ZyvKq","email":"semiha@gmail.com","fullname":"Semiha"}

@@ -146,7 +146,8 @@ bool Buffer::_findContentLength() {
 	if (_contentLength > _maxBodySize) {
 		throw HttpStatus("413");
 	}
-	_headerSize = str.size() - str.find(DB_CRLF) + 4; // to remove it from the raw when checking in EndContentLength
+	// to remove it from the raw when checking in EndContentLength
+	_headerSize = str.size() - str.find(DB_CRLF) + 4;
 	_remainingContentLength = _contentLength;
 	return true;
 }

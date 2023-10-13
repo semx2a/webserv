@@ -1,11 +1,6 @@
 #ifndef BUFFER_HPP
 # define BUFFER_HPP
 
-//#define DEBUG_BUFFER
-
-# define CRLF "\r\n"
-# define DB_CRLF "\r\n\r\n"
-
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
@@ -13,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "macros.hpp"
 #include "Request.hpp"
 #include "ServerContext.hpp"
 #include "HttpStatus.hpp"

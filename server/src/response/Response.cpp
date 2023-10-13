@@ -32,15 +32,15 @@ Response& Response::operator=(Response const& rhs)
 {
 	if (this != &rhs) {
 
-//		this->setRequest(rhs.request());
-//		this->setResponseContext(rhs.responseContext());
-//		this->setStatus(rhs.status());
-//		this->setBody(rhs.body());
-//		this->setPath(rhs.path());
-//		this->setBoundary(rhs.boundary());
-//		this->setResponseStr(rhs.responseStr());
-//		this->setCustomHeaders(rhs.customHeaders());
-//		this->setFilePath(rhs.filePath());
+		this->setRequest(rhs.request());
+		this->setResponseContext(rhs.responseContext());
+		this->setStatus(rhs.status());
+		this->setBody(rhs.body());
+		this->setPath(rhs.path());
+		this->setBoundary(rhs.boundary());
+		this->setResponseStr(rhs.responseStr());
+		this->setCustomHeaders(rhs.customHeaders());
+		this->setFilePath(rhs.filePath());
 
 	}
 	return (*this);
@@ -253,7 +253,6 @@ void	Response::_handlePost() {
 	this->_runCgi();
 
 	this->_status.setStatusCode("201");
-	//this->_body = _request.body();
 }
 
 void	Response::_handleDelete() {
@@ -345,7 +344,9 @@ void	Response::_autoIndex() {
 	std::string to_remove = this->responseContext().serverContext().pwd();
 	std::string title = "Index of http://www." + this->path().substr(to_remove.size(), this->path().size() - to_remove.size());
 	std::stringstream page;
-	page 	<< "<!DOCTYPE html>" << std::endl
+	
+	page 	<< DB_CRLF
+			<< "<!DOCTYPE html>" << std::endl
 			<< "<html>" << std::endl
 			<< "<head>" << std::endl
 			<< "<title>webserv</title>" <<std::endl
@@ -369,6 +370,7 @@ void	Response::_autoIndex() {
 			<< "</body>" << std::endl
 			<< "</html>" << std::endl;
 
+	this->setCustomHeaders("Content-Type: text/html");
 	this->setBody(page.str());
 }
 

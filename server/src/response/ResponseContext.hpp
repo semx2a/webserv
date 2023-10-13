@@ -1,8 +1,6 @@
 #ifndef RESPONSECONTEXT_HPP
 # define RESPONSECONTEXT_HPP
 
-//#define DEBUG_RESPONSECONTEXT
-
 # include <iostream>
 
 # include "Request.hpp"

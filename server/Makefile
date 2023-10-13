@@ -6,7 +6,7 @@
 #    By: seozcan <seozcan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/18 15:25:37 by seozcan           #+#    #+#              #
-#    Updated: 2023/10/08 13:16:51 by seozcan          ###   ########.fr        #
+#    Updated: 2023/10/13 22:36:21 by seozcan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,11 +59,11 @@ NAME	:=	webserv
 TNAME	:=	testexe
 
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::PATHS::
-
-SDIR	:=	src/
-TDIR	:=	test/src/
-ODIR	:=	obj/
-TODIR	:=	test/obj/
+PROJ	:=	./
+SDIR	:=	$(addprefix $(PROJ), src/)
+TDIR	:=	$(addprefix $(PROJ), test/src/)
+ODIR	:=	$(addprefix $(PROJ), obj/)
+TODIR	:=	$(addprefix $(PROJ), test/obj/)
 
 CONF	:=	$(addprefix $(SDIR), conf/)
 CORE	:=	$(addprefix $(SDIR), core/)
