@@ -242,12 +242,15 @@ void	Response::_handlePost() {
 
 void	Response::_handleDelete() {
 
-	if (access(this->_path.c_str(), F_OK) == -1)
+ 	if (access(this->_path.c_str(), F_OK) == -1)
 		throw HttpStatus("404");
-	else if (access(this->_path.c_str(), W_OK | X_OK) == -1)
+	else if (_path[_path.size() - 1] == '/' || access(this->_path.c_str(), W_OK) == -1)
 		throw HttpStatus("403");
-	if (std::remove(this->_path.c_str()) != 0)
-		throw HttpStatus("204");
+	else if (_responseContext.isCgi())
+		this->_runCgi();
+	if (std::remove(this->_path.c_str()))
+		throw HttpStatus("500");
+	throw HttpStatus("204");
 }
 
 void	Response::_handleError() {
