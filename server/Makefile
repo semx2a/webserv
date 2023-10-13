@@ -152,28 +152,6 @@ $(NAME): $(OBJ)	$(MOBJ)
 	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(OBJ) $(MOBJ) -o $(NAME)
 	@echo "$(HIGREEN)mandatory exe:[OK]$(RESET)" | $(INDENT)
 
-# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TESTS::
-
-test: header h2 message $(TNAME)
-
-$(TODIR):
-	@mkdir -p $(dir $@)
-	@echo "$(HIGREEN)objs folder:[OK]$(RESET)" | $(INDENT)
-
-$(TOBJ): | $(TODIR)
-
-$(TODIR)%.o: $(TDIR)%.cpp
-	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(INC) -c $< -o $@ 
-	@echo "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
-
--include ${DEP}
--include ${TDEP}
-
-$(TNAME): $(OBJ) $(TOBJ)
-	@$(CXX) $(CXXFLAGS) $(DEPFLAG) $(DEBUGFLAG) $(OBJ) $(TOBJ) -o $(TNAME)
-	@echo "$(HIGREEN)test exe:[OK]$(RESET)" | $(INDENT)
-
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::RULES::
 
 update:		header fclean
@@ -232,50 +210,4 @@ h2:
 message:
 	@make -q $(NAME) && echo "$(BHIGREEN)All files are already up to date$(RESET)" || true
 
-# :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::DEBUG::
-#
-#TDIR	:=	$(addprefix $(PROJ), test/)
-#
-#TSDIR	:= $(addprefix $(TDIR), src/)
-#TSRC	:= $(addprefix $(TDIR), parsing_tester.cpp)
-#TSRC	+= $(SRC)
-#
-#TODIR	:= $(addprefix $(TDIR), obj/)
-#TOBJ	:= ${subst ${TSDIR}, ${TODIR}, ${TSRC:%.cpp=%.o}}
-#TOBJ	+= $(OBJ)
-#
-##TOBJ	:= $(patsubst $(TDIR)%.cpp,$(TODIR)%.o,$(TSRC))
-##TOBJ 	+= $(OBJ)
-#
-##TDEP	:= $(tsubst $(TSDIR)%.cpp,$(TODIR)%.d,$(TSRC))
-#
-#$(TOBJ): | $(TODIR)
-#
-#$(TODIR):
-#	mkdir -p $(dir $@)
-#	echo "$(HIGREEN)objs folder:[OK]$(RESET)" | $(INDENT)
-#
-#$(TODIR)%.o: $(TSDIR)%.cpp
-#	mkdir -p $(dir $@)
-#	$(CXX) $(CXXFLAGS) $(INC) $(DEPFLAG) $(TOBJ) -c $< -o $@ 
-#	@echo "$(HIGREEN)compilation:[OK]$(RESET)" | $(INDENT)
-#
-#-include ${TDEP}
-#-include ${DEP}
-#
-#debug_parsing: $(OBJ) $(TOBJ)
-#	$(info TOBJ is $(TOBJ))
-#	$(CXX) $(CXXFLAGS) $(OBJ) $(TOBJ) -o $(NAME)
-#	@echo "$(HIGREEN)debug parsing:[OK]$(RESET)" | $(INDENT)
-#
-#clean_debug_parsing:
-#	@rm -rf $(TODIR) $(ODIR) 
-#	@echo "$(HIORANGE)objs folder:[RM]$(RESET)" | $(INDENT)
-#
-#fclean_debug_parsing: clean_debug_parsing
-#	@rm -f $(NAME)
-#	@echo "$(HIORANGE)$(NAME) bin:[RM]$(RESET)" | $(INDENT)
-#
-#re_debug_parsing: fclean_debug_parsing debug_parsing
-
-.PHONY:	all bonus clean fclean re push update o_dir h1 h2 header 
+.PHONY:	all bonus clean fclean re push update h1 h2 header 

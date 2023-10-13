@@ -284,6 +284,13 @@ void	Response::_handleError() {
 		std::ifstream	file(this->path().c_str());
 		if (file.is_open())
 			content = utl::fileToStr(file);
+		else {
+			std::stringstream bodyContent;
+			bodyContent	<< "<html><body><h1>" 
+						<< _status.statusCode() 
+						<< "</h1></body></html>";
+			content = bodyContent.str();
+		}
 	}
 	else {
 		std::stringstream bodyContent;
