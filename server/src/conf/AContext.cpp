@@ -65,16 +65,19 @@ void	AContext::setDefaults() {
 		this->_root = this->pwd() + "html";
 	if (this->_root.find_last_of("/") != this->_root.size() - 1)
 		this->_root += "/";
-
+	if (this->root().find(this->pwd()) == std::string::npos)
+		this->_root = this->pwd() + this->_root;
+		
 	if (this->_authorizedMethods.empty()) {
 		this->_authorizedMethods.push_back("GET");
 		this->_authorizedMethods.push_back("POST");
 		this->_authorizedMethods.push_back("DELETE");
 	}
-	else {
-		for (std::map<int, std::string>::iterator it = this->_errorPages.begin(); it != this->_errorPages.end(); it++)
+	
+		for (std::map<int, std::string>::iterator it = this->_errorPages.begin(); it != this->_errorPages.end(); it++) {
 			it->second = this->pwd() + it->second;
-	}
+			std::cerr << "ERROR PAGE: " << it->second << std::endl;
+		}
 
 	if (this->_uploadFolder.empty())
 		this->_uploadFolder = "files/";
