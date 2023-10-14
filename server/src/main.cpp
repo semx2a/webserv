@@ -10,7 +10,7 @@ int	main(int ac, char **av) {
 			throw std::invalid_argument("Usage: ./webserv <config_file>");
 
 		std::string conf_file;
-		conf_file = (ac == 1) ? "../neoserv/conf/default.conf" : av[1];
+		conf_file = (ac == 1) ? "../neoserv/conf/testwebsite.conf" : av[1];
 		
 		Parser	parser(conf_file);
 		Engine	webserv (parser.serverContexts());

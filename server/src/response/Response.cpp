@@ -362,22 +362,24 @@ void	Response::_autoIndex() {
 			<< "<h1>"
 			<< title
 			<< "</h1>" << std::endl
-			<< "<p>" << std::endl;
+			<< "<ul>" << std::endl;
 	
 	struct dirent *entry;
 	while ((entry = readdir(dir)) != NULL) {
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
 			continue;
+		page << "<li>" << std::endl;
 		page << "<a href=\"" << entry->d_name << "\">" << entry->d_name << "</a><br>" << std::endl;
+		page << "</li>" << std::endl;
 	}
 
-	closedir(dir);
+	//closedir(dir);
 
-	page	<< "</p>" << std::endl
+	page	<< "</ul>" << std::endl
 			<< "</body>" << std::endl
 			<< "</html>" << std::endl;
 
-	this->setCustomHeaders("Content-Type: text/html");
+	this->setCustomHeaders("Content-Type: text/html;\r\nConnection: close\r\n");
 	this->setBody(page.str());
 }
 

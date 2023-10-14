@@ -59,7 +59,8 @@ void	Headers::build(std::string const& path, size_t contentLength, std::string c
 			headers << "Content-Type: " << this->_mimeTypes.getMimeType(this->_findExtension(path)) << CRLF;
 		headers << "Content-Length: " << contentLength << CRLF;
 	}
-	headers << "Connection: keep-alive" << CRLF;
+	if (customHeaders.find("Connection") == std::string::npos)
+		headers << "Connection: keep-alive" << CRLF;
 	if (customHeaders.find("Cache-Control") == std::string::npos)
 		headers << "Cache-Control: no-cache" << CRLF;
 	if (not filePath.empty())

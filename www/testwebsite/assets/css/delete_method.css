@@ -1,6 +1,6 @@
 :root {
 	font-family: sans-serif;
-	--background-gradient: linear-gradient(30deg, #f39c12 30%, #f1c40f);
+	--background: white;
 	--gray: #34495e;
 	--darkgray: #2c3e50;
 }
@@ -54,13 +54,12 @@ select::-ms-expand {
 }
 /* Transition */
 .select:hover::after {
-	color: #f39c12;
+	color: #fff;
 }
 
 /* Other styles*/
 body {
 	color: #fff;
-	background: var(--background-gradient);
 }
 h1 {
 	margin: 0 0 0.25em;
