@@ -33,16 +33,16 @@ class CGI {
 		CGI& operator=(CGI const&);
 		~CGI();
 
-		Request const&			request() const;
-		ServerContext const&	serverContext() const;
-		ResponseContext const&	responseContext() const;
-		std::string const&		scriptPath() const;
+		Request const&					request() const;
+		ServerContext const&			serverContext() const;
+		ResponseContext const&			responseContext() const;
+		std::string const&				scriptPath() const;
 		std::vector<char> const&		output() const;
-		envp_t const&			envpMap() const;
-		char**					envp() const;
-		size_t					envSize() const;
-		std::string const&		cmd() const;
-		char**					argv() const;
+		envp_t const&					envpMap() const;
+		char**							envp() const;
+		size_t							envSize() const;
+		std::string const&				cmd() const;
+		char**							argv() const;
 		
 		void	setScriptPath(std::string const&);
 		void	setOutput(std::vector<char> const&);

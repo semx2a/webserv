@@ -76,6 +76,8 @@ void	AContext::setDefaults() {
 			it->second = this->pwd() + it->second;
 	}
 
-	if (this->_uploadFolder.find(this->pwd()) != 0)
+	if (this->_uploadFolder.empty())
+		this->_uploadFolder = "files/";
+	if (this->_uploadFolder.find(this->pwd()) == std::string::npos)
 		this->_uploadFolder = this->pwd() + this->_uploadFolder;
 }

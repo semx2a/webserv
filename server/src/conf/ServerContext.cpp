@@ -41,10 +41,6 @@ void	ServerContext::setServerNames(std::vector<std::string> const& serverNames) 
 void	ServerContext::setDefaults() {
 
 	AContext::setDefaults();
-	//if (this->_listen.empty())
-	//	this->_listen["0.0.0.0"] = 80;
-	//if (this->_serverNames.empty())
-	//	this->_serverNames.push_back("default");
 }
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: OPERATOR OVERLOAD::

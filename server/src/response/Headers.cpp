@@ -28,7 +28,6 @@ Headers &		Headers::operator=(Headers const & rhs) {
 
 	if (this != &rhs) {
 		ARespComponent::operator=(rhs);
-		
 	}
 	return *this;
 }

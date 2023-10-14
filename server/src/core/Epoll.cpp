@@ -109,7 +109,9 @@ void	Epoll::editSocketInEpoll(int socket, int eventToWatch) {
 
 int		Epoll::waitForConnexions() {
 
+	#ifdef LOGS
 	std::cout << utl::print_wait() << std::endl;
+	#endif
 	int numEvents = epoll_wait(this->_listener, this->_events, MAX_EVENTS, -1);
 	if (numEvents < 0) {
 		throw std::runtime_error(strerror(errno));

@@ -28,16 +28,16 @@ CGI::~CGI() {}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-Request const& 			CGI::request() const { return this->_responseContext.request(); }
-ServerContext const& 	CGI::serverContext() const { return this->_responseContext.serverContext(); }
-ResponseContext const& 	CGI::responseContext() const { return this->_responseContext; }
-std::string const& 		CGI::scriptPath() const { return this->_scriptPath; }
+Request const& 					CGI::request() const { return this->_responseContext.request(); }
+ServerContext const& 			CGI::serverContext() const { return this->_responseContext.serverContext(); }
+ResponseContext const& 			CGI::responseContext() const { return this->_responseContext; }
+std::string const& 				CGI::scriptPath() const { return this->_scriptPath; }
 std::vector<char> const& 		CGI::output() const { return this->_output; }
-envp_t const&			CGI::envpMap() const { return this->_envpMap; }
-char**					CGI::envp() const { return this->_envp; }
-size_t					CGI::envSize() const { return this->_envSize; }
-std::string const&		CGI::cmd() const { return this->_cmd; }
-char**					CGI::argv() const { return this->_argv; }
+envp_t const&					CGI::envpMap() const { return this->_envpMap; }
+char**							CGI::envp() const { return this->_envp; }
+size_t							CGI::envSize() const { return this->_envSize; }
+std::string const&				CGI::cmd() const { return this->_cmd; }
+char**							CGI::argv() const { return this->_argv; }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 
@@ -54,7 +54,6 @@ void	CGI::setCmd() {
 		this->_cmd = "/usr/bin/python3";
 	}
 	else {
-		std::cout << "CGI: Unknown CGI extension" << std::endl;
 		throw HttpStatus("500");
 	}
 }

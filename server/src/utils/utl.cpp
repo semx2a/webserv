@@ -17,7 +17,7 @@ utl& utl::operator=(utl const& rhs) {
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: METHODS::
 
-int	utl::searchVectorChar(std::vector<char> tab, char const* to_find, size_t index) {
+int					utl::searchVectorChar(std::vector<char> tab, char const* to_find, size_t index) {
 
 	std::vector<char>::iterator it = std::search(tab.begin() + index, tab.end(), to_find, to_find + std::strlen(to_find));
 	if (it == tab.end())
@@ -25,7 +25,7 @@ int	utl::searchVectorChar(std::vector<char> tab, char const* to_find, size_t ind
 	return (it - tab.begin());
 }
 
-int	utl::searchVectorCharUntil(std::vector<char> tab, char const* to_find, size_t index) {
+int					utl::searchVectorCharUntil(std::vector<char> tab, char const* to_find, size_t index) {
 
 	std::vector<char>::iterator it = std::search(tab.begin(), tab.begin() + index, to_find, to_find + std::strlen(to_find));
 	if (it == tab.begin() + index)
@@ -40,7 +40,7 @@ std::vector<char>&	utl::replaceVectorChar(std::vector<char>& tab, size_t positio
 	return (tab);
 }
 
-std::string	utl::trim(std::string const& str) {
+std::string			utl::trim(std::string const& str) {
 
     const std::string ws = " \n\r\t\f\v";
     
@@ -53,36 +53,29 @@ std::string	utl::trim(std::string const& str) {
     return str.substr(start, end-start+1);
 }
 
-int	utl::find_first_occurrence(const std::vector<char> & haystack, const std::string& needle) {
+int					utl::find_first_occurrence(const std::vector<char> & haystack, const std::string& needle) {
 
-    // Convert the vector of characters to a string
 	std::string haystack_str(haystack.begin(), haystack.end());
 
-	// Use find to find the first occurrence of the needle
 	size_t pos = haystack_str.find(needle);
 
-	// If the needle is not found, return -1
 	if(pos == std::string::npos) {
 		return -1;
 	}
 
-	// Otherwise, return the position of the first character of the needle
 	return pos; 
 }
 
-int	utl::find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
-    // Convert the vector of characters to a string
+int					utl::find_last_occurrence(const std::vector<char> & haystack, const std::string& needle) {
+
     std::string haystack_str(haystack.begin(), haystack.end());
 
-    // Use rfind to find the last occurrence of the needle
     size_t pos = haystack_str.rfind(needle);
 
-    // If the needle is not found, return -1
     if(pos == std::string::npos) {
         return -1;
     }
 
-    // Otherwise, return the position of the last character of the needle
     return pos + needle.size() - 1;
 }
 
@@ -228,14 +221,12 @@ bool	utl::isDirectory(std::string path) {
 
 bool	utl::createDirectory(std::string path) {
 
-   // Attempt to create the directory using the 'mkdir' command
 	std::string *createCmd = new std::string("mkdir \"" + path + "\"");
     const char* cmd = createCmd->c_str();
 	delete(createCmd);
 
     int result = std::system(cmd);
 	
-	// Failed to create directory
 	if (result != 0) {
         return false;
     }
@@ -292,10 +283,10 @@ bool	utl::createFile(std::string path, std::vector<char> content, std::string fi
 }
 
 std::string	utl::getDate() {
-    // Get the current time
+
     std::time_t now = std::time(NULL);
 
-    // Convert it to a string in the HTTP date format
+    // Convert time to a string in the HTTP date format
     char buf[50];
     struct tm tm;
 	setenv("TZ", "Europe/Paris", 1);

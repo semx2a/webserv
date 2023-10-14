@@ -59,11 +59,15 @@ void	Engine::connexionLoop() {
 			event = this->_epoll.readyEvent(i);
 			socket = event.data.fd;
 			if ((event.events & EPOLLERR) or (event.events & EPOLLHUP)) {
+				#ifdef LOGS
 				utl::log(socket, "Epoll error");
+				#endif
 				_endConnexion(socket);
 			}
 			else if (event.events & EPOLLRDHUP) {
+				#ifdef LOGS
 				utl::log(socket, "Closed connexion");
+				#endif
 				_endConnexion(socket);
 			}
 			else if (this->_epoll.isNewClient(socket)) {
@@ -83,14 +87,18 @@ void	Engine::_addNewClient(int serverSocket) {
 
 	int clientSocket = accept(serverSocket, NULL, NULL);
 	if (clientSocket < 0) {
+		#ifdef LOGS
 		utl::log(clientSocket, "Error: " + (std::string)strerror(errno));
+		#endif
 		return;
 	}
 	_epoll.addSocketToEpoll(clientSocket);
 	_serverContexts[clientSocket] = _epoll.servers().find(serverSocket)->second;
 	_buffers[clientSocket].setMaxBodySize(_serverContexts[clientSocket].maxBodySize());
 	_status[clientSocket].setStatusCode("");
+	#ifdef LOGS
 	utl::log(clientSocket, "New client added");
+	#endif
 	
 	int on = 1;
 	setsockopt(clientSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &on, sizeof(int));
@@ -107,7 +115,9 @@ void	Engine::_readFromClient(int clientSocket) {
 			throw HttpStatus("500");
 		}
 		else if (bytesRead == 0) { 
+			#ifdef LOGS
 			utl::log(clientSocket, "End of connexion");
+			#endif
 			_endConnexion(clientSocket);
 			return ;
 		}
@@ -128,7 +138,9 @@ void	Engine::_readFromClient(int clientSocket) {
 
 void	Engine::_handleBuffer(int clientSocket) {
 
+	#ifdef LOGS
 	utl::log(clientSocket, "Buffer received");
+	#endif
 
 	#ifdef DEBUG_ENGINE
 	std::cout << RED << std::string(_buffers[clientSocket].raw().begin(), _buffers[clientSocket].raw().end()) << RESET << std::endl;
@@ -144,19 +156,29 @@ void	Engine::_handleBuffer(int clientSocket) {
 		if (this->_buffers[clientSocket].isEnded()	|| this->_status[clientSocket].statusCode() != "202"
 														|| this->_status[clientSocket].statusCode() != "200") {
 			this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw(), this->_buffers[clientSocket].boundary());
+			#ifdef LOGS
 			utl::log(clientSocket, "Request parsed");
+			#endif
+			#ifdef DEBUG_ENGINE
 			std::cout << RED << utl::vectorOfCharToStr(this->_buffers[clientSocket].raw()) << RESET << std::endl;
+			#endif
 			this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 		}
 	}
 	catch (HttpStatus& e) {
 		this->_requests[clientSocket].parser(this->_buffers[clientSocket].raw(), this->_buffers[clientSocket].boundary());
+		#ifdef LOGS
 		utl::log(clientSocket, "Error in request");
+		#endif
+		#ifdef DEBUG_ENGINE
 		std::cout << RED << utl::vectorOfCharToStr(this->_buffers[clientSocket].raw()) << RESET << std::endl;
+		#endif
 		this->_epoll.editSocketInEpoll(clientSocket, EPOLLOUT);
 	}
 	catch (std::exception& e) {
+		#ifdef LOGS
 		utl::log(clientSocket, "Error: " + (std::string)e.what() + ". Connexion closed.");
+		#endif
 		_endConnexion(clientSocket);
 	}
 }
@@ -166,8 +188,12 @@ void	Engine::_writeToClient(int clientSocket) {
 	ResponseContext rc(this->_requests[clientSocket], this->_serverContexts[clientSocket]);
 	Response res(this->_requests[clientSocket], rc, this->_status[clientSocket]);
 	
+	#ifdef LOGS
 	utl::log(clientSocket, "Response about to be sent");
+	#endif
+	#ifdef DEBUG_ENGINE
 	std::cout << GREEN << res.responseStr() << RESET << std::endl;
+	#endif
 
 	if ((send(clientSocket, res.responseStr().c_str(), res.responseStr().length(), 0)) < 0) {
 		throw HttpStatus("500");
@@ -182,7 +208,9 @@ void	Engine::_writeToClient(int clientSocket) {
 			_epoll.editSocketInEpoll(clientSocket, EPOLLIN);
 		}
 		catch (std::exception& e) {
+			#ifdef LOGS
 			utl::log(clientSocket, "Error: " + (std::string)e.what() + ". Connexion closed.");
+			#endif
 			_endConnexion(clientSocket);
 		}
 	}

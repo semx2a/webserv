@@ -123,7 +123,6 @@ void	Parser::parseMaxBodySize(std::string const& line, Context& context) {
 	float size = std::strtof(sizeStr.substr(0, mPos).c_str(), NULL);
 	size *= 1e6;
 	if (size == 0 && sizeStr != "0") {
-		std::cout << "Size: " << size << std::endl;
 		buildAndThrowParamError(line);
 	}
 	context.setMaxBodySize(size);

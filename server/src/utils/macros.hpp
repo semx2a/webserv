@@ -10,13 +10,14 @@
 //#define DEBUG_SOCKET
 //#define DEBUG_BUFFER
 //#define DEBUG_REQUEST
-#define DEBUG_RESPONSE
+//#define DEBUG_RESPONSE
 //#define DEBUG_RESPONSECONTEXT
 //#define DEBUG_SERVER_CONTEXT
 //#define DEBUG_LOCATION_CONTEXT
 //#define DEBUG_HTTP_STATUS
 //#define DEBUG_UTILS
 //#define DEBUG_CGI
+//#define LOGS
 
 
 #endif

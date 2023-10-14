@@ -131,7 +131,6 @@ void	Response::_handleGet () {
 		}
 		this->_expandDirectory();
 	}
-	std::cout << "[DEBUG] handleGet: path: " << _path << std::endl;
 	if (_responseContext.isCgi()
 		|| _path.find(".php") != std::string::npos
 		|| _path.find(".py") != std::string::npos) {
@@ -168,7 +167,11 @@ void	Response::_handleUpload() {
 	size_t			filenamePos = utl::searchVectorChar(postData, "filename=\"", 0);
 	size_t			filenameSize = utl::searchVectorChar(postData, "\"", filenamePos + 11) - filenamePos - 11;
 	std::string		filename(postData.begin() + filenamePos + 11, postData.begin() + filenameSize);
-	std::string		filepath = this->responseContext().root() + this->responseContext().uploadFolder() + filename;
+	if (this->responseContext().uploadFolder().find(this->responseContext().root()) == std::string::npos)
+		this->_filePath = this->responseContext().root() + this->responseContext().uploadFolder();
+	else 
+		this->_filePath = this->responseContext().uploadFolder();
+	std::string		filepath = _filePath + filename;
 	std::ofstream	file(filename.c_str(), std::ios::app);
 
 	if (!file.is_open())
@@ -204,7 +207,10 @@ void	Response::_postData() {
 									utl::searchVectorChar(body, ("\r\n--" + boundary).c_str(), i) -
 									utl::searchVectorChar(body, "\r\n\r\n", i) - 4);
 		
-		_filePath = this->responseContext().root() + this->responseContext().uploadFolder();
+		if (this->responseContext().uploadFolder().find(this->responseContext().root()) == std::string::npos)
+			_filePath = this->responseContext().root() + this->responseContext().uploadFolder();
+		else 
+			_filePath = this->responseContext().uploadFolder();
 
 		#ifdef DEBUG_RESPONSE
 		std::cout << "[DEBUG] " << BOLD << "filename: " << RESET << filename << std::endl;
@@ -249,7 +255,6 @@ void	Response::_handlePost() {
 		throw HttpStatus("403");
 	
 	this->_postData();
-	std::cout << "[DEBUG] Post: _path: " << _path << std::endl;
 	this->_runCgi();
 
 	this->_status.setStatusCode("201");
