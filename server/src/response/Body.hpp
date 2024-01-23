@@ -6,7 +6,7 @@
 class Body : public ARespComponent {
 	
 	public:
-		Body();
+		Body(void);
 		Body(std::string const &);
 		Body(std::vector<char> const &);
 		Body(Body const & src);
@@ -14,11 +14,11 @@ class Body : public ARespComponent {
 	
 		Body &		operator=(Body const & rhs);
 
-		size_t		getContentLength() const;
+		size_t		getContentLength(void) const;
 
 		void		setContentLength(size_t contentLength);
 
-		void		build();
+		void		build(void);
 		void		build(std::string const &);
 		void		build(std::vector<char> const &);
 	

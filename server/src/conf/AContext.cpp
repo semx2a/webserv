@@ -30,14 +30,14 @@ AContext::~AContext() {}
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::GETTERS
 
-std::string const&								AContext::autoindex(void) const { return this->_autoindex; }
-size_t											AContext::maxBodySize(void) const { return this->_maxBodySize; }
-std::string const &								AContext::pwd(void) const { return this->_pwd; }
-std::string const &								AContext::root(void) const { return this->_root; }
-std::map<int, std::string> const &				AContext::errorPages(void) const { return this->_errorPages; }
-std::vector<std::string> const & 				AContext::index(void) const { return this->_index; }
-std::vector<std::string> const &				AContext::authorizedMethods(void) const { return this->_authorizedMethods; }
-std::string const&								AContext::uploadFolder(void) const { return this->_uploadFolder; }
+std::string const&					AContext::autoindex(void) const { return this->_autoindex; }
+size_t								AContext::maxBodySize(void) const { return this->_maxBodySize; }
+std::string const &					AContext::pwd(void) const { return this->_pwd; }
+std::string const &					AContext::root(void) const { return this->_root; }
+std::map<int, std::string> const &	AContext::errorPages(void) const { return this->_errorPages; }
+std::vector<std::string> const & 	AContext::index(void) const { return this->_index; }
+std::vector<std::string> const &	AContext::authorizedMethods(void) const { return this->_authorizedMethods; }
+std::string const&					AContext::uploadFolder(void) const { return this->_uploadFolder; }
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::SETTERS
 

@@ -21,17 +21,17 @@ class Epoll {
 		~Epoll();
 		Epoll& operator=(Epoll const& rhs);
 		
-		std::map<int, ServerContext> const&		servers() const;
-		int										listener() const;
+		std::map<int, ServerContext> const&		servers(void) const;
+		int										listener(void) const;
 		struct epoll_event const&				readyEvent(int index) const;
-		struct epoll_event const&				toPoll() const;
+		struct epoll_event const&				toPoll(void) const;
 
 		void	setServers(std::map<int, ServerContext> const&);
 		void	setListener(int);
 		void	setReadyEvent(int, struct epoll_event const&);
 		void	setToPoll(struct epoll_event const&);
 
-		int			waitForConnexions();
+		int			waitForConnexions(void);
 		bool		isNewClient(int fd) const;
 		void		addSocketToEpoll(int fd);
 		void		editSocketInEpoll(int fd, int eventToWatch);
@@ -44,7 +44,7 @@ class Epoll {
 		struct epoll_event				_events[MAX_EVENTS];
 
 		int					_pollPort(std::string const& ip, int port);
-		void				_createEpollEvent();
+		void				_createEpollEvent(void);
 };
 
 #endif

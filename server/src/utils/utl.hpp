@@ -74,7 +74,7 @@ class utl {
 		static std::string				fileToStr(std::ifstream &file);
 		static std::string				printCharArray(char** charArray, int size);
 		static void						deleteCharArray(char **);
-		static std::string						getDate();
+		static std::string				getDate(void);
 
 		static void						log(int client_fd, std::string str);
 		static std::string				str_of(size_t size, const std::string & c);
@@ -83,9 +83,9 @@ class utl {
 		static std::string 				vectorOfCharToStr(std::vector <char> const& buffer);
 		static std::string 				print_str(std::string buffer);
 
-		static std::string	   			print_client_added();
-		static std::string	   			print_end_connexion();
-		static std::string	   			print_wait();
+		static std::string	   			print_client_added(void);
+		static std::string	   			print_end_connexion(void);
+		static std::string	   			print_wait(void);
 
 		static bool						isDirectory(std::string path);
 		static bool						createDirectory(std::string path);

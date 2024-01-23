@@ -13,15 +13,15 @@ typedef std::map<std::string, std::string> t_lexicon;
 
 class AFile {
 	public:
-		AFile();
+		AFile(void);
 		AFile(std::string const&);
 		AFile(AFile const&);
 		virtual ~AFile();
 
 		AFile& operator=(AFile const&);
 
-		std::string const&	fileName() const;
-		t_lexicon const&	lexicon() const;
+		std::string const&	fileName(void) const;
+		t_lexicon const&	lexicon(void) const;
 
 		void	setFileName(std::string const&);
 		void	setLexicon(t_lexicon const&);

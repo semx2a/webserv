@@ -20,21 +20,21 @@ class Engine {
 		~Engine();
 		Engine& operator=(Engine const& rhs);
 
-		Epoll const&						epoll() const;
-		std::map<int, ServerContext> const&	serverContexts() const;
-		std::map<int, Buffer> const&		buffers() const;
-		std::map<int, Request> const&		requests() const;
+		Epoll const&						epoll(void) const;
+		std::map<int, ServerContext> const&	serverContexts(void) const;
+		std::map<int, Buffer> const&		buffers(void) const;
+		std::map<int, Request> const&		requests(void) const;
 
 		void	setEpollEvents(Epoll const&);
 		void	setServersContexts(std::map<int, ServerContext> const&);
 		void	setBuffers(std::map<int, Buffer> const&);
 		void	setRequests(std::map<int, Request> const&);
 
-		void	connexionLoop();
+		void	connexionLoop(void);
 
 	private:
 
-		Engine();
+		Engine(void);
 
 		Epoll								_epoll;
 		std::map<int, ServerContext>		_serverContexts;
