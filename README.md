@@ -1,17 +1,24 @@
 # Projet: Webserv
 
-## Introduction
-Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98, nous offrant ainsi l'occasion de comprendre les mécanismes internes d'un serveur web et de se familiariser avec les requêtes et les réponses HTTP.
 
-## Contraintes Techniques
-- Le serveur doit être écrit en C++ 98.
-- Aucune bibliothèque externe ou ensemble Boost n'est autorisé.
-- Le serveur doit être non-bloquant et utiliser `poll()` (ou équivalent) pour les opérations d'entrée/sortie.
-- Le serveur doit être capable de lire un fichier de configuration et de s'adapter en conséquence.
-- Le serveur doit supporter les méthodes HTTP GET, POST, et DELETE.
-- Le serveur doit être capable de servir un site web statique, de gérer le téléversement de fichiers par les clients, et de supporter les CGI pour certaines extensions de fichiers.
-- Le serveur doit être robuste et ne jamais cesser de fonctionner inopinément.
-- Le serveur doit être conforme à HTTP 1.1, en utilisant NGINX comme référence pour les comportements de réponse et les en-têtes.
+
+## Introduction
+Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98 inspiré de NGINX, nous offrant ainsi l'occasion de comprendre les mécanismes internes d'un serveur web et de nous familiariser avec les requêtes et les réponses HTTP.
+
+## Cahier des Charges
+- **Language**: C++ 98 et C.
+- **Fonctionnalités** : Le serveur doit :
+  - être capable de lire un fichier de configuration et de s'adapter en conséquence.
+  - pouvoir ecouter sur plusieurs ports.
+  - être non-bloquant et utiliser `poll()` (ou équivalent) pour les opérations d'entrée/sortie.
+  - supporter les méthodes GET, POST, et DELETE.
+  - être capable de servir un site web statique.
+  - gérer le téléversement de fichiers par les clients
+  - supporter les CGI pour certaines extensions de fichiers.
+  - être robuste et ne jamais cesser de fonctionner inopinément.
+  - être conforme à HTTP 1.1, en utilisant NGINX comme référence pour les comportements de réponse et les en-têtes.
+- Aucune bibliothèque externe (ni l'ensemble Boost) n'est autorisée.
+- Interdiction d'utiliser `fork` pour autre chose que les CGI.
 
 ## Apprentissages Liés au Projet
 - Compréhension approfondie du protocole HTTP et de ses méthodes.
@@ -25,3 +32,75 @@ Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98, no
 - Capacité à créer et à lire des fichiers de configuration pour personnaliser le comportement du serveur.
 - Compréhension de la manière dont les serveurs web traitent les requêtes, servent les contenus statiques, gèrent les téléversements de fichiers et exécutent des CGI.
 - Développement de compétences en débogage et en test, pour s'assurer que le serveur est fiable et performant même sous charge.
+
+
+## Exploration de l'Orienté Objet avec C++
+
+### Liste des concepts utilisés
+- Classes
+  - Encapsulation
+    - Visibilité
+    - Attributs et fonctions membre
+      - Constantes
+    - Accesseurs
+  - Constructeurs / Destructeurs
+    - Forme canonique de Coplien
+    - Liste d'initialisation
+  - Pointeurs sur les membres
+  - Héritage
+    - Classes abstraites  
+- Surcharge d'opérateur
+- Templates
+- Containers
+  - Vectors
+  - Maps
+- Polymorphisme (Surcharge de fonction)
+  - Sous-typage
+- Compilation conditionnelle
+- Exceptions
+- Casting
+
+### Exemples
+
+#### Compilation conditionnelle
+```cpp
+#ifdef LOGS
+	utl::log(socket, "Closed connexion");
+#endif
+```
+
+#### Classes; Héritage; 
+```cpp
+#ifndef HEADERS_HPP
+# define HEADERS_HPP
+
+# include "ARespComponent.hpp"
+# include "ResponseContext.hpp"
+# include "MimeTypes.hpp"
+
+class Headers : public ARespComponent {
+	
+	public:
+		Headers(size_t);
+		Headers(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
+		Headers(Headers const&);
+		~Headers();
+	
+		Headers &	operator=(Headers const&);
+
+		size_t		contentLength(void) const;
+		void		setContentLength(size_t);
+
+		void 		build(void);
+		void		build(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
+
+	private:
+		Headers();
+		size_t		_contentLength;
+		MimeTypes	_mimeTypes;
+
+		std::string	_findExtension(std::string const& path);
+};
+
+#endif
+```
