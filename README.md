@@ -69,7 +69,7 @@ Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98 ins
 #endif
 ```
 
-#### Classes; Héritage; 
+#### Classes; Héritage; Encapsulation; Polymorphisme; Forme canonique; Constantes
 ```cpp
 #ifndef HEADERS_HPP
 # define HEADERS_HPP
