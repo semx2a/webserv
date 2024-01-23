@@ -1,7 +1,7 @@
 # Projet: Webserv
 
 ## Introduction
-Le projet Webserv est conçu pour nous plonger dans les détails du protocole HTTP, le protocole le plus utilisé sur Internet. Ce projet nous amène à écrire votre propre serveur HTTP en C++ 98, nous offrant ainsi l'occasion de comprendre les mécanismes internes d'un serveur web et de se familiariser avec les requêtes et les réponses HTTP.
+Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98, nous offrant ainsi l'occasion de comprendre les mécanismes internes d'un serveur web et de se familiariser avec les requêtes et les réponses HTTP.
 
 ## Contraintes Techniques
 - Le serveur doit être écrit en C++ 98.
