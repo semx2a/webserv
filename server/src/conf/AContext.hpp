@@ -15,14 +15,14 @@ class AContext {
 		AContext& operator=(AContext const& rhs);
 		virtual ~AContext();
 
-		std::string const&							autoindex() const;
-		size_t										maxBodySize() const;
-		std::string const &							pwd() const;
-		std::string const&							root() const;
-		std::map<int, std::string> const&			errorPages() const;
-		std::vector<std::string> const&				index() const;
-		std::vector<std::string> const&				authorizedMethods() const;
-		std::string const&							uploadFolder() const;
+		std::string const&							autoindex(void) const;
+		size_t										maxBodySize(void) const;
+		std::string const &							pwd(void) const;
+		std::string const&							root(void) const;
+		std::map<int, std::string> const&			errorPages(void) const;
+		std::vector<std::string> const&				index(void) const;
+		std::vector<std::string> const&				authorizedMethods(void) const;
+		std::string const&							uploadFolder(void) const;
 
 		void	setAutoindex(std::string const& autoindex);
 		void 	setMaxBodySize(size_t size);

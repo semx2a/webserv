@@ -33,29 +33,29 @@ class CGI {
 		CGI& operator=(CGI const&);
 		~CGI();
 
-		Request const&					request() const;
-		ServerContext const&			serverContext() const;
-		ResponseContext const&			responseContext() const;
-		std::string const&				scriptPath() const;
-		std::vector<char> const&		output() const;
-		envp_t const&					envpMap() const;
-		char**							envp() const;
-		size_t							envSize() const;
-		std::string const&				cmd() const;
-		char**							argv() const;
+		Request const&					request(void) const;
+		ServerContext const&			serverContext(void) const;
+		ResponseContext const&			responseContext(void) const;
+		std::string const&				scriptPath(void) const;
+		std::vector<char> const&		output(void) const;
+		envp_t const&					envpMap(void) const;
+		char**							envp(void) const;
+		size_t							envSize(void) const;
+		std::string const&				cmd(void) const;
+		char**							argv(void) const;
 		
 		void	setScriptPath(std::string const&);
 		void	setOutput(std::vector<char> const&);
 		void	setEnvpMap(envp_t const&);
 		void	setEnvp(char**);
 		void	setEnvSize(size_t);
-		void	setCmd();
-		void	setArgv();
+		void	setCmd(void);
+		void	setArgv(void);
 
-		void	execute();
+		void	execute(void);
 
 	private:
-		CGI();
+		CGI(void);
 
 		Request				_request;
 		ResponseContext		_responseContext;
@@ -69,9 +69,9 @@ class CGI {
 		char**				_argv;
 
 
-		void	_generateEnvp();
-		void	_generateEnvpMap();
-		void	_mapToEnvp();
+		void	_generateEnvp(void);
+		void	_generateEnvpMap(void);
+		void	_mapToEnvp(void);
 		void	_waitChild(pid_t);
 };
 

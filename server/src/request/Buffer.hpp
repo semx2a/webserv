@@ -23,19 +23,19 @@ class Buffer {
 		Buffer &operator=(Buffer const& rhs);
 		~Buffer();
 
-		std::vector<char> const&	raw() const;
+		std::vector<char> const&	raw(void) const;
 
-		bool						hasBody() const;
-		bool						isEnded() const;
+		bool						hasBody(void) const;
+		bool						isEnded(void) const;
 
-		std::string const&			boundary() const;
-		std::string const&			finalBoundary() const;
-		size_t						contentLength() const;
-		bool						transferEncoding() const;
+		std::string const&			boundary(void) const;
+		std::string const&			finalBoundary(void) const;
+		size_t						contentLength(void) const;
+		bool						transferEncoding(void) const;
 
-		size_t						maxBodySize() const;
-		size_t						headerSize() const;
-		t_ull						remainingContentLength() const;
+		size_t						maxBodySize(void) const;
+		size_t						headerSize(void) const;
+		t_ull						remainingContentLength(void) const;
 
 		void						setMaxBodySize(size_t maxBodySize);
 		void						setRemainingContentLength(t_ull remainingContentLength);
@@ -43,11 +43,11 @@ class Buffer {
 		void						add(std::vector<char> raw);
 
 
-		void	checkEnd();
-		void	searchForHeaders();
-		void	processBodyEndCheck();
-		void	clear();
-		void	resetFlagsAndValues();
+		void	checkEnd(void);
+		void	searchForHeaders(void);
+		void	processBodyEndCheck(void);
+		void	clear(void);
+		void	resetFlagsAndValues(void);
 
 	private:
 
@@ -65,12 +65,12 @@ class Buffer {
 		size_t				_headerSize;
 		t_ull				_remainingContentLength;
 		
-		bool	_findContentLength();
-		bool	_findTransferEncoding();
-		bool	_findBoundary();
-		void	_checkEndBoundary();
-		void	_checkEndContentLength();
-		void	_checkEndTransferEncoding();
+		bool	_findContentLength(void);
+		bool	_findTransferEncoding(void);
+		bool	_findBoundary(void);
+		void	_checkEndBoundary(void);
+		void	_checkEndContentLength(void);
+		void	_checkEndTransferEncoding(void);
 };
 
 #endif

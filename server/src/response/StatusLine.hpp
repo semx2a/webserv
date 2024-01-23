@@ -7,7 +7,7 @@
 class StatusLine : public ARespComponent {
 	
 	public:
-		StatusLine();
+		StatusLine(void);
 		StatusLine(std::string const&, std::string const&);
 		StatusLine(StatusLine const &);
 		~StatusLine();
@@ -17,10 +17,10 @@ class StatusLine : public ARespComponent {
 		void				setStatusCode(std::string const&);
 		void				setReasonPhrase(std::string const &);
 
-		std::string const&	statusCode() const;
-		std::string const&	reasonPhrase() const;
+		std::string const&	statusCode(void) const;
+		std::string const&	reasonPhrase(void) const;
 
-		void		build();
+		void		build(void);
 		void		build(std::string const&, std::string const&);
 
 	private:

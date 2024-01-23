@@ -4,6 +4,7 @@
 # define CRLF		"\r\n"
 # define DB_CRLF	"\r\n\r\n"
 
+/* Uncommment to toggle the type of debugging option you need */
 //#define DEBUG_PARSER
 //#define DEBUG_ENGINE
 //#define DEBUG_EPOLL

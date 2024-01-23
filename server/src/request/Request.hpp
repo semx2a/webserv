@@ -19,7 +19,7 @@ class Request {
 	
 	public:
 
-		Request();
+		Request(void);
 		Request(Request const &src);
 		~Request();
 
@@ -34,14 +34,14 @@ class Request {
 		void	setBody(const std::vector<char>);
 		void	setBoundary(const std::string);
 		
-		std::string const &			method() const;
-		std::string const &			target() const;
-		std::string const &			query() const;
-		std::string const &			version() const;
-		std::vector<char> const &	body() const;
+		std::string const &			method(void) const;
+		std::string const &			target(void) const;
+		std::string const &			query(void) const;
+		std::string const &			version(void) const;
+		std::vector<char> const &	body(void) const;
 		std::string const &			header(std::string const &) const;
-		t_headers const &			headers() const;
-		std::string const &			boundary() const;
+		t_headers const &			headers(void) const;
+		std::string const &			boundary(void) const;
 
 		//METHODS
 		void	parser(std::vector<char> const& raw, std::string const& boundary);

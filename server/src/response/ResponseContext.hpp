@@ -20,21 +20,21 @@ class ResponseContext {
 		ResponseContext& operator=(ResponseContext const&);
 
 		// :::::::::::::::::::::::::::: ACCESSORS
-		Request const&						request() const;
-		ServerContext const&				serverContext() const;
-		std::string const&					target() const;
-		std::string const&					path() const;
-		LocationContext const&				location() const;
-		std::string const&					root() const;
-		bool								alias() const;
-		std::string const&					uploadFolder() const;
-		std::vector<std::string> const&		index() const;
-		std::map<int, std::string> const&	errorPages() const;
-		std::string const&					autoindex() const;
-		size_t 								maxBodySize() const;
-		std::vector<std::string> const&		authorizedMethods() const;
-		bool								isCgi() const;
-		bool								isUpload() const;
+		Request const&						request(void) const;
+		ServerContext const&				serverContext(void) const;
+		std::string const&					target(void) const;
+		std::string const&					path(void) const;
+		LocationContext const&				location(void) const;
+		std::string const&					root(void) const;
+		bool								alias(void) const;
+		std::string const&					uploadFolder(void) const;
+		std::vector<std::string> const&		index(void) const;
+		std::map<int, std::string> const&	errorPages(void) const;
+		std::string const&					autoindex(void) const;
+		size_t 								maxBodySize(void) const;
+		std::vector<std::string> const&		authorizedMethods(void) const;
+		bool								isCgi(void) const;
+		bool								isUpload(void) const;
 
 	private:
 	 	Request const&						_request;
@@ -55,8 +55,8 @@ class ResponseContext {
 		bool								_isUpload;
 		
 
-		void		_locationDirectives();
-		void		_serverDirectives();
+		void		_locationDirectives(void);
+		void		_serverDirectives(void);
 };
 
 std::ostream&	operator<<(std::ostream& o, ResponseContext const& rhs);

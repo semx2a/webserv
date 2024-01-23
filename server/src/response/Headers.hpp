@@ -15,10 +15,10 @@ class Headers : public ARespComponent {
 	
 		Headers &	operator=(Headers const&);
 
-		size_t		contentLength() const;
+		size_t		contentLength(void) const;
 		void		setContentLength(size_t);
 
-		void 		build();
+		void 		build(void);
 		void		build(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
 
 	private:

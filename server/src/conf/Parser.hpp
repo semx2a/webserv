@@ -29,7 +29,7 @@ class Parser {
 		std::string const&					confFileName(void) const;
 		size_t								linesRead(void) const;
 
-		void	parse();
+		void	parse(void);
 
 	private:
 		Parser();
