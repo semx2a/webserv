@@ -1,6 +1,7 @@
-# Projet: Webserv
+[![en](https://img.shields.io/badge/lang-en-pink.svg)](https://github.com/semx2a/webserv/blob/master/README.md)
+[![fr](https://img.shields.io/badge/lang-fr-purple.svg)](https://github.com/semx2a/webserv/blob/master/README.fr.md)
 
-
+# Webserv
 
 ## Introduction
 Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98 inspiré de NGINX, nous offrant ainsi l'occasion de comprendre les mécanismes internes d'un serveur web et de nous familiariser avec les requêtes et les réponses HTTP.
@@ -19,6 +20,26 @@ Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98 ins
   - être conforme à HTTP 1.1, en utilisant NGINX comme référence pour les comportements de réponse et les en-têtes.
 - Aucune bibliothèque externe (ni l'ensemble Boost) n'est autorisée.
 - Interdiction d'utiliser `fork` pour autre chose que les CGI.
+
+## Utilisation
+
+```shell
+git clone git@github.com:semx2a/webserv.git
+cd webserv/server
+make
+./webserv chemin/vers/fichier_de_conf.conf
+'''
+
+> Un fichier de configuration de démonstration se trouve dans `neoserv/conf/testwebsite.conf`. Vous pouvez le modifier pour changer le comportement du serveur, les ports d'écoute, etc.
+
+Pour accéder au site, entrez simplement la ligne ci-dessous dans la bare de recherche de votre navigateur web:
+
+```web
+http://localhost:8080
+```
+
+> Le port 8080 est le port configuré par défaut dans le fichier de configuration fourni. Si ce paramètre est modifié, le port devra être modifié dans le navigateur afin de pouvoir accéder au site
+
 
 ## Apprentissages Liés au Projet
 - Compréhension approfondie du protocole HTTP et de ses méthodes.
