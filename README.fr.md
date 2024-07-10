@@ -1,7 +1,7 @@
 # Webserv
 
-[![en](https://img.shields.io/badge/lang-en-pink.svg)](https://github.com/semx2a/webserv/blob/master/README.md)
-[![fr](https://img.shields.io/badge/lang-fr-purple.svg)](https://github.com/semx2a/webserv/blob/master/README.fr.md)
+[![en](https://img.shields.io/badge/lang-en-pink.svg)](https://github.com/semx2a/webserv/blob/main/README.md)
+[![fr](https://img.shields.io/badge/lang-fr-purple.svg)](https://github.com/semx2a/webserv/blob/main/README.fr.md)
 
 ## Introduction
 
