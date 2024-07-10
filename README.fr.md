@@ -1,13 +1,15 @@
+# Webserv
+
 [![en](https://img.shields.io/badge/lang-en-pink.svg)](https://github.com/semx2a/webserv/blob/master/README.md)
 [![fr](https://img.shields.io/badge/lang-fr-purple.svg)](https://github.com/semx2a/webserv/blob/master/README.fr.md)
 
-# Webserv
-
 ## Introduction
+
 Le projet Webserv nous amène à écrire votre propre serveur HTTP en C++ 98 inspiré de NGINX, nous offrant ainsi l'occasion de comprendre les mécanismes internes d'un serveur web et de nous familiariser avec les requêtes et les réponses HTTP.
 
 ## Cahier des Charges
-- **Language**: C++ 98 et C.
+
+- **Langage**: C++ 98 et C.
 - **Fonctionnalités** : Le serveur doit :
   - être capable de lire un fichier de configuration et de s'adapter en conséquence.
   - pouvoir ecouter sur plusieurs ports.
@@ -40,24 +42,21 @@ http://localhost:8080
 
 > Le port 8080 est le port configuré par défaut dans le fichier de configuration fourni. Si ce paramètre est modifié, le port devra être modifié dans le navigateur afin de pouvoir accéder au site
 
-
 ## Apprentissages Liés au Projet
+
 - Compréhension approfondie du protocole HTTP et de ses méthodes.
 - Maîtrise de la programmation réseau en C et C++, en particulier la gestion des connexions non-bloquantes et le multiplexage des I/O. Nous avons choisi `epoll` comme multiplexer pour les raisons suivantes:
-
-	- Meilleure Performance: `epoll` fonctionne sur un modèle basé sur les événements, où le kernel informe l'application des descripteurs de fichiers prêts pour l'opération d'entrée/sortie. Cela évite des appels système inutiles (contrairement à `select` ou `poll` qui réitèrent sur l'ensemble des fichiers) et réduit la complexité de O(n) à O(1) dans de nombreux scénarios.
-
-	- Flexibilité et Contrôle: `epoll` offre un contrôle précis sur les types d'événements surveillés pour chaque descripteur de fichier, et ce sans avoir à le retirer et à le réajouter, ce qui n'est pas possible avec `select` ou `poll`.
-
+  - Meilleure Performance: `epoll` fonctionne sur un modèle basé sur les événements, où le kernel informe l'application des descripteurs de fichiers prêts pour l'opération d'entrée/sortie. Cela évite des appels système inutiles (contrairement à `select` ou `poll` qui réitèrent sur l'ensemble des fichiers) et réduit la complexité de O(n) à O(1) dans de nombreux scénarios.
+  - Flexibilité et Contrôle: `epoll` offre un contrôle précis sur les types d'événements surveillés pour chaque descripteur de fichier, et ce sans avoir à le retirer et à le réajouter, ce qui n'est pas possible avec `select` ou `poll`.
 - Gestion d'un projet complexe en C++, en respectant les normes de codage et en produisant un code propre et bien organisé.
 - Capacité à créer et à lire des fichiers de configuration pour personnaliser le comportement du serveur.
 - Compréhension de la manière dont les serveurs web traitent les requêtes, servent les contenus statiques, gèrent les téléversements de fichiers et exécutent des CGI.
 - Développement de compétences en débogage et en test, pour s'assurer que le serveur est fiable et performant même sous charge.
 
-
 ## Exploration de l'Orienté Objet avec C++
 
 ### Liste des concepts utilisés
+
 - Classes
   - Encapsulation
     - Visibilité
@@ -84,13 +83,15 @@ http://localhost:8080
 ### Exemples
 
 #### Compilation conditionnelle
+
 ```cpp
 #ifdef LOGS
-	utl::log(socket, "Closed connexion");
+    utl::log(socket, "Closed connexion");
 #endif
 ```
 
 #### Classes; Héritage; Encapsulation; Polymorphisme; Forme canonique; Constantes
+
 ```cpp
 #ifndef HEADERS_HPP
 # define HEADERS_HPP
@@ -100,27 +101,27 @@ http://localhost:8080
 # include "MimeTypes.hpp"
 
 class Headers : public ARespComponent {
-	
-	public:
-		Headers(size_t);
-		Headers(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
-		Headers(Headers const&);
-		~Headers();
-	
-		Headers &	operator=(Headers const&);
 
-		size_t		contentLength(void) const;
-		void		setContentLength(size_t);
+  public:
+      Headers(size_t);
+      Headers(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
+      Headers(Headers const&);
+      ~Headers();
+  
+      Headers &   operator=(Headers const&);
 
-		void 		build(void);
-		void		build(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
+      size_t      contentLength(void) const;
+      void        setContentLength(size_t);
 
-	private:
-		Headers();
-		size_t		_contentLength;
-		MimeTypes	_mimeTypes;
+      void        build(void);
+      void        build(std::string const&, size_t, std::string const&, ResponseContext const&, std::string const&);
 
-		std::string	_findExtension(std::string const& path);
+  private:
+      Headers();
+      size_t      _contentLength;
+      MimeTypes   _mimeTypes;
+
+      std::string _findExtension(std::string const& path);
 };
 
 #endif
